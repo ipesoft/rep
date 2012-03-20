@@ -1,0 +1,852 @@
+# Regional plants translation file.
+# Copyright (C) 2012
+# This file is distributed under the same license as the PACKAGE package.
+# Renato De Giovanni <renato@cria . org . br>, 2012.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-03-20 06:34-0300\n"
+"PO-Revision-Date: 2012-03-07 21:05-0300\n"
+"Last-Translator: Renato De Giovanni <renato@cria . org . br>\n"
+"Language-Team: pt_BR <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+
+#: admin.py:40
+msgid "reference"
+msgstr "referência"
+
+#: admin.py:41
+msgid "references"
+msgstr "referências"
+
+#: admin.py:272 models.py:578
+msgid "conservation status"
+msgstr "status de conservação"
+
+#: admin.py:273 models.py:579
+msgid "conservation statuses"
+msgstr "status de conservação"
+
+#: admin.py:325 models.py:16
+msgid "synonym"
+msgstr "sinônimo"
+
+#: admin.py:326
+msgid "synonyms"
+msgstr "sinônimos"
+
+#: admin.py:330
+msgid "common name"
+msgstr "nome popular"
+
+#: admin.py:331
+msgid "common names"
+msgstr "nomes populares"
+
+#: admin.py:337 models.py:253
+msgid "Taxonomic data"
+msgstr "Dados taxonômicos"
+
+#: admin.py:341 models.py:254
+msgid "Uses"
+msgstr "Recomendação de uso"
+
+#: admin.py:345 models.py:255
+msgid "Abundance"
+msgstr "Abundância"
+
+#: admin.py:349 models.py:257
+msgid "Endemism"
+msgstr "Endemismo"
+
+#: admin.py:353 models.py:104 models.py:258
+msgid "Special features"
+msgstr "Características de destaque"
+
+#: admin.py:357 models.py:105
+msgid "Successional group"
+msgstr "Grupo sucessional"
+
+#: admin.py:361 models.py:106
+msgid "Growth rate"
+msgstr "Velocidade de desenvolvimento"
+
+#: admin.py:365 models.py:107
+msgid "Pruning"
+msgstr "Poda de condução e galhos"
+
+#: admin.py:369 models.py:108
+msgid "Flowering period"
+msgstr "Período de floração"
+
+#: admin.py:373 models.py:109
+msgid "Flowering color"
+msgstr "Cor da floração"
+
+#: admin.py:377
+msgid "Pollination"
+msgstr "Polinização"
+
+#: admin.py:381 models.py:111
+msgid "Seed dispersal"
+msgstr "Tipo de dispersão"
+
+#: admin.py:385
+msgid "Dispersion agents"
+msgstr "Agentes dispersores"
+
+#: admin.py:389 models.py:178
+msgid "Fruits"
+msgstr "Frutos"
+
+#: admin.py:393 models.py:114
+msgid "Symbiotic association"
+msgstr "Associação simbiótica"
+
+#: admin.py:397
+msgid "Roots"
+msgstr "Raízes"
+
+#: admin.py:401 models.py:116
+msgid "Foliage persistence"
+msgstr "Persistência foliar"
+
+#: admin.py:405 models.py:117
+msgid "Crown diameter"
+msgstr "Diâmetro da copa"
+
+#: admin.py:409 models.py:118
+msgid "Crown shape"
+msgstr "Formato da copa"
+
+#: admin.py:413 models.py:119
+msgid "Bark texture"
+msgstr "Superfície do tronco"
+
+#: admin.py:417 models.py:120
+msgid "Trunk alignment"
+msgstr "Alinhamento do tronco"
+
+#: admin.py:421 models.py:121
+msgid "Tree size"
+msgstr "Porte"
+
+#: admin.py:425 models.py:122
+msgid "Thorns or spines"
+msgstr "Acúleos ou espinhos"
+
+#: admin.py:429 models.py:123
+msgid "Toxic or allergenic"
+msgstr "Princípios tóxicos ou alergênicos"
+
+#: admin.py:433 models.py:124
+msgid "Pests and diseases"
+msgstr "Pragas e doenças"
+
+#: admin.py:437 models.py:125
+msgid "Fruiting period"
+msgstr "Período de frutificação"
+
+#: admin.py:441 models.py:126
+msgid "Seed collection"
+msgstr "Coleta de sementes"
+
+#: admin.py:445 models.py:127
+msgid "Seed type"
+msgstr "Tipo de semente"
+
+#: admin.py:449 models.py:128
+msgid "Pre-germination treatment"
+msgstr "Tratamento para germinação"
+
+#: admin.py:453 models.py:129
+msgid "Seedling production"
+msgstr "Produção de mudas"
+
+#: admin.py:457 models.py:130
+msgid "Germination time lapse"
+msgstr "Tempo de germinação"
+
+#: admin.py:461 models.py:131
+msgid "Germination rate"
+msgstr "Taxa de germinação"
+
+#: admin.py:465 models.py:132
+msgid "Light requirements"
+msgstr "Exigência em luminosidade"
+
+#: models.py:15
+msgid "accepted"
+msgstr "aceito"
+
+#: models.py:17
+msgid "popular"
+msgstr "popular"
+
+#: models.py:21
+msgid "january"
+msgstr "janeiro"
+
+#: models.py:22
+msgid "february"
+msgstr "fevereiro"
+
+#: models.py:23
+msgid "march"
+msgstr "março"
+
+#: models.py:24
+msgid "april"
+msgstr "abril"
+
+#: models.py:25
+msgid "may"
+msgstr "maio"
+
+#: models.py:26
+msgid "june"
+msgstr "junho"
+
+#: models.py:27
+msgid "july"
+msgstr "julho"
+
+#: models.py:28
+msgid "august"
+msgstr "agosto"
+
+#: models.py:29
+msgid "september"
+msgstr "setembro"
+
+#: models.py:30
+msgid "october"
+msgstr "outubro"
+
+#: models.py:31
+msgid "november"
+msgstr "novembro"
+
+#: models.py:32
+msgid "december"
+msgstr "dezembro"
+
+#: models.py:36
+msgid "white"
+msgstr "branca"
+
+#: models.py:37
+msgid "cream"
+msgstr "creme"
+
+#: models.py:38
+msgid "yellow"
+msgstr "amarela"
+
+#: models.py:39
+msgid "pink"
+msgstr "rosa"
+
+#: models.py:40
+msgid "orange"
+msgstr "laranja"
+
+#: models.py:41
+msgid "red"
+msgstr "vermelha"
+
+#: models.py:42
+msgid "green"
+msgstr "verde"
+
+#: models.py:43
+msgid "purple"
+msgstr "roxa"
+
+#: models.py:47
+msgid "Berry"
+msgstr "Baga"
+
+#: models.py:48
+msgid "Capsule"
+msgstr "Cápsula"
+
+#: models.py:49
+msgid "Drupe"
+msgstr "Drupa"
+
+#: models.py:50
+msgid "Legume"
+msgstr "Vagem"
+
+#: models.py:54
+msgid "Fibrous"
+msgstr "Fasciculada"
+
+#: models.py:55
+msgid "Taproot"
+msgstr "Pivotante"
+
+#: models.py:59
+msgid "Spherical"
+msgstr "Globosa"
+
+#: models.py:60
+msgid "Elliptical"
+msgstr "Elíptica"
+
+#: models.py:61
+msgid "Conical"
+msgstr "Cônica"
+
+#: models.py:62
+msgid "Cylindrical"
+msgstr "Colunar"
+
+#: models.py:63
+msgid "Corymbiform"
+msgstr "Corimbiforme"
+
+#: models.py:64
+msgid "Umbelliform"
+msgstr "Umbeliforme"
+
+#: models.py:65
+msgid "Flabelliform"
+msgstr "Flabeliforme"
+
+#: models.py:66
+msgid "Pendant"
+msgstr "Pendente"
+
+#: models.py:67
+msgid "Irregular"
+msgstr "Irregular"
+
+#: models.py:71
+msgid "Smooth"
+msgstr "Lisa"
+
+#: models.py:72
+msgid "Cracked"
+msgstr "Fissurada"
+
+#: models.py:73
+msgid "Rough"
+msgstr "Áspera"
+
+#: models.py:77
+msgid "Recalcitrant"
+msgstr "Recalcitrante"
+
+#: models.py:78
+msgid "Orthodox"
+msgstr "Ortodoxa"
+
+#: models.py:82
+msgid "No treatment"
+msgstr "Sem tratamento"
+
+#: models.py:83
+msgid "Chemical scarification"
+msgstr "Escarificação ácida"
+
+#: models.py:84
+msgid "Immersion in hot or cold water"
+msgstr "Imersão em água quente ou fria"
+
+#: models.py:85
+msgid "Mechanical scarification"
+msgstr "Escarificação mecânica"
+
+#: models.py:89
+msgid "wetland (frequent floods)"
+msgstr "úmido e pantanoso (inundações frequentes)"
+
+#: models.py:90
+msgid "wetland (unfrequent floods)"
+msgstr "úmido e pantanoso (inundações pouco frequentes)"
+
+#: models.py:91
+msgid "marsh"
+msgstr "brejoso"
+
+#: models.py:92
+msgid "dry and rocky"
+msgstr "seco e pedregoso"
+
+#: models.py:93
+msgid "wet or dry"
+msgstr "úmido ou seco"
+
+#: models.py:97
+msgid "Shadow tolerant"
+msgstr "Tolerante à sombra"
+
+#: models.py:98
+msgid "Full sun"
+msgstr "Exigente em luz"
+
+#: models.py:102
+msgid "Rarity"
+msgstr "Raridade"
+
+#: models.py:103 models.py:183
+msgid "Endemic"
+msgstr "Endêmica"
+
+#: models.py:110 models.py:196
+msgid "Pollinators"
+msgstr "Polinizadores"
+
+#: models.py:112 models.py:201
+msgid "Dispersers"
+msgstr "Dispersores"
+
+#: models.py:113 models.py:202
+msgid "Fruit type"
+msgstr "Tipo de fruto"
+
+#: models.py:115 models.py:205
+msgid "Root system"
+msgstr "Sistema radicular"
+
+#: models.py:137
+msgid "Code"
+msgstr "Sigla"
+
+#: models.py:137
+msgid "Unique code to identify the page"
+msgstr "Sigla única identificando a página"
+
+#: models.py:138
+msgid "Language"
+msgstr "Língua"
+
+#: models.py:139
+msgid "Title"
+msgstr "Título"
+
+#: models.py:140
+msgid "Content"
+msgstr "Conteúdo"
+
+#: models.py:143
+msgid "page"
+msgstr "página estática"
+
+#: models.py:144
+msgid "pages"
+msgstr "páginas estáticas"
+
+#: models.py:153
+msgid "Citation"
+msgstr "Citação"
+
+#: models.py:153
+msgid "e.g. Paranagua et al. 2011"
+msgstr ""
+
+#: models.py:154
+msgid "Full reference"
+msgstr "Referência completa"
+
+#: models.py:154
+msgid ""
+"e.g. Paranagua, P. 2011. Building cool systems for native plants. Cool "
+"Journal, 123(4): 1-10"
+msgstr ""
+
+#: models.py:157
+msgid "bibliographic reference"
+msgstr "referência bibliográfica"
+
+#: models.py:158
+msgid "bibliographic references"
+msgstr "referências bibliográficas"
+
+#: models.py:166
+msgid "Genus"
+msgstr "Gênero"
+
+#: models.py:167
+msgid "Species"
+msgstr "Espécie"
+
+#: models.py:167
+msgid "leave blank if unknown"
+msgstr "deixar em branco se for desconhecida"
+
+#: models.py:168
+msgid "Variety"
+msgstr "Variedade"
+
+#: models.py:168
+msgid "do not include var."
+msgstr "não incluir var."
+
+#: models.py:169
+msgid "Author"
+msgstr "Autor"
+
+#: models.py:169
+msgid "only if the species is known"
+msgstr "somente se a espécie for conhecida"
+
+#: models.py:170
+msgid "Family"
+msgstr "Família"
+
+#: models.py:172
+msgid "Label"
+msgstr "Nome"
+
+#: models.py:174
+msgid "Restoration"
+msgstr "Restauração"
+
+#: models.py:175
+msgid "Urban forestry"
+msgstr "Arborização urbana"
+
+#: models.py:176
+msgid "Flowers"
+msgstr "Flores"
+
+#: models.py:177
+msgid "Leaves"
+msgstr "Folhas"
+
+#: models.py:179
+msgid "Crown"
+msgstr "Copa"
+
+#: models.py:181
+msgid "Rare"
+msgstr "Rara"
+
+#: models.py:182
+msgid "Maximum density"
+msgstr "Densidade máxima"
+
+#: models.py:182
+msgid "individuals per hectare"
+msgstr "indivíduos por hectare"
+
+#: models.py:184
+msgid "Pioneer"
+msgstr "Pioneira"
+
+#: models.py:185
+msgid "Early secondary"
+msgstr "Secundária inicial"
+
+#: models.py:186
+msgid "Late secondary"
+msgstr "Secundária tardia"
+
+#: models.py:187
+msgid "Climax"
+msgstr "Clímax"
+
+#: models.py:188
+msgid "Slow"
+msgstr "Lenta"
+
+#: models.py:189
+msgid "Moderate"
+msgstr "Moderada"
+
+#: models.py:190
+msgid "Fast"
+msgstr "Rápida"
+
+#: models.py:191
+msgid "Comments"
+msgstr "Observações"
+
+#: models.py:192
+msgid "Requires pruning"
+msgstr "Requer poda"
+
+#: models.py:193 models.py:225
+msgid "Start"
+msgstr "Início"
+
+#: models.py:194 models.py:226
+msgid "End"
+msgstr "Fim"
+
+#: models.py:195
+msgid "Color"
+msgstr "Cor"
+
+#: models.py:197
+msgid "Anemochorous"
+msgstr "Anemocórica"
+
+#: models.py:198
+msgid "Autochorous"
+msgstr "Autocórica"
+
+#: models.py:199
+msgid "Hydrochorous"
+msgstr "Hidrocórica"
+
+#: models.py:200
+msgid "Zoochorous"
+msgstr "Zoocórica"
+
+#: models.py:203 models.py:222 models.py:223
+msgid "Presence"
+msgstr "Presença"
+
+#: models.py:204 models.py:229 models.py:232 models.py:235
+msgid "Details"
+msgstr "Detalhes"
+
+#: models.py:206
+msgid "Evergreen"
+msgstr "Perenifolia"
+
+#: models.py:207
+msgid "Semi-deciduous"
+msgstr "Semi-decídua"
+
+#: models.py:208
+msgid "Deciduous"
+msgstr "Decídua"
+
+#: models.py:209 models.py:236 models.py:238
+msgid "Minimum"
+msgstr "Mínimo"
+
+#: models.py:209 models.py:210 models.py:218 models.py:219
+msgid "meters"
+msgstr "metros"
+
+#: models.py:210 models.py:237 models.py:239
+msgid "Maximum"
+msgstr "Máximo"
+
+#: models.py:211 models.py:212 models.py:230 models.py:541
+msgid "Type"
+msgstr "Tipo"
+
+#: models.py:213
+msgid "Straight"
+msgstr "Reto"
+
+#: models.py:214
+msgid "Slightly inclined"
+msgstr "Levemente inclinado"
+
+#: models.py:215
+msgid "Inclined"
+msgstr "Inclinado"
+
+#: models.py:216
+msgid "Slightly crooked"
+msgstr "Levemente tortuoso"
+
+#: models.py:217
+msgid "Crooked"
+msgstr "Tortuoso"
+
+#: models.py:218
+msgid "Minimum height"
+msgstr "Altura mínima"
+
+#: models.py:219
+msgid "Maximum height"
+msgstr "Altura máxima"
+
+#: models.py:220
+msgid "Minimum DBH"
+msgstr "DAP mínimo"
+
+#: models.py:220 models.py:221
+msgid "centimeters"
+msgstr "centimetros"
+
+#: models.py:221
+msgid "Maximum DBH"
+msgstr "DAP máximo"
+
+#: models.py:224
+msgid "Information"
+msgstr "Informações"
+
+#: models.py:227
+msgid "Collect from tree"
+msgstr "Coleta de frutos na árvore"
+
+#: models.py:228
+msgid "Collect from soil"
+msgstr "Coleta de frutos no solo"
+
+#: models.py:231
+msgid "Treatment"
+msgstr "Tratamento"
+
+#: models.py:233
+msgid "Seedbed under half shadow"
+msgstr "Canteiros à meia-sombra"
+
+#: models.py:234
+msgid "Individual containers"
+msgstr "Recipientes individuais"
+
+#: models.py:236 models.py:237
+msgid "days"
+msgstr "dias"
+
+#: models.py:238 models.py:239
+msgid "%"
+msgstr ""
+
+#: models.py:241
+msgid "Classification"
+msgstr "Classificação"
+
+#: models.py:244
+msgid "plant"
+msgstr "planta"
+
+#: models.py:245
+msgid "plants"
+msgstr "plantas"
+
+#: models.py:357
+msgid "Data completeness"
+msgstr "Preenchimento"
+
+#: models.py:463
+msgid "Foliage persistence cannot be evergreen and decidous simultaneously!"
+msgstr "Não é possível ser perenifolia e decídua simultaneamente"
+
+#: models.py:466
+msgid "Minimum crown diameter cannot be greater than the maximum diameter!"
+msgstr "Diâmetro mínimo da copa não pode ser maior que o diâmetro máximo!"
+
+#: models.py:470
+msgid "Minimum height cannot be greater than the maximum height!"
+msgstr "Altura mínima da árvore não pode ser maior que a altura máxima!"
+
+#: models.py:474
+msgid "Minimum DBH cannot be greater than the maximum DBH!"
+msgstr "DAP mínimo não pode ser maior que o DAP máximo!"
+
+#: models.py:540
+msgid "Name"
+msgstr "Nome"
+
+#: models.py:540
+msgid "Taxon name"
+msgstr "Nome"
+
+#: models.py:544
+msgid "name"
+msgstr "nome"
+
+#: models.py:545
+msgid "names"
+msgstr "nomes"
+
+#: models.py:562
+msgid "Acronym"
+msgstr "Sigla"
+
+#: models.py:565
+msgid "conservation assessment source"
+msgstr "Fonte de avaliação de status de conservação"
+
+#: models.py:566
+msgid "conservation assessment sources"
+msgstr "Fontes de avaliação de status de conservação"
+
+#: models.py:574
+msgid "Source"
+msgstr "Fonte"
+
+#: models.py:575
+msgid "Status"
+msgstr "Status"
+
+#: models.py:587
+msgid "Reference"
+msgstr "Referência"
+
+#: models.py:588
+msgid "Data"
+msgstr "Dado"
+
+#: models.py:589
+msgid "Notes"
+msgstr "Anotações"
+
+#: models.py:589
+msgid "Additional notes, such as page numbers"
+msgstr "Anotações adicionais, como páginas"
+
+#: templates/admin/base_site.html:4
+msgid "site admin"
+msgstr "admin site"
+
+#: templates/admin/base_site.html:7
+msgid "Administrative interface"
+msgstr "Interface administrativa"
+
+#: templates/admin/change_form.html:19
+msgid "Home"
+msgstr "Início"
+
+#: templates/admin/change_form.html:22
+msgid "Add"
+msgstr "Adicionar"
+
+#: templates/admin/change_form.html:31
+msgid "History"
+msgstr "Histórico"
+
+#: templates/admin/change_form.html:32
+#: templates/admin/edit_inline/mytabular.html:29
+msgid "View on site"
+msgstr "Visualizar no site"
+
+#: templates/admin/change_form.html:43
+msgid "Please correct the error below."
+msgid_plural "Please correct the errors below."
+msgstr[0] "Favor corrigir o erro abaixo"
+msgstr[1] "Favor corrigir os erros abaixo"
+
+#: templates/admin/edit_inline/mytabular.html:15
+msgid "Delete?"
+msgstr "Apagar?"
+
+#: templates/admin/edit_inline/mytabular.html:115
+#, python-format
+msgid "Add %(verbose_name)s"
+msgstr "Adicionar %(verbose_name)s"
+
+#: templates/admin/edit_inline/mytabular.html:118
+msgid "Remove"
+msgstr "Remover"
+
+#~ msgid "Minimum crown diameter"
+#~ msgstr "Diâmetro mínimo"
+
+#~ msgid "Maximum crown diameter"
+#~ msgstr "Diâmetro máximo"
+
+#~ msgid "Has thorns or spines"
+#~ msgstr "Possui acúleos ou espinhos"
+
+#~ msgid "Has toxic or allergenic properties"
+#~ msgstr "Possui princípios tóxicos ou alergênicos"
