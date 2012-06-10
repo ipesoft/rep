@@ -1,0 +1,63 @@
+{% extends "search_species.html" %}
+{% load i18n %}
+{% block header %}
+<script type="text/javascript">
+function collapse(region_id, button_id) {
+  obj = document.getElementById(region_id);
+  button = document.getElementById(button_id);
+  if (obj.style.display == "none") {
+    obj.style.display = "block";
+    button.src = "/static/images/collapse.gif"
+    button.title = "collapse"
+    button.alt = "collapse"
+  }
+  else {
+    obj.style.display = "none";
+    button.src = "/static/images/expand.gif"
+    button.title = "expand"
+    button.alt = "expand"
+  }
+}
+function load()
+{
+{% if performed_query %}
+collapse('options', 'c_button');
+{% endif %}
+}
+</script>
+{% endblock header %}
+
+{% block body_params %}onload="load()"{% endblock body_params %}
+
+{% block search_options %}
+<h1>{% trans "Advanced search for urban forestry" %}&nbsp;&nbsp;&nbsp;<a href="#" onclick="collapse('options', 'c_button');return false;"><img id="c_button" src="/static/images/collapse.gif" alt="collapse" title="collapse"/></a></h1>
+<fieldset id="options">
+<form action="/sp/" method="GET">{% csrf_token %}
+<input type="hidden" name="adv" value="1"/>
+<input type="hidden" name="urban" value="1"/>
+<table width="100%">
+<tr><td width="20%">{{ form.endemic.label_tag }}:</td><td width="80%">{{ form.endemic }}</td></tr>
+<tr><td>{{ form.rare.label_tag }}:</td><td>{{ form.rare }}</td></tr>
+<tr><td><label for="id_features">{% trans "Special features" %}</label>:</td><td>&nbsp;{{ form.h_flowers.label }}{{ form.h_flowers }}&nbsp;{{ form.h_leaves.label }}{{ form.h_leaves }}&nbsp;{{ form.h_fruits.label }}{{ form.h_fruits }}&nbsp;{{ form.h_crown.label }}{{ form.h_crown }}&nbsp;{{ form.h_bark.label }}{{ form.h_bark }}</td></tr>
+<tr><td><label for="id_height">{% trans "height"|capfirst %}</label>:</td><td>{{ form.min_height }}&nbsp;{% trans "to" %}&nbsp;{{ form.max_height }}m</td></tr>
+<tr><td><label for="id_diameter">{% trans "Crown diameter" %}</label>:</td><td>{{ form.cr_min_diameter }}&nbsp;{% trans "to" %}&nbsp;{{ form.cr_max_diameter }}m</td></tr>
+<tr><td><label for="id_growth">{% trans "Growth rate" %}</label>:</td><td>&nbsp;{{ form.gr_slow.label }}{{ form.gr_slow }}&nbsp;{{ form.gr_moderate.label }}{{ form.gr_moderate }}&nbsp;{{ form.gr_fast.label }}{{ form.gr_fast }}</td></tr>
+<tr><td>{{ form.cr_shape.label_tag }}:</td><td>{{ form.cr_shape }}</td></tr>
+<tr><td><label for="id_alignement">{% trans "Trunk alignment" %}:</label></td><td>&nbsp;{{ form.tr_straight.label }}{{ form.tr_straight }}&nbsp;{{ form.tr_sl_inclined.label }}{{ form.tr_sl_inclined }}&nbsp;{{ form.tr_inclined.label }}{{ form.tr_inclined }}&nbsp;{{ form.tr_sl_crooked.label }}{{ form.tr_sl_crooked }}&nbsp;{{ form.tr_crooked.label }}{{ form.tr_crooked }}</td></tr>
+<tr><td>{{ form.color.label_tag }}:</td><td>{{ form.color }}</td></tr>
+<tr><td>{{ form.fl_month.label_tag }}:</td><td>{{ form.fl_month }}</td></tr>
+<tr><td>{{ form.r_type.label_tag }}:</td><td>{{ form.r_type }}</td></tr>
+<tr><td><label for="id_foliage">{% trans "Foliage persistence" %}:</label></td><td>&nbsp;{{ form.fo_evergreen.label }}{{ form.fo_evergreen }}&nbsp;{{ form.fo_semideciduous.label }}{{ form.fo_semideciduous }}&nbsp;{{ form.fo_deciduous.label }}{{ form.fo_deciduous }}</td></tr>
+<tr><td>{{ form.fr_month.label_tag }}:</td><td>{{ form.fr_month }}</td></tr>
+<tr><td>{{ form.pruning.label_tag }}:</td><td>{{ form.pruning }}</td></tr>
+<tr><td>{{ form.thorns.label_tag }}:</td><td>{{ form.thorns }}</td></tr>
+<tr><td>{{ form.toxic.label_tag }}:</td><td>{{ form.toxic }}</td></tr>
+{% if form.status_choices|length > 0 %}
+<tr><td>{{ form.status.label_tag }}:</td><td>{{ form.status }}</td></tr>
+{% endif %}
+</table>
+<center><input type="submit" class="button" name="search" value="{% trans "search" %}"/></center>
+</form>
+</fieldset>
+
+{% endblock search_options %}

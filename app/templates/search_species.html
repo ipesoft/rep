@@ -1,0 +1,25 @@
+{% extends base_template %}
+{% load i18n %}
+{% block content %}
+{% block search_options %}{% endblock search_options %}
+{% if performed_query %}
+{% if taxa.number == 1 %}<h1>{{ taxa.paginator.count }} {% if taxa.paginator.count == 1 %}{% trans "result" %}{% else %}{% trans "results" %}{% endif %}</h1>{% endif %}
+{% for taxon in taxa.object_list %}
+{% with synonyms=taxon.get_synonyms popnames=taxon.get_popular_names %}
+<label class="name"><i><a href="{{taxon.id}}">{{taxon.genus}} {{taxon.species}}</a></i></label>{% if popnames %}&nbsp;&nbsp;<span class="small">({% for pop in popnames %}{{pop.name}}{% if forloop.last %}{% else %}, {% endif %}{% endfor %})</span>{% endif %}
+{% if synonyms %}<p class="small">{% trans "Synonyms" %}:&nbsp;{% for syn in synonyms %}{{syn.name}}{% if forloop.last %}{% else %}, {% endif %}{% endfor %}</p>{% endif %}
+{% if not synonyms %}<p></p>{% endif %}
+{% endwith %}
+{% endfor %}
+{% if taxa.paginator.num_pages > 1 %}
+<div class="pagination">
+  <span class="step-links">
+&nbsp;{% for p in taxa.paginator.page_range %}{% if p == taxa.number %}<b>{{p}}</b>{% else %}<a href="?page={{ p }}{{ get_params }}">{{p}}</a>{% endif %}&nbsp;{% endfor %}
+  </span>
+</div>
+{% endif %}
+{% if taxa.paginator.count == 0 %}
+{% trans "No species found" %}
+{% endif %}
+{% endif %}
+{% endblock content %}

@@ -11,7 +11,18 @@ urlpatterns = patterns('',
     # url(r'^rep/', include('rep.foo.urls')),
     # Main page:
     url(r'^$', 'app.views.index'),
-    url(r'^p/(?P<page_code>[-\w\d]+)/$', 'app.views.page'),
+    # Translation facility
+    url(r'^i18n/', include('django.conf.urls.i18n')),
+    # Static content page
+    url(r'^p/(?P<page_code>[-\w\d]+)/$', 'app.views.show_page'),
+    # Browse species
+    url(r'^sp/?$', 'app.views.search_species'),
+    # Species page
+    url(r'^sp/(?P<species_id>\d+)/?$', 'app.views.show_species'),
+    # Search page
+    url(r'^sp/search/?$', 'app.views.search_page'),
+    # Test page (REMOVE ME)
+    url(r'^test/?$', 'app.views.test'),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),

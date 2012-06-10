@@ -177,6 +177,7 @@ class Taxon( models.Model ):
     h_leaves  = models.BooleanField( _(u'Leaves') )
     h_fruits  = models.BooleanField( _(u'Fruits') )
     h_crown   = models.BooleanField( _(u'Crown') )
+    h_bark    = models.BooleanField( _(u'Bark') )
     # todo: potential_use
     rare        = models.NullBooleanField( _(u'Rare'), null=True, blank=True )
     max_density = models.IntegerField( _(u'Maximum density'), help_text=_(u'individuals per hectare'), null=True, blank=True )
@@ -224,8 +225,8 @@ class Taxon( models.Model ):
     pests_and_diseases = models.TextField( _(u'Information'), null=True, blank=True )
     fr_start = models.IntegerField( _(u'Start'), null=True, blank=True, choices=MONTHS )
     fr_end   = models.IntegerField( _(u'End'), null=True, blank=True, choices=MONTHS )
-    seed_tree = models.BooleanField( _(u'Collect from tree') )
-    seed_soil = models.BooleanField( _(u'Collect from soil') )
+    seed_tree = models.BooleanField( _(u'Collect fruits from tree') )
+    seed_soil = models.BooleanField( _(u'Collect fruits from soil') )
     seed_collection = models.TextField( _(u'Details'), null=True, blank=True )
     seed_type = models.CharField( _(u'Type'), null=True, blank=True, choices=SEED_TYPES, max_length=1 )
     pg_treatment = models.CharField( _(u'Treatment'), null=True, blank=True, choices=PREGERMINATION_TREATMENTS, max_length=1 )
@@ -247,6 +248,151 @@ class Taxon( models.Model ):
 
     def __unicode__(self):
         return unicode(self.label)
+
+    def _get_field_label(self, name):
+        'Return a field label given its name'
+        return unicode(Taxon._meta.get_field_by_name(name)[0].verbose_name)
+
+    def _get_boolean_concat(self, fields):
+        '''
+        Return comma separated labels given a list [(value,label)].
+        Only labels where the value is True are returned in the string.
+        '''
+        types = ''
+        sep = ', '
+        prev = False
+        for field in fields:
+            if getattr(self, field):
+                if prev:
+                    types = string_concat(types, sep)
+                types = string_concat(types, self._get_field_label(field))
+                prev = True
+        if prev:
+            return types
+        return '-'
+
+    def _get_yes_no(self, value):
+        'Return yes or no given a boolean value'
+        if value == True:
+            return _(u'yes')
+        if value == False:
+            return _(u'no')
+        return '-'
+
+    def _get_interval(self, minval, maxval, unit):
+        'Return a string representation of an interval'
+        if minval:
+            val = str(minval)
+            if maxval and maxval != minval:
+                val = val + '-' + str(maxval)
+            return val + unit
+        return '-'
+
+    def get_use(self):
+        return self._get_boolean_concat(['restoration', 'urban_use'])
+
+    def get_successional_group(self):
+        return self._get_boolean_concat(['sg_pioneer', 'sg_early_secondary', 'sg_late_secondary', 'sg_climax'])
+
+    def get_rare(self):
+        return self._get_yes_no(self.rare)
+
+    def get_seed_gathering(self):
+        if self.seed_tree and self.seed_soil:
+            return _(u'Collect fruits from tree or soil')
+        elif self.seed_tree:
+            return self._get_field_label('seed_tree')
+        elif self.seed_soil:
+            return self._get_field_label('seed_soil')
+        return '-'
+
+    def get_seedbed(self):
+        if self.sl_seedbed and self.sl_containers:
+            return string_concat(self._get_field_label('sl_seedbed'),' ',_(u'or'),' ',self._get_field_label('sl_containers'))
+        elif self.sl_seedbed:
+            return self._get_field_label('sl_seedbed')
+        elif self.sl_containers:
+            return self._get_field_label('sl_containers')
+        return '-'
+
+    def get_germination_time_lapse(self):
+        val = ''
+        if self.seed_gmin_time is not None:
+            val = str(self.seed_gmin_time)
+            if self.seed_gmax_time is not None and self.seed_gmax_time != self.seed_gmin_time:
+                val = string_concat(val, ' ', _(u'to'), ' ', str(self.seed_gmax_time), ' ', _(u'days'))
+        elif self.seed_gmax_time is not None:
+            val = string_concat(str(self.seed_gmax_time), ' ', _(u'days'))
+        else:
+            val = '-'
+        return val
+
+    def get_germination_rate(self):
+        val = ''
+        if self.seed_gmin_rate is not None:
+            val = str(self.seed_gmin_rate)
+            if self.seed_gmax_rate is not None and self.seed_gmax_rate != self.seed_gmin_rate:
+                val = string_concat(val, ' ', _(u'to'), ' ', str(self.seed_gmax_rate), '%')
+        elif self.seed_gmax_rate is not None:
+            val = string_concat(str(self.seed_gmax_rate), '%')
+        else:
+            val = '-'
+        return val
+
+    def get_special_features(self):
+        return self._get_boolean_concat(['h_flowers', 'h_leaves', 'h_fruits', 'h_crown', 'h_bark'])
+
+    def get_growth_rate(self):
+        return self._get_boolean_concat(['gr_slow', 'gr_moderate', 'gr_fast'])
+
+    def get_dispersal_types(self):
+        return self._get_boolean_concat(['dt_anemochorous', 'dt_autochorous', 'dt_hydrochorous', 'dt_zoochorous'])
+
+    def get_endemic(self):
+        return self._get_yes_no(self.endemic)
+
+    def get_pruning(self):
+        return self._get_yes_no(self.pruning)
+
+    def get_symbiotic_assoc(self):
+        return self._get_yes_no(self.symbiotic_assoc)
+
+    def get_thorns_or_spines(self):
+        return self._get_yes_no(self.thorns_or_spines)
+
+    def get_toxic_or_allergenic(self):
+        return self._get_yes_no(self.toxic_or_allergenic)
+
+    def get_crown_diameter(self):
+        return self._get_interval(self.cr_min_diameter, self.cr_max_diameter, 'm')
+
+    def get_height(self):
+        return self._get_interval(self.min_height, self.max_height, 'm')
+
+    def get_dbh(self):
+        return self._get_interval(self.min_dbh, self.max_dbh, 'cm')
+
+    def get_flowering_period(self):
+        if self.fl_start:
+            val = self.get_fl_start_display()
+            if self.fl_end and self.fl_end != self.fl_start:
+                val = string_concat(val, ' ', _(u'to'), ' ', self.get_fl_end_display())
+            return val
+        return '-'
+
+    def get_fruiting_period(self):
+        if self.fr_start:
+            val = self.get_fr_start_display()
+            if self.fr_end and self.fr_end != self.fr_start:
+                val = string_concat(val, ' ', _(u'to'), ' ', self.get_fr_end_display())
+            return val
+        return '-'
+
+    def get_trunk_alignment(self):
+        return self._get_boolean_concat(['tr_straight', 'tr_sl_inclined', 'tr_inclined', 'tr_sl_crooked', 'tr_crooked'])
+
+    def get_foliage_persistence(self):
+        return self._get_boolean_concat(['fo_evergreen', 'fo_semideciduous', 'fo_deciduous'])
 
     # Functions used by the admin change list form
     def data_completeness(self):
@@ -375,6 +521,12 @@ class Taxon( models.Model ):
             return []
         else:
             raise Exception(u'Problem communicating with checklist service: '+resp.status)
+
+    def get_popular_names( self ):
+        return self.taxonname_set.filter(ntype=u'P').order_by('name')
+
+    def get_synonyms( self ):
+        return self.taxonname_set.filter(ntype=u'S').order_by('name')
 
 class TaxonName( models.Model ):
     "Taxon name"

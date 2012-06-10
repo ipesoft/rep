@@ -1,0 +1,64 @@
+{% load i18n %}
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <meta http-equiv="PRAGMA" content="NO-CACHE">
+  <meta http-equiv="EXPIRES" content="-1">
+  <title>Regional Flora</title>
+  <link rel="stylesheet" type="text/css" href="/static/css/style.css" />
+  <!-- link rel="stylesheet" type="text/css" href="/static/admin/css/base.css" / -->
+  <!-- link rel="stylesheet" type="text/css" href="/static/admin/css/forms.css" / -->
+{% block header %}
+{% endblock header %}
+</head>
+<body {% block body_params %}{% endblock body_params %}>
+<div class="container">
+ <div id="header">
+  <div class="inner">
+   <div id="logo">
+    <a href="/"><h1>Regional<span>Flora</span></h1></a>
+   </div>
+   <div id="searchbox">
+    <form method="get" action="/sp/"><span>Search&nbsp;species:&nbsp;</span><input type="text" name="name" id="name" class="textbox" /></form>
+   </div>
+  </div>
+ </div>
+
+ <div id="wrapper">
+  <div id="col1">
+   <h3><a href="/">About</a></h3>
+   <h3><a href="/">Methods</a></h3>
+   <h3><a href="/">Ethnobotany</a></h3>
+   <h3><a href="/">History</a></h3>
+   <h3>List of species</h3>
+   <ul>
+    <li><a href="/sp/">all</a></li>
+    <li><a href="/sp/?restor=1">restoration</a></li>
+    <li><a href="/sp/?urban=1">urban forestry</a></li>
+   </ul>
+   <h3>Advanced search</h3>
+   <ul>
+    <li><a href="/sp/?restor=1&amp;adv=1">restoration</a></li>
+    <li><a href="/sp/?urban=1&amp;adv=1">urban forestry</a></li>
+   </ul>
+   <h3><a href="/">Contact</a></h3>
+  </div>
+
+  <div id="col2">
+{% block content %}
+{% endblock content %}
+  </div>
+ </div>
+
+ <div id="clearfooter"></div>
+
+ <div id="footer">
+  <div class="inner">
+   Created by <a href="http://www.ipe.org.br">IPÊ</a> with funding from <a href="http://www.jrsbdf.org">JRS</a>
+  </div>
+ </div>
+</div>
+</body>
+</html>
