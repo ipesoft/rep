@@ -21,8 +21,6 @@ urlpatterns = patterns('',
     url(r'^sp/(?P<species_id>\d+)/?$', 'app.views.show_species'),
     # Search page
     url(r'^sp/search/?$', 'app.views.search_page'),
-    # Test page (REMOVE ME)
-    url(r'^test/?$', 'app.views.test'),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
