@@ -18,7 +18,7 @@ null_boolean_choices = (( -1, no_matter_str ),( 1 , _(u'yes') ),( 0 , _(u'no') )
 class CommonSearchForm(forms.Form):
     month_choices = [(0, no_matter_str)] + list(MONTHS)
     root_system_choices = [('NULL', no_matter_str)] + list(ROOT_SYSTEMS)
-    status_choices = [(c.status, c.status) for c in ConservationStatus.objects.values('status').order_by('status').distinct()]
+    status_choices = [(c['status'], c['status']) for c in ConservationStatus.objects.values('status').order_by('status').distinct()]
     rare        = forms.BooleanField(label=_(u'Rare'))
     endemic     = forms.BooleanField(label=_(u'Endemic'))
     # Growth rate
