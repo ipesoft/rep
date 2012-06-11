@@ -247,6 +247,7 @@ blockquote {
 .name {
 	font-size: 12px;
 	font-weight: normal;
+	margin-bottom:0px;
 }
 
 label {
@@ -257,6 +258,7 @@ label {
 .small, p.small {
 	font-size: 10px;
 	color: #999;
+	margin-top:0px;
 }
 
 .bib {

@@ -30,7 +30,7 @@ collapse('options', 'c_button');
 {% block body_params %}onload="load()"{% endblock body_params %}
 
 {% block search_options %}
-<h1>{% trans "Advanced search for urban forestry" %}&nbsp;&nbsp;&nbsp;<a href="#" onclick="collapse('options', 'c_button');return false;"><img id="c_button" src="/static/images/collapse.gif" alt="collapse" title="collapse"/></a></h1>
+<h1>{% trans "Advanced search for urban forestry" %}{% if performed_query %}&nbsp;&nbsp;&nbsp;<a href="#" onclick="collapse('options', 'c_button');return false;"><img id="c_button" src="/static/images/collapse.gif" alt="collapse" title="collapse"/></a>{% endif %}</h1>
 <fieldset id="options">
 <form action="/sp/" method="GET">{% csrf_token %}
 <input type="hidden" name="adv" value="1"/>
