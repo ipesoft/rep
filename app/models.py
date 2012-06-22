@@ -8,7 +8,7 @@ from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 
-import httplib2
+import httplib2, datetime
 from xml.etree.ElementTree import fromstring
 
 NAME_TYPES = (
@@ -240,6 +240,8 @@ class Taxon( models.Model ):
     seed_gmax_rate = models.IntegerField( _(u'Maximum'), help_text=_(u'%'), null=True, blank=True )
     #soil = models.CharField( _(u'Soil'), null=True, blank=True, choices=SOIL_TYPES, max_length=1 )
     light = models.CharField( _(u'Classification'), null=True, blank=True, choices=LIGHT_REQUIREMENTS, max_length=1 )
+    created = models.DateTimeField( u'Date created', auto_now_add = True )
+    modified = models.DateTimeField( u'Date modified', null=True )
 
     class Meta:
         verbose_name = _(u'plant')
@@ -607,6 +609,7 @@ def post_save_taxon( sender, instance, created, raw, using, **kwargs ):
 
 @receiver(pre_save, sender=Taxon, dispatch_uid='pre_save_taxon')
 def pre_save_taxon( sender, instance, raw, using, **kwargs ):
+    instance.modified = datetime.datetime.now()
     # Update label
     if instance.species is None:
         instance.label = instance.genus + u' spp'

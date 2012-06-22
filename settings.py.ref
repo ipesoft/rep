@@ -1,3 +1,5 @@
+# coding=UTF-8
+
 # Django settings for rep project.
 
 #DEBUG = True
@@ -167,3 +169,18 @@ LOGGING = {
 
 # Custom settings
 BASE_TEMPLATE = 'base.html'
+
+# The next items are all used to share data with EoL
+
+GUID_FORMAT = 'urn:your_domain:%s'
+SPECIES_URL_FORMAT = 'http://your_domain/sp/%s/'
+# Short description of the habitat for species in the region (e.g. Atlantic Forest)
+HABITAT_DESCRIPTION = u''
+# Name of the organization or person responsible for running the system
+CREATOR_NAME = u''
+# URL of the organization or person running the system
+CREATOR_HOMEPAGE = ''
+# Logo URL of the organization or person running the system
+CREATOR_LOGO_URL = ''
+# List of names for people who helped compile all data available in the system
+COMPILERS = []
