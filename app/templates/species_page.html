@@ -117,7 +117,8 @@ function setmap() {
 
 {% block content %}
 {% with synonyms=taxon.get_synonyms popnames=taxon.get_popular_names %}
-<h1><i>{{ taxon.genus }}&nbsp;{{ taxon.species }}</i>&nbsp;{{ taxon.author }}{% if popnames %}&nbsp;&nbsp;({% for pop in popnames %}{{pop.name}}{% if forloop.last %}{% else %}, {% endif %}{% endfor %}){% endif %}</h1>
+<h1><i>{{ taxon.genus }}&nbsp;{{ taxon.species }}</i>&nbsp;{{ taxon.author }}</h1>
+{% if popnames %}<h2>{% for pop in popnames %}{{pop.name}}{% if forloop.last %}{% else %}, {% endif %}{% endfor %}</h2>{% endif %}
 {% if synonyms %}<p><label>{% trans "Synonyms" %}:&nbsp;</label>{% for syn in synonyms %}{{syn.name}}{% if forloop.last %}{% else %}, {% endif %}{% endfor %}</p>{% endif %}
 <p><label>{% trans "Family" %}:</label>&nbsp;{{ taxon.family|default:"-" }}</p>
 {% endwith %}
