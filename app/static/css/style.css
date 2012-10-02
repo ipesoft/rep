@@ -265,3 +265,15 @@ label {
 	padding:0px;
 	margin:0px;
 }
+
+.section {
+	font-family: "trebuchet ms", helvetica, sans-serif;
+	font-size:1.3em;
+	font-weight: normal;
+	color: #6d6d6d;
+	margin-top:0px;
+	border:1px solid #585858;
+	padding:3px;
+	background: #adefad;
+	margin-bottom: 1px;
+}

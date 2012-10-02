@@ -271,7 +271,7 @@ class Taxon( models.Model ):
                 prev = True
         if prev:
             return types
-        return '-'
+        return None
 
     def _get_yes_no(self, value):
         'Return yes or no given a boolean value'
@@ -279,7 +279,7 @@ class Taxon( models.Model ):
             return _(u'yes')
         if value == False:
             return _(u'no')
-        return '-'
+        return None
 
     def _get_interval(self, minval, maxval, unit):
         'Return a string representation of an interval'
@@ -288,7 +288,7 @@ class Taxon( models.Model ):
             if maxval and maxval != minval:
                 val = val + '-' + str(maxval)
             return val + unit
-        return '-'
+        return None
 
     def get_use(self):
         return self._get_boolean_concat(['restoration', 'urban_use'])
@@ -306,7 +306,7 @@ class Taxon( models.Model ):
             return self._get_field_label('seed_tree')
         elif self.seed_soil:
             return self._get_field_label('seed_soil')
-        return '-'
+        return None
 
     def get_seedbed(self):
         if self.sl_seedbed and self.sl_containers:
@@ -315,7 +315,7 @@ class Taxon( models.Model ):
             return self._get_field_label('sl_seedbed')
         elif self.sl_containers:
             return self._get_field_label('sl_containers')
-        return '-'
+        return None
 
     def get_germination_time_lapse(self):
         val = ''
@@ -326,7 +326,7 @@ class Taxon( models.Model ):
         elif self.seed_gmax_time is not None:
             val = string_concat(str(self.seed_gmax_time), ' ', _(u'days'))
         else:
-            val = '-'
+            val = None
         return val
 
     def get_germination_rate(self):
@@ -338,7 +338,7 @@ class Taxon( models.Model ):
         elif self.seed_gmax_rate is not None:
             val = string_concat(str(self.seed_gmax_rate), '%')
         else:
-            val = '-'
+            val = None
         return val
 
     def get_special_features(self):
@@ -380,7 +380,7 @@ class Taxon( models.Model ):
             if self.fl_end and self.fl_end != self.fl_start:
                 val = string_concat(val, ' ', _(u'to'), ' ', self.get_fl_end_display())
             return val
-        return '-'
+        return None
 
     def get_fruiting_period(self):
         if self.fr_start:
@@ -388,7 +388,7 @@ class Taxon( models.Model ):
             if self.fr_end and self.fr_end != self.fr_start:
                 val = string_concat(val, ' ', _(u'to'), ' ', self.get_fr_end_display())
             return val
-        return '-'
+        return None
 
     def get_trunk_alignment(self):
         return self._get_boolean_concat(['tr_straight', 'tr_sl_inclined', 'tr_inclined', 'tr_sl_crooked', 'tr_crooked'])
@@ -530,6 +530,21 @@ class Taxon( models.Model ):
     def get_synonyms( self ):
         return self.taxonname_set.filter(ntype=u'S').order_by('name')
 
+    def has_general_features_data(self):
+        return (self.get_height() is not None) or (self.get_dbh() is not None) or (self.get_fl_color_display() is not None) or (self.get_growth_rate() is not None) or (self.gr_comments is not None and len(self.gr_comments) > 0) or (self.get_foliage_persistence() is not None) or (self.get_r_type_display() is not None) or (self.get_cr_shape_display() is not None) or (self.get_crown_diameter() is not None) or (self.get_trunk_alignment() is not None) or (self.get_bark_texture_display() is not None) or (self.get_fr_type_display() is not None) 
+
+    def has_care_data( self ):
+        return (self.get_pruning() is not None) or (self.pests_and_diseases() is not None) or (self.get_thorns_or_spines() is not None) or (self.get_toxic_or_allergenic() is not None)
+
+    def has_ecology_and_reproduction_data( self ):
+        return (self.get_successional_group() is not None) or (self.pollinators() is not None) or (self.get_flowering_period() is not None) or (self.get_dispersal_types() is not None) or (self.dispersers() is not None) or (self.get_fruiting_period() is not None) or (self.get_symbiotic_assoc() is not None) or (self.symbiotic_details is not None)
+
+    def has_seedling_production_data( self ):
+        return (self.get_seed_gathering() is not None) or (self.seed_collection is not None) or (self.get_seed_type_display() is not None) or (self.get_pg_treatment_display() is not None) or (self.get_pg_details is not None) or (self.get_seedbed() is not None) or (self.get_sl_details() is not None) or (self.get_germination_time_lapse() is not None) or (self.get_germination_rate() is not None) or (self.get_light_display() is not None)
+
+    def has_bibliography_data( self ):
+        return self.taxondatareference_set.all().count()
+
 class TaxonName( models.Model ):
     "Taxon name"
     taxon = models.ForeignKey(Taxon)
@@ -587,6 +602,13 @@ class TaxonDataReference( models.Model ):
     def __unicode__(self):
         return unicode(self.taxon) + u' ' + unicode(self.reference)
 
+#class TaxonOccurrence( models.Model ):
+#    "Taxon occurrence"
+#    taxon     = models.ForeignKey(Taxon)
+#    label     = models.TextField( _(u'Label'), null=True, blank=True )
+#    locality  = models.TextField( _(u'Locality'), null=True, blank=True )
+#    long_orig = models.CharField( _(u'Original longitude'), max_length=30 )
+#    lat_orig  = models.CharField( _(u'Original latitude'), max_length=30 )
 
 ############# Signal receivers #############
 

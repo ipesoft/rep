@@ -1,64 +1,99 @@
 {% extends base_template %}
 {% load i18n %}
+
+{% block header %}
+<script type="text/javascript">
+function collapse(region_id, button_id) {
+  obj = document.getElementById(region_id);
+  button = document.getElementById(button_id);
+  if (obj.style.display == "none") {
+    obj.style.display = "block";
+    button.src = "/static/images/collapse.gif"
+    button.title = "collapse"
+    button.alt = "collapse"
+  }
+  else {
+    obj.style.display = "none";
+    button.src = "/static/images/expand.gif"
+    button.title = "expand"
+    button.alt = "expand"
+  }
+}
+</script>
+{% endblock header %}
+
 {% block content %}
 {% with synonyms=taxon.get_synonyms popnames=taxon.get_popular_names %}
 <h1><i>{{ taxon.genus }}&nbsp;{{ taxon.species }}</i>&nbsp;{{ taxon.author }}{% if popnames %}&nbsp;&nbsp;({% for pop in popnames %}{{pop.name}}{% if forloop.last %}{% else %}, {% endif %}{% endfor %}){% endif %}</h1>
 {% if synonyms %}<p><label>{% trans "Synonyms" %}:&nbsp;</label>{% for syn in synonyms %}{{syn.name}}{% if forloop.last %}{% else %}, {% endif %}{% endfor %}</p>{% endif %}
 <p><label>{% trans "Family" %}:</label>&nbsp;{{ taxon.family|default:"-" }}</p>
 {% endwith %}
-<p><label>{% trans "Endemic" %}:</label>&nbsp;{{ taxon.get_endemic }}&nbsp;<sup>{{ refs.END }}</sup></p>
-<p><label>{% trans "Rare" %}:</label>&nbsp;{{ taxon.get_rare }}{% if taxon.max_density %}&nbsp;({{ taxon.max_density }}&nbsp;{% trans "individuals per hectare" %}){% endif %}<sup>{{ refs.RAR }}</sup></p>
+<p><label>{% trans "Endemic" %}:</label>&nbsp;{{ taxon.get_endemic|default:"-" }}&nbsp;<sup>{{ refs.END }}</sup></p>
+<p><label>{% trans "Rare" %}:</label>&nbsp;{{ taxon.get_rare|default:"-" }}{% if taxon.max_density %}&nbsp;({{ taxon.max_density }}&nbsp;{% trans "individuals per hectare" %}){% endif %}<sup>{{ refs.RAR }}</sup></p>
 {% with conservation_recs=taxon.conservationstatus_set.all %}
 {% if conservation_recs|length > 0 %}
 <p><label>{% trans "conservation status" %}:&nbsp;</label>{% for rec in conservation_recs %}{{ rec.status }}&nbsp;({{ rec.source.acronym }}){% endfor %}
 {% endif %}
 {% endwith %}
-<p><label>{% trans "Special features" %}:</label>&nbsp;{{ taxon.get_special_features }}&nbsp;<sup>{{ refs.SPE }}</sup></p>
+<p><label>{% trans "Special features" %}:</label>&nbsp;{{ taxon.get_special_features|default:"-" }}&nbsp;<sup>{{ refs.SPE }}</sup></p>
 <p><label>{% trans "Uses" %}:</label>&nbsp;{{ taxon.get_use }}</p>
-<hr/>
-<h2>{% trans "General features" %}</h2>
-<p><label>{% trans "Tree size" %}:</label>&nbsp;{% if taxon.get_height == "-" %}-{% else %}{% trans "height" %}&nbsp;{{ taxon.get_height }}&nbsp;{% trans "DBH" %}&nbsp;{{ taxon.get_dbh }}<sup>{{ refs.SIZ }}</sup>{% endif %}</p>
+
+<div class="section"><table width="100%"><tr><td width="90%"{% if taxon.has_general_features_data %} style="font-weight: bold;"{% endif %}>{% trans "General features" %}</td><td style="text-align: right;"><a href="#" onclick="collapse('s2', 'i2');return false;"><img id="i2" src="/static/images/expand.gif" alt="expand" title="expand"/></a></td></tr></table></div>
+<div id="s2" style="display: none;">
+{% with height=taxon.get_height dbh=taxon.get_dbh %}
+<p><label>{% trans "Tree size" %}:</label>{% if height %}&nbsp;{% trans "height" %}&nbsp;{{ taxon.get_height }}{% else %}{% if dbh == None %}&nbsp;-{% endif %}{% endif %}{% if dbh %}&nbsp;{% trans "DBH" %}&nbsp;{{ taxon.get_dbh }}<sup>{{ refs.SIZ }}</sup>{% endif %}</p>
+{% endwith %}
 <p><label>{% trans "Flowering color" %}:</label>&nbsp;{{ taxon.get_fl_color_display|default:"-" }}&nbsp;<sup>{{ refs.FLC }}</sup></p>
-<p><label>{% trans "Growth rate" %}:</label>&nbsp;{{ taxon.get_growth_rate }}&nbsp;<sup>{{ refs.GRO }}</sup></p>
+<p><label>{% trans "Growth rate" %}:</label>&nbsp;{{ taxon.get_growth_rate|default:"-" }}&nbsp;<sup>{{ refs.GRO }}</sup></p>
 {% if taxon.gr_comments %}<p>{{ taxon.gr_comments }}</p>{% endif %}
-<p><label>{% trans "Foliage persistence" %}:</label>&nbsp;{{ taxon.get_foliage_persistence }}&nbsp;<sup>{{ refs.FOL }}</sup></p>
+<p><label>{% trans "Foliage persistence" %}:</label>&nbsp;{{ taxon.get_foliage_persistence|default:"-" }}&nbsp;<sup>{{ refs.FOL }}</sup></p>
 <p><label>{% trans "Root system" %}:</label>&nbsp;{{ taxon.get_r_type_display|default:"-" }}&nbsp;<sup>{{ refs.ROT }}</sup></p>
 <p><label>{% trans "Crown shape" %}:</label>&nbsp;{{ taxon.get_cr_shape_display|default:"-" }}&nbsp;<sup>{{ refs.CRS }}</sup></p>
-<p><label>{% trans "Crown diameter" %}:</label>&nbsp;{{ taxon.get_crown_diameter }}&nbsp;<sup>{{ refs.CRD }}</sup></p>
-<p><label>{% trans "Trunk alignment" %}:</label>&nbsp;{{ taxon.get_trunk_alignment }}&nbsp;<sup>{{ refs.TRA }}</sup></p>
+<p><label>{% trans "Crown diameter" %}:</label>&nbsp;{{ taxon.get_crown_diameter|default:"-" }}&nbsp;<sup>{{ refs.CRD }}</sup></p>
+<p><label>{% trans "Trunk alignment" %}:</label>&nbsp;{{ taxon.get_trunk_alignment|default:"-" }}&nbsp;<sup>{{ refs.TRA }}</sup></p>
 <p><label>{% trans "Bark texture" %}:</label>&nbsp;{{ taxon.get_bark_texture_display|default:"-" }}&nbsp;<sup>{{ refs.BRT }}</sup></p>
 <p><label>{% trans "Fruit type" %}:</label>&nbsp;{{ taxon.get_fr_type_display|default:"-" }}&nbsp;<sup>{{ refs.FRT }}</sup></p>
-<hr/>
-<h2>{% trans "Care" %}</h2>
-<p><label>{% trans "Pruning" %}:</label>&nbsp;{{ taxon.get_pruning }}&nbsp;<sup>{{ refs.PRU }}</sup></p>
+</div>
+
+<div class="section"><table width="100%"><tr><td width="90%"{% if taxon.has_care_data %} style="font-weight: bold;"{% endif %}>{% trans "Care" %}</td><td style="text-align: right;"><a href="#" onclick="collapse('s3', 'i3');return false;"><img id="i3" src="/static/images/expand.gif" alt="expand" title="expand"/></a></td></tr></table></div>
+<div id="s3" style="display: none;">
+<p><label>{% trans "Pruning" %}:</label>&nbsp;{{ taxon.get_pruning|default:"-" }}&nbsp;<sup>{{ refs.PRU }}</sup></p>
 <p><label>{% trans "Pests and diseases" %}:</label>&nbsp;{{ taxon.pests_and_diseases|default:"-" }}&nbsp;<sup>{{ refs.PAD }}</sup></p>
-<p><label>{% trans "Thorns or spines" %}:</label>&nbsp;{{ taxon.get_thorns_or_spines }}&nbsp;<sup>{{ refs.TOS }}</sup></p>
-<p><label>{% trans "Toxic or allergenic" %}:</label>&nbsp;{{ taxon.get_toxic_or_allergenic }}&nbsp;<sup>{{ refs.TOA }}</sup></p>
-<hr/>
-<h2>{% trans "Ecology & reproduction" %}</h2>
-<p><label>{% trans "Successional group" %}:</label>&nbsp;{{ taxon.get_successional_group }}&nbsp;<sup>{{ refs.SUG }}</sup></p>
+<p><label>{% trans "Thorns or spines" %}:</label>&nbsp;{{ taxon.get_thorns_or_spines|default:"-" }}&nbsp;<sup>{{ refs.TOS }}</sup></p>
+<p><label>{% trans "Toxic or allergenic" %}:</label>&nbsp;{{ taxon.get_toxic_or_allergenic|default:"-" }}&nbsp;<sup>{{ refs.TOA }}</sup></p>
+</div>
+
+<div class="section"><table width="100%"><tr><td width="90%"{% if taxon.has_ecology_and_reproduction_data %} style="font-weight: bold;"{% endif %}>{% trans "Ecology & reproduction" %}</td><td style="text-align: right;"><a href="#" onclick="collapse('s4', 'i4');return false;"><img id="i4" src="/static/images/expand.gif" alt="expand" title="expand"/></a></td></tr></table></div>
+<div id="s4" style="display: none;">
+<p><label>{% trans "Successional group" %}:</label>&nbsp;{{ taxon.get_successional_group|default:"-" }}&nbsp;<sup>{{ refs.SUG }}</sup></p>
 <p><label>{% trans "Pollinators" %}:</label>&nbsp;{{ taxon.pollinators|default:"-" }}&nbsp;<sup>{{ refs.POL }}</sup></p>
-<p><label>{% trans "Flowering period" %}:</label>&nbsp;{{ taxon.get_flowering_period }}&nbsp;<sup>{{ refs.FLP }}</sup></p>
-<p><label>{% trans "Seed dispersal" %}:</label>&nbsp;{{ taxon.get_dispersal_types }}&nbsp;<sup>{{ refs.SED }}</sup></p>
+<p><label>{% trans "Flowering period" %}:</label>&nbsp;{{ taxon.get_flowering_period|default:"-" }}&nbsp;<sup>{{ refs.FLP }}</sup></p>
+<p><label>{% trans "Seed dispersal" %}:</label>&nbsp;{{ taxon.get_dispersal_types|default:"-" }}&nbsp;<sup>{{ refs.SED }}</sup></p>
 <p><label>{% trans "Dispersion agents" %}:</label>&nbsp;{{ taxon.dispersers|default:"-" }}&nbsp;<sup>{{ refs.DIS }}</sup></p>
-<p><label>{% trans "Fruiting period" %}:</label>&nbsp;{{ taxon.get_fruiting_period }}&nbsp;<sup>{{ refs.FRP }}</sup></p>
-<p><label>{% trans "Symbiotic association" %}:</label>&nbsp;{{ taxon.get_symbiotic_assoc }}&nbsp;<sup>{{ refs.SYM }}</sup></p>
+<p><label>{% trans "Fruiting period" %}:</label>&nbsp;{{ taxon.get_fruiting_period|default:"-" }}&nbsp;<sup>{{ refs.FRP }}</sup></p>
+<p><label>{% trans "Symbiotic association" %}:</label>&nbsp;{{ taxon.get_symbiotic_assoc|default:"-" }}&nbsp;<sup>{{ refs.SYM }}</sup></p>
 {% if taxon.symbiotic_details %}<p>{{ taxon.symbiotic_details }}</p>{% endif %}
-<hr/>
-<h2>{% trans "Seedling production" %}</h2>
-<p><label>{% trans "Seed collection" %}:</label>&nbsp;{{ taxon.get_seed_gathering }}&nbsp;<sup>{{ refs.SEC }}</sup></p>
+</div>
+
+<div class="section"><table width="100%"><tr><td width="90%"{% if taxon.has_seedling_production_data %} style="font-weight: bold;"{% endif %}>{% trans "Seedling production" %}</td><td style="text-align: right;"><a href="#" onclick="collapse('s5', 'i5');return false;"><img id="i5" src="/static/images/expand.gif" alt="expand" title="expand"/></a></td></tr></table></div>
+<div id="s5" style="display: none;">
+<p><label>{% trans "Seed collection" %}:</label>&nbsp;{{ taxon.get_seed_gathering|default:"-" }}&nbsp;<sup>{{ refs.SEC }}</sup></p>
 {% if taxon.seed_collection %}<p>{{ taxon.seed_collection }}</p>{% endif %}
 <p><label>{% trans "Seed type" %}:</label>&nbsp;{{ taxon.get_seed_type_display|default:"-" }}&nbsp;<sup>{{ refs.SET }}</sup></p>
 <p><label>{% trans "Pre-germination treatment" %}:</label>&nbsp;{{ taxon.get_pg_treatment_display|default:"-" }}&nbsp;<sup>{{ refs.PGT }}</sup></p>
 {% if taxon.pg_details %}<p>{{ taxon.pg_details }}</p>{% endif %}
-<p><label>{% trans "Seedling production" %}:</label>&nbsp;{{ taxon.get_seedbed }}&nbsp;<sup>{{ refs.SDL }}</sup></p>
+<p><label>{% trans "Seedling production" %}:</label>&nbsp;{{ taxon.get_seedbed|default:"-" }}&nbsp;<sup>{{ refs.SDL }}</sup></p>
 {% if taxon.sl_details %}<p>{{ taxon.sl_details }}</p>{% endif %}
-<p><label>{% trans "Germination time lapse" %}:</label>&nbsp;{{ taxon.get_germination_time_lapse }}&nbsp;<sup>{{ refs.GET }}</sup></p>
-<p><label>{% trans "Germination rate" %}:</label>&nbsp;{{ taxon.get_germination_rate }}&nbsp;<sup>{{ refs.GER }}</sup></p>
+<p><label>{% trans "Germination time lapse" %}:</label>&nbsp;{{ taxon.get_germination_time_lapse|default:"-" }}&nbsp;<sup>{{ refs.GET }}</sup></p>
+<p><label>{% trans "Germination rate" %}:</label>&nbsp;{{ taxon.get_germination_rate|default:"-" }}&nbsp;<sup>{{ refs.GER }}</sup></p>
 <p><label>{% trans "Light requirements" %}:</label>&nbsp;{{ taxon.get_light_display|default:"-" }}&nbsp;<sup>{{ refs.LIG }}</sup></p>
-<hr/>
-<h2>{% trans "Bibliography" %}</h2>
+</div>
+
+<div class="section"><table width="100%"><tr><td width="90%"{% if taxon.has_bibliography_data %} style="font-weight: bold;"{% endif %}>{% trans "Bibliography" %}</td><td style="text-align: right;"><a href="#" onclick="collapse('s6', 'i6');return false;"><img id="i6" src="/static/images/expand.gif" alt="expand" title="expand"/></a></td></tr></table></div>
+<div id="s6" style="display: none;">
 {% for citation in citations %}
 <p class="bib"><sup>{{ citation.0 }}</sup>&nbsp;{{ citation.1 }}</p>
 {% endfor %}
+</div>
+
 {% endblock content %}
