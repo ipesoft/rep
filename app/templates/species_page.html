@@ -1,7 +1,16 @@
 {% extends base_template %}
 {% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
 
 {% block header %}
+
+{% if taxon.has_points %}
+<link rel="stylesheet" href="/static/js/openlayers/theme/default/style.css" type="text/css">
+<script type="text/javascript" src="/static/js/openlayers/OpenLayers.js"></script>
+<script type="text/javascript" src="/static/js/openlayers/lang/pt-BR.js"></script>
+<script src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>
+{% endif %}
+
 <script type="text/javascript">
 function collapse(region_id, button_id) {
   obj = document.getElementById(region_id);
@@ -19,6 +28,90 @@ function collapse(region_id, button_id) {
     button.alt = "expand"
   }
 }
+
+{% if taxon.has_points %}
+var map;
+
+function setmap() {
+
+    if ( map != null ) {
+
+      return;
+    }
+
+    {% if LANGUAGE_CODE == "pt_BR" %}
+    OpenLayers.Lang.setCode("pt-BR");
+    {% endif %}
+
+    map = new OpenLayers.Map( {div: "s7",
+                               projection: "EPSG:900913",
+                               displayProjection: "EPSG:4326",
+                               numZoomLevels: 22,
+                               maxResolution: 156543.0339,
+                               maxExtent: new OpenLayers.Bounds(-20037508, -20037508, 20037508, 20037508.34)} );
+
+    map.addControls([
+            new OpenLayers.Control.Navigation(),
+            new OpenLayers.Control.Attribution(),
+            new OpenLayers.Control.LayerSwitcher(),
+            new OpenLayers.Control.MousePosition(),
+            new OpenLayers.Control.ScaleLine()
+    ]);
+
+    if ( window['google'] != undefined ) {
+
+      var gphy = new OpenLayers.Layer.Google(
+          "{% trans "Physical map" %}",
+          {type: google.maps.MapTypeId.TERRAIN}
+      );
+      var gmap = new OpenLayers.Layer.Google(
+          "{% trans "Road map" %}", // the default
+          {numZoomLevels: 20}
+      );
+      var ghyb = new OpenLayers.Layer.Google(
+          "{% trans "Hybrid map" %}",
+          {type: google.maps.MapTypeId.HYBRID, numZoomLevels: 20}
+      );
+      var gsat = new OpenLayers.Layer.Google(
+          "{% trans "Satellite map" %}",
+          {type: google.maps.MapTypeId.SATELLITE, numZoomLevels: 22}
+      );
+
+      map.addLayers([gphy, gmap, ghyb, gsat]);
+
+      var markers = new OpenLayers.Layer.Markers( "Occurrence locations" );
+
+      var proj = new OpenLayers.Projection("EPSG:4326");
+
+      var size = new OpenLayers.Size(21,25);
+      var offset = new OpenLayers.Pixel(-(size.w/2), -size.h);
+      var icon = new OpenLayers.Icon('/static/js/openlayers/img/marker-gold.png',size,offset);
+
+      var points = {% autoescape off %}{{ points }}{% endautoescape %};
+
+      var last_point;
+
+      for (var i = 0; i < points.length; i++) {
+
+          var point = new OpenLayers.LonLat( points[i].x, points[i].y );
+
+          // Google.v3 uses EPSG:900913 as projection, so we have to
+          // transform our coordinates
+          point.transform( proj, map.getProjectionObject() );
+
+          // Add marker
+          markers.addMarker(new OpenLayers.Marker( point, icon.clone() ));
+
+          last_point = point;
+      }
+
+      map.addLayer(markers);
+
+      map.setCenter( last_point, 10 );
+    }
+}
+{% endif %}
+
 </script>
 {% endblock header %}
 
@@ -95,5 +188,11 @@ function collapse(region_id, button_id) {
 <p class="bib"><sup>{{ citation.0 }}</sup>&nbsp;{{ citation.1 }}</p>
 {% endfor %}
 </div>
+
+{% if taxon.has_points %}
+<div class="section"><table width="100%"><tr><td width="90%" style="font-weight: bold;">{% trans "Occurrence locations" %}</td><td style="text-align: right;"><a href="#" onclick="collapse('s7', 'i7');setmap();return false;"><img id="i7" src="/static/images/expand.gif" alt="expand" title="expand"/></a></td></tr></table></div>
+<div id="s7" style="display: none; height: 320px;">
+</div>
+{% endif %}
 
 {% endblock content %}

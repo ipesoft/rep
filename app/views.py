@@ -141,6 +141,19 @@ def _add_month_condition(request, qs, param, min_field, max_field):
         qs = qs.filter(inside | outside)
     return qs
 
+def _json_raw_encode(data):
+    """
+    Return the specified data encoded in json.
+    """
+    import types
+    from django.core import serializers
+    from django.utils.simplejson.encoder import JSONEncoder
+    if type(data) is types.InstanceType: # assuming a Django object
+        json_serializer = serializers.get_serializer("json")()
+        return json_serializer.serialize(data, ensure_ascii=False)
+    else:
+        return JSONEncoder().encode(data)
+
 # View methods
 def index(request):
     'Index page'
@@ -190,8 +203,12 @@ def show_species(request, species_id):
             numbers[ref.data] = numbers[ref.data] + ',' + ctrl[ref.reference_id]
         else:
             numbers[ref.data] = ctrl[ref.reference_id]
+    points = []
+    for occ in taxon.taxonoccurrence_set.all():
+        points.append({'x':occ.get_decimal_long(), 'y':occ.get_decimal_lat(), 'label':occ.label})
+    points = _json_raw_encode( points )
     c = RequestContext(request, {'taxon': taxon, 'refs': numbers, 'citations': citations, 
-                                 'base_template':settings.BASE_TEMPLATE})
+                                 'points': points, 'base_template':settings.BASE_TEMPLATE})
     possible_templates = ['my_species_page.html', 'species_page.html']
     return render_to_response( possible_templates, c )
 

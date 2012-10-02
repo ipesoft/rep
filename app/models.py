@@ -8,7 +8,7 @@ from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 
-import httplib2, datetime
+import httplib2, datetime, re
 from xml.etree.ElementTree import fromstring
 
 NAME_TYPES = (
@@ -216,8 +216,8 @@ class Taxon( models.Model ):
     tr_inclined    = models.BooleanField( _(u'Inclined') )
     tr_sl_crooked  = models.BooleanField( _(u'Slightly crooked') )
     tr_crooked     = models.BooleanField( _(u'Crooked') )
-    min_height     = models.IntegerField( _(u'Minimum height'), help_text=_(u'meters'), null=True, blank=True )
-    max_height = models.IntegerField( _(u'Maximum height'), help_text=_(u'meters'), null=True, blank=True )
+    min_height     = models.FloatField( _(u'Minimum height'), help_text=_(u'meters'), null=True, blank=True )
+    max_height = models.FloatField( _(u'Maximum height'), help_text=_(u'meters'), null=True, blank=True )
     min_dbh = models.IntegerField( _(u'Minimum DBH'), help_text=_(u'centimeters'), null=True, blank=True )
     max_dbh = models.IntegerField( _(u'Maximum DBH'), help_text=_(u'centimeters'), null=True, blank=True )
     thorns_or_spines = models.NullBooleanField( _(u'Presence'), null=True, blank=True )
@@ -281,12 +281,19 @@ class Taxon( models.Model ):
             return _(u'no')
         return None
 
-    def _get_interval(self, minval, maxval, unit):
+    def _get_interval(self, minval, maxval, unit, decimals=None):
         'Return a string representation of an interval'
         if minval:
-            val = str(minval)
+            if decimals is not None:
+                format = '%.' + str(decimals) + 'f'
+                val = format % minval
+            else:
+                val = str(minval)
             if maxval and maxval != minval:
-                val = val + '-' + str(maxval)
+                if decimals is not None:
+                    val = val + '-' + (format % maxval)
+                else:
+                    val = val + '-' + str(maxval)
             return val + unit
         return None
 
@@ -369,7 +376,7 @@ class Taxon( models.Model ):
         return self._get_interval(self.cr_min_diameter, self.cr_max_diameter, 'm')
 
     def get_height(self):
-        return self._get_interval(self.min_height, self.max_height, 'm')
+        return self._get_interval(self.min_height, self.max_height, 'm', 1)
 
     def get_dbh(self):
         return self._get_interval(self.min_dbh, self.max_dbh, 'cm')
@@ -545,6 +552,9 @@ class Taxon( models.Model ):
     def has_bibliography_data( self ):
         return self.taxondatareference_set.all().count()
 
+    def has_points( self ):
+        return self.taxonoccurrence_set.all().count()
+
 class TaxonName( models.Model ):
     "Taxon name"
     taxon = models.ForeignKey(Taxon)
@@ -602,13 +612,39 @@ class TaxonDataReference( models.Model ):
     def __unicode__(self):
         return unicode(self.taxon) + u' ' + unicode(self.reference)
 
-#class TaxonOccurrence( models.Model ):
-#    "Taxon occurrence"
-#    taxon     = models.ForeignKey(Taxon)
-#    label     = models.TextField( _(u'Label'), null=True, blank=True )
-#    locality  = models.TextField( _(u'Locality'), null=True, blank=True )
-#    long_orig = models.CharField( _(u'Original longitude'), max_length=30 )
-#    lat_orig  = models.CharField( _(u'Original latitude'), max_length=30 )
+class TaxonOccurrence( models.Model ):
+    "Taxon occurrence"
+    taxon     = models.ForeignKey(Taxon)
+    label     = models.TextField( _(u'Label'), null=True, blank=True )
+    locality  = models.TextField( _(u'Locality'), null=True, blank=True )
+    long_orig = models.CharField( _(u'Original longitude'), max_length=30 )
+    lat_orig  = models.CharField( _(u'Original latitude'), max_length=30 )
+
+    def get_decimal_long(self):
+        val = self.long_orig
+        res = re.search(u'^-?\d{1,3}(\.\d+)?$', val)
+        if ( res is not None ):
+            return float(val)
+        res = re.search(u'^(\d{1,3})([WE])(\d{1,2})\'(\d{1,2}\.\d+)\"?$', val)
+        if ( res is not None ):
+            retval = float(res.group(1)) + float(res.group(3))/60.0 + float(res.group(4))/60.0/60.0
+            if res.group(2) == 'W':
+                retval = -1*retval
+            return retval
+        raise Exception('Could not interpret longitude: '+self.long_orig)
+
+    def get_decimal_lat(self):
+        val = self.lat_orig
+        res = re.search(u'^-?\d{1,2}(\.\d+)?$', val)
+        if ( res is not None ):
+            return float(val)
+        res = re.search(u'^(\d{1,2})([NS])(\d{1,2})\'(\d{1,2}\.\d+)\"?$', val)
+        if ( res is not None ):
+            retval = float(res.group(1)) + float(res.group(3))/60.0 + float(res.group(4))/60.0/60.0
+            if res.group(2) == 'S':
+                retval = -1*retval
+            return retval
+        raise Exception('Could not interpret latitude: '+self.lat_orig)
 
 ############# Signal receivers #############
 
