@@ -130,6 +130,7 @@ TAXON_DATA = (
     ( u'GET', _(u'Germination time lapse') ),
     ( u'GER', _(u'Germination rate') ),
     ( u'LIG', _(u'Light requirements') ),
+    ( u'USE', _(u'Use') ),
 )
 
 class Page( models.Model ):
@@ -161,6 +162,18 @@ class Reference( models.Model ):
     def __unicode__(self):
         return unicode(self.citation)
 
+class TypeOfUse( models.Model ):
+    "Types of use of a taxon"
+    label = models.TextField( _(u'Label'), unique=True )
+
+    class Meta:
+        verbose_name = _(u'type of use')
+        verbose_name_plural = _(u'types of use')
+        ordering = [u'label']
+
+    def __unicode__(self):
+        return unicode(self.label)
+
 class Taxon( models.Model ):
     "Plant taxon"
     genus      = models.CharField( _(u'Genus'), max_length=50 )
@@ -170,9 +183,12 @@ class Taxon( models.Model ):
     family     = models.CharField( _(u'Family'), max_length=20, null=True, blank=True )
     # The following field was only created to order the admin form
     label      = models.TextField( _(u'Label'), null=True, blank=True )
+    description = models.TextField( _(u'General description'), null=True, blank=True )
+    ethno_notes = models.TextField( _(u'Ethnobotany description'), null=True, blank=True )
     references = models.ManyToManyField( Reference, through='TaxonDataReference' )
     restoration = models.BooleanField( _(u'Restoration') )
     urban_use   = models.BooleanField( _(u'Urban forestry') )
+    uses      = models.ManyToManyField( TypeOfUse, through='TaxonUse' )
     h_flowers = models.BooleanField( _(u'Flowers') )
     h_leaves  = models.BooleanField( _(u'Leaves') )
     h_fruits  = models.BooleanField( _(u'Fruits') )
@@ -406,6 +422,8 @@ class Taxon( models.Model ):
     # Functions used by the admin change list form
     def data_completeness(self):
         fieldsets = ((_('Taxonomic data'), bool(self.genus) and bool(self.species) and bool(self.author) and bool(self.family)),
+                     (_('General description'), bool(self.description)),
+                     (_('Ethnobotany description'), bool(self.ethno_notes)),
                      (_('Uses'), bool(self.restoration) or bool(self.urban_use)),
                      (_('Abundance'), self.rare is not None),
 
@@ -611,6 +629,18 @@ class TaxonDataReference( models.Model ):
 
     def __unicode__(self):
         return unicode(self.taxon) + u' ' + unicode(self.reference)
+
+class TaxonUse( models.Model ):
+    "Uses of a taxon"
+    taxon = models.ForeignKey(Taxon)
+    use   = models.ForeignKey(TypeOfUse, verbose_name=_(u'type of use'))
+    fieldwork = models.BooleanField( _(u'Detected in fieldwork') )
+
+    class Meta:
+        unique_together = ((u'taxon', u'use'),)
+
+    def __unicode__(self):
+        return unicode(self.taxon) + u' ' + unicode(self.use)
 
 class TaxonOccurrence( models.Model ):
     "Taxon occurrence"

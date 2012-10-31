@@ -1,6 +1,6 @@
 # coding=UTF-8
 
-from app.models import Page, Taxon, TaxonName, Reference, TaxonDataReference, ConservationAssessmentSource, ConservationStatus
+from app.models import Page, Taxon, TaxonName, Reference, TaxonDataReference, ConservationAssessmentSource, ConservationStatus, TypeOfUse, TaxonUse
 from django.contrib import admin
 from django.forms.models import ModelForm
 from django.utils.translation import ugettext_lazy as _
@@ -32,7 +32,7 @@ class RefForm(ModelForm):
 
 class RefInline(admin.TabularInline):
     """
-    Generic inline for biblographic references. It needs to be subclassed
+    Generic inline for bibliographic references. It needs to be subclassed
     and each subclass must indicate a form that inherits from RefForm.
     """
     
@@ -275,6 +275,20 @@ class ConservationStatusInline(admin.TabularInline):
     verbose_name_plural = _('conservation statuses')
     show_in_the_end = 1 # Custom attribute to show this in the end of the page
 
+class UsesInline(admin.TabularInline):
+    model = TaxonUse
+    extra = 0
+    verbose_name = _('documented use')
+    verbose_name_plural = _('documented uses')
+    show_in_the_end = 0 # Custom attribute to show this in the end of the page
+
+class UseRefForm(RefForm):
+    taxondata = 'USE'
+class UseRefInline(RefInline):
+    form = UseRefForm
+    #verbose_name = _('documented use reference')
+    #verbose_name_plural = _('documented use references')
+
 class NameForm(ModelForm):
     """
     Custom form to handle taxon names.
@@ -335,178 +349,189 @@ class CommonNamesInline(NamesInline):
 class TaxonAdmin(admin.ModelAdmin):
     list_display = ('label', 'data_completeness')
     fieldsets = (
-        (_('Taxonomic data'), {        #1
+        (_('Taxonomic data'), {            #1
             #'classes': ('collapse',),
             'fields': (('genus', 'species'), ('subspecies', 'author'), 'family'),
         }),
-        (_('Uses'), {                  #2
+        (_('General description'), {       #2
+            #'classes': ('collapse',),
+            'fields': ('description',),
+        }),
+        (_('Ethnobotany description'), {   #3
+            #'classes': ('collapse',),
+            'fields': ('ethno_notes',),
+        }),
+        (_('Uses'), {                      #4
             #'classes': ('collapse',),
             'fields': (('restoration', 'urban_use'),),
         }),
-        (_('Abundance'), {             #3
+        (_('Abundance'), {                 #5
             #'classes': ('collapse',),
             'fields': (('rare', 'max_density'),),
         }),
-        (_('Endemism'), {              #4
+        (_('Endemism'), {                  #6
             #'classes': ('collapse',),
             'fields': ('endemic',),
         }),
-        (_('Special features'), {      #5
+        (_('Special features'), {          #7
             #'classes': ('collapse',),
             'fields': (('h_flowers', 'h_leaves', 'h_fruits', 'h_crown', 'h_bark'),),
         }),
-        (_('Successional group'), {    #6
+        (_('Successional group'), {        #8
             #'classes': ('collapse',),
             'fields': (('sg_pioneer', 'sg_early_secondary', 'sg_late_secondary', 'sg_climax'),),
         }),
-        (_('Growth rate'), {           #7
+        (_('Growth rate'), {               #9
             #'classes': ('collapse',),
             'fields': (('gr_slow', 'gr_moderate', 'gr_fast'), 'gr_comments',),
         }),
-        (_('Pruning'), {               #8
+        (_('Pruning'), {                   #10
             #'classes': ('collapse',),
             'fields': ('pruning',),
         }),
-        (_('Flowering period'), {      #9
+        (_('Flowering period'), {          #11
             #'classes': ('collapse',),
             'fields': (('fl_start', 'fl_end'),),
         }),
-        (_('Flowering color'), {       #10
+        (_('Flowering color'), {           #12
             #'classes': ('collapse',),
             'fields': ('fl_color',),
         }),
-        (_('Pollination'), {           #11
+        (_('Pollination'), {               #13
             #'classes': ('collapse',),
             'fields': ('pollinators',),
         }),
-        (_('Seed dispersal'), {        #12
+        (_('Seed dispersal'), {            #14
             #'classes': ('collapse',),
             'fields': (('dt_anemochorous', 'dt_autochorous', 'dt_hydrochorous', 'dt_zoochorous'),),
         }),
-        (_('Dispersion agents'), {     #13
+        (_('Dispersion agents'), {         #15
             #'classes': ('collapse',),
             'fields': ('dispersers',),
         }),
-        (_('Fruits'), {                #14
+        (_('Fruits'), {                    #16
             #'classes': ('collapse',),
             'fields': ('fr_type',),
         }),
-        (_('Symbiotic association'), { #15
+        (_('Symbiotic association'), {     #17
             #'classes': ('collapse',),
             'fields': ('symbiotic_assoc','symbiotic_details',),
         }),
-        (_('Roots'), {                 #16
+        (_('Roots'), {                     #18
             #'classes': ('collapse',),
             'fields': ('r_type',),
         }),
-        (_('Foliage persistence'), {   #17
+        (_('Foliage persistence'), {       #19
             #'classes': ('collapse',),
             'fields': (('fo_evergreen', 'fo_semideciduous', 'fo_deciduous'),),
         }),
-        (_('Crown diameter'), {        #18
+        (_('Crown diameter'), {            #20
             #'classes': ('collapse',),
             'fields': (('cr_min_diameter', 'cr_max_diameter'),),
         }),
-        (_('Crown shape'), {           #19
+        (_('Crown shape'), {               #21
             #'classes': ('collapse',),
             'fields': ('cr_shape',),
         }),
-        (_('Bark texture'), {          #20
+        (_('Bark texture'), {              #22
             #'classes': ('collapse',),
             'fields': ('bark_texture',),
         }),
-        (_('Trunk alignment'), {       #21
+        (_('Trunk alignment'), {           #23
             #'classes': ('collapse',),
             'fields': (('tr_straight', 'tr_sl_inclined', 'tr_inclined', 'tr_sl_crooked', 'tr_crooked'),),
         }),
-        (_('Tree size'), {             #22
+        (_('Tree size'), {                 #24
             #'classes': ('collapse',),
             'fields': (('min_height', 'max_height'),('min_dbh', 'max_dbh'),),
         }),
-        (_('Thorns or spines'), {      #23
+        (_('Thorns or spines'), {          #25
             #'classes': ('collapse',),
             'fields': ('thorns_or_spines',),
         }),
-        (_('Toxic or allergenic'), {   #24
+        (_('Toxic or allergenic'), {       #26
             #'classes': ('collapse',),
             'fields': ('toxic_or_allergenic',),
         }),
-        (_('Pests and diseases'), {    #25
+        (_('Pests and diseases'), {        #27
             #'classes': ('collapse',),
             'fields': ('pests_and_diseases',),
         }),
-        (_('Fruiting period'), {       #26
+        (_('Fruiting period'), {           #28
             #'classes': ('collapse',),
             'fields': (('fr_start', 'fr_end'),),
         }),
-        (_('Seed collection'), {       #27
+        (_('Seed collection'), {           #29
             #'classes': ('collapse',),
             'fields': (('seed_tree','seed_soil'), 'seed_collection',),
         }),
-        (_('Seed type'), {             #28
+        (_('Seed type'), {                 #30
             #'classes': ('collapse',),
             'fields': ('seed_type',),
         }),
-        (_('Pre-germination treatment'), { #29
+        (_('Pre-germination treatment'), { #31
             #'classes': ('collapse',),
             'fields': (('pg_treatment'),('pg_details'),),
         }),
-        (_('Seedling production'), {       #30
+        (_('Seedling production'), {       #32
             #'classes': ('collapse',),
             'fields': (('sl_seedbed','sl_containers'), 'sl_details',),
         }),
-        (_('Germination time lapse'), {    #31
+        (_('Germination time lapse'), {    #33
             #'classes': ('collapse',),
             'fields': (('seed_gmin_time','seed_gmax_time'),),
         }),
-        (_('Germination rate'), {          #32
+        (_('Germination rate'), {          #34
             #'classes': ('collapse',),
             'fields': (('seed_gmin_rate','seed_gmax_rate'),),
         }),
-        (_('Light requirements'), {        #33
+        (_('Light requirements'), {        #35
             #'classes': ('collapse',),
             'fields': ('light',),
         }),
     )
     inlines = [
-        SynonymsInline,               #1
-        CommonNamesInline,            #2
-        RarityRefInline,              #3
-        EndemicRefInline,             #4
-        SpecialFeaturesRefInline,     #5
-        SuccessionalGroupRefInline,   #6
-        GrowthRateRefInline,          #7
-        RequiresPruningRefInline,     #8
-        FloweringPeriodRefInline,     #9
-        FloweringColorRefInline,      #10
-        PollinatorsRefInline,         #11
-        DispersalRefInline,           #12
-        DispersersRefInline,          #13
-        FruitTypeRefInline,           #14
-        SymbioticRefInline,           #15
-        RootSystemRefInline,          #16
-        FoliagePersitenceRefInline,   #17
-        CrownDiameterRefInline,       #18
-        CrownShapeRefInline,          #19
-        BarkTextureRefInline,         #20
-        TrunkAlignmentRefInline,      #21
-        SizeRefInline,                #22
-        ThornsOrSpinesRefInline,      #23
-        ToxicOrAllegenicRefInline,    #24
-        PestsAndDiseasesRefInline,    #25
-        FruitingPeriodRefInline,      #26
-        SeedCollectionRefInline,      #27
-        SeedTypeRefInline,            #28
-        PgTreatmentRefInline,         #29
-        SeedlingProductionRefInline,  #30
-        GerminationTimeRefInline,     #31
-        GerminationRateRefInline,     #32
-        LightRefInline,               #33
-        ConservationStatusInline,     #34
+        SynonymsInline,               #0
+        CommonNamesInline,            #1
+        UsesInline,                   #2
+        UseRefInline,                 #3
+        RarityRefInline,              #4
+        EndemicRefInline,             #5
+        SpecialFeaturesRefInline,     #6
+        SuccessionalGroupRefInline,   #7
+        GrowthRateRefInline,          #8
+        RequiresPruningRefInline,     #9
+        FloweringPeriodRefInline,     #10
+        FloweringColorRefInline,      #11
+        PollinatorsRefInline,         #12
+        DispersalRefInline,           #13
+        DispersersRefInline,          #14
+        FruitTypeRefInline,           #15
+        SymbioticRefInline,           #16
+        RootSystemRefInline,          #17
+        FoliagePersitenceRefInline,   #18
+        CrownDiameterRefInline,       #19
+        CrownShapeRefInline,          #20
+        BarkTextureRefInline,         #21
+        TrunkAlignmentRefInline,      #22
+        SizeRefInline,                #23
+        ThornsOrSpinesRefInline,      #24
+        ToxicOrAllegenicRefInline,    #25
+        PestsAndDiseasesRefInline,    #26
+        FruitingPeriodRefInline,      #27
+        SeedCollectionRefInline,      #28
+        SeedTypeRefInline,            #29
+        PgTreatmentRefInline,         #30
+        SeedlingProductionRefInline,  #31
+        GerminationTimeRefInline,     #32
+        GerminationRateRefInline,     #33
+        LightRefInline,               #34
+        ConservationStatusInline,     #35
     ]
 
 admin.site.register(Page)
 admin.site.register(Taxon, TaxonAdmin)
 admin.site.register(Reference)
+admin.site.register(TypeOfUse)
 admin.site.register(ConservationAssessmentSource)
 

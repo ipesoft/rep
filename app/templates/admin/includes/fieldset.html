@@ -26,5 +26,39 @@
             {% endfor %}
         </div>
     {% endfor %}
-{% with fset_cnt=forloop.counter %}{% with sub="0" %}{% if fset_cnt == 1 %}{% for inline_admin_formset in inline_admin_formsets %}{% if forloop.counter < 3 %}{% include inline_admin_formset.opts.template %}{% endif %}{% endfor %}{% endif %}{% if fset_cnt > 2 %}{% for inline_admin_formset in inline_admin_formsets %}{% if forloop.counter < 34 %}{% if forloop.counter == fset_cnt|add:sub %}{% include inline_admin_formset.opts.template %}{% endif %}{% endif %}{% endfor %}{% endif %}{% endwith %}{% endwith %}
+{% comment %}
+This template is called from inside a loop to render all fieldsets.
+The following code is a hack to embed inlines between certain fieldsets.
+
+{% endcomment %}
+{% with fset_cnt=forloop.counter %}
+  {% comment %}INSERT AFTER THE FIRST FIELDSET{% endcomment %}
+  {% if fset_cnt == 1 %}
+    {% comment %}FIRST INLINE (SYNONYMS){% endcomment %}
+    {% with inline_admin_formset=inline_admin_formsets.0 %}
+    {% include inline_admin_formset.opts.template %}
+    {% endwith %}
+    {% comment %}THEN SECOND INLINE (COMMON NAMES){% endcomment %}
+    {% with inline_admin_formset=inline_admin_formsets.1 %}
+    {% include inline_admin_formset.opts.template %}
+    {% endwith %}
+  {% comment %}INSERT AFTER THE FOURTH FIELDSET{% endcomment %}
+  {% elif fset_cnt == 4 %}
+    {% comment %}THIRD INLINE (USES){% endcomment %}
+    {% with inline_admin_formset=inline_admin_formsets.2 %}
+    {% include inline_admin_formset.opts.template %}
+    {% endwith %}
+    {% comment %}FOURTH INLINE (USE REFS){% endcomment %}
+    {% with inline_admin_formset=inline_admin_formsets.3 %}
+    {% include inline_admin_formset.opts.template %}
+    {% endwith %}
+  {% elif fset_cnt > 4 %}
+    {% comment %}PICK THE CORRESPONDING REFERENCE INLINE{% endcomment %}
+    {% for inline_admin_formset in inline_admin_formsets %}{% if forloop.counter == fset_cnt|add:0 %}{% include inline_admin_formset.opts.template %}{% endif %}{% endfor %}
+  {% elif fset_cnt == 35 %}
+    {% with inline_admin_formset=inline_admin_formsets.34 %}
+    {% include inline_admin_formset.opts.template %}
+    {% endwith %}
+  {% endif %}
+{% endwith %}
 </fieldset>
