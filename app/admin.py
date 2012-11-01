@@ -347,6 +347,7 @@ class CommonNamesInline(NamesInline):
     verbose_name_plural = _('common names')
 
 class TaxonAdmin(admin.ModelAdmin):
+    change_form_template = 'admin/taxon_change_form.html'
     list_display = ('label', 'data_completeness')
     fieldsets = (
         (_('Taxonomic data'), {            #1
