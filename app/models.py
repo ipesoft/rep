@@ -8,7 +8,7 @@ from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 
-import httplib2, datetime, re
+import httplib2, datetime, re, string
 from xml.etree.ElementTree import fromstring
 
 NAME_TYPES = (
@@ -315,6 +315,10 @@ class Taxon( models.Model ):
 
     def get_use(self):
         return self._get_boolean_concat(['restoration', 'urban_use'])
+
+    def get_specific_uses(self):
+        uses = self.uses.all().order_by('label').values_list('label', flat=True)
+        return string.join(uses, ', ')
 
     def get_successional_group(self):
         return self._get_boolean_concat(['sg_pioneer', 'sg_early_secondary', 'sg_late_secondary', 'sg_climax'])

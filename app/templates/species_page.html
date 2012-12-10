@@ -144,6 +144,7 @@ function setmap() {
 {% endwith %}
 <p><label>{% trans "Special features" %}:</label>&nbsp;{{ taxon.get_special_features|default:"-" }}&nbsp;<sup>{{ refs.SPE }}</sup></p>
 <p><label>{% trans "Uses" %}:</label>&nbsp;{{ taxon.get_use }}</p>
+<p><label>{% trans "Specific uses" %}:</label>&nbsp;{{ taxon.get_specific_uses|default:"-" }}</p>
 
 {% if taxon.description or taxon.ethno_notes %}
 <div class="section"><table width="100%"><tr><td width="90%" style="font-weight: bold;">{% trans "Description" %}</td><td style="text-align: right;"><a href="#" onclick="collapse('s1', 'i1');return false;"><img id="i1" src="/static/images/expand.gif" alt="expand" title="expand"/></a></td></tr></table></div>
