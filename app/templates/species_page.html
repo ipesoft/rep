@@ -203,6 +203,7 @@ function setmap() {
 {% if taxon.sl_details %}<p>{{ taxon.sl_details }}</p>{% endif %}
 <p><label>{% trans "Germination time lapse" %}:</label>&nbsp;{{ taxon.get_germination_time_lapse|default:"-" }}&nbsp;<sup>{{ refs.GET }}</sup></p>
 <p><label>{% trans "Germination rate" %}:</label>&nbsp;{{ taxon.get_germination_rate|default:"-" }}&nbsp;<sup>{{ refs.GER }}</sup></p>
+<p><label>{% trans "Number of seeds per weight" %}:</label>&nbsp;{{ taxon.seeds_per_weight|default:"-" }}{% if taxon.seeds_per_weight %}&nbsp;num/Kg{% endif %}&nbsp;<sup>{{ refs.SPW }}</sup></p>
 <p><label>{% trans "Light requirements" %}:</label>&nbsp;{{ taxon.get_light_display|default:"-" }}&nbsp;<sup>{{ refs.LIG }}</sup></p>
 </div>
 

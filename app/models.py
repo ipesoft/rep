@@ -129,6 +129,7 @@ TAXON_DATA = (
     ( u'SDL', _(u'Seedling production') ),
     ( u'GET', _(u'Germination time lapse') ),
     ( u'GER', _(u'Germination rate') ),
+    ( u'SPW', _(u'Seeds per weight') ),
     ( u'LIG', _(u'Light requirements') ),
     ( u'USE', _(u'Use') ),
 )
@@ -254,6 +255,7 @@ class Taxon( models.Model ):
     seed_gmax_time = models.IntegerField( _(u'Maximum'), help_text=_(u'days'), null=True, blank=True )
     seed_gmin_rate = models.IntegerField( _(u'Minimum'), help_text=_(u'%'), null=True, blank=True )
     seed_gmax_rate = models.IntegerField( _(u'Maximum'), help_text=_(u'%'), null=True, blank=True )
+    seeds_per_weight = models.IntegerField( _(u'Quantity'), help_text=_(u'num/Kg'), null=True, blank=True )
     #soil = models.CharField( _(u'Soil'), null=True, blank=True, choices=SOIL_TYPES, max_length=1 )
     light = models.CharField( _(u'Classification'), null=True, blank=True, choices=LIGHT_REQUIREMENTS, max_length=1 )
     created = models.DateTimeField( u'Date created', auto_now_add = True )
@@ -460,6 +462,7 @@ class Taxon( models.Model ):
                      (_('Seedling production'), self.sl_seedbed or self.sl_containers), 
                      (_('Germination time lapse'), bool(self.seed_gmin_time) and bool(self.seed_gmax_time)), 
                      (_('Germination rate'), bool(self.seed_gmin_rate) and bool(self.seed_gmax_rate)), 
+                     (_('Seeds per weight'), bool(self.seeds_per_weight)), 
                      (_('Light requirements'), self.light is not None), 
                      )
         html = ''
@@ -569,7 +572,7 @@ class Taxon( models.Model ):
         return (self.get_successional_group() is not None) or (self.pollinators() is not None) or (self.get_flowering_period() is not None) or (self.get_dispersal_types() is not None) or (self.dispersers() is not None) or (self.get_fruiting_period() is not None) or (self.get_symbiotic_assoc() is not None) or (self.symbiotic_details is not None)
 
     def has_seedling_production_data( self ):
-        return (self.get_seed_gathering() is not None) or (self.seed_collection) or (self.get_seed_type_display() is not None) or (self.get_pg_treatment_display() is not None) or (self.pg_details) or (self.get_seedbed() is not None) or (self.sl_details) or (self.get_germination_time_lapse() is not None) or (self.get_germination_rate() is not None) or (self.get_light_display() is not None)
+        return (self.get_seed_gathering() is not None) or (self.seed_collection) or (self.get_seed_type_display() is not None) or (self.get_pg_treatment_display() is not None) or (self.pg_details) or (self.get_seedbed() is not None) or (self.sl_details) or (self.get_germination_time_lapse() is not None) or (self.get_germination_rate() is not None) or (self.get_light_display() is not None) or (self.seeds_per_weight is not None)
 
     def has_bibliography_data( self ):
         return self.taxondatareference_set.all().count()

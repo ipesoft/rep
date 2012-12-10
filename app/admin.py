@@ -261,6 +261,13 @@ class GerminationRateRefInline(RefInline):
     #verbose_name = _('germination rate reference')
     #verbose_name_plural = _('germination rate references')
 
+class SeedsPerWeightRefForm(RefForm):
+    taxondata = 'SPW'
+class SeedsPerWeightRefInline(RefInline):
+    form = SeedsPerWeightRefForm
+    #verbose_name = _('seeds per weight reference')
+    #verbose_name_plural = _('seeds per weight references')
+
 class LightRefForm(RefForm):
     taxondata = 'LIG'
 class LightRefInline(RefInline):
@@ -486,7 +493,11 @@ class TaxonAdmin(admin.ModelAdmin):
             #'classes': ('collapse',),
             'fields': (('seed_gmin_rate','seed_gmax_rate'),),
         }),
-        (_('Light requirements'), {        #35
+        (_('Seeds per weight'), {          #35
+            #'classes': ('collapse',),
+            'fields': (('seeds_per_weight'),),
+        }),
+        (_('Light requirements'), {        #36
             #'classes': ('collapse',),
             'fields': ('light',),
         }),
@@ -526,8 +537,9 @@ class TaxonAdmin(admin.ModelAdmin):
         SeedlingProductionRefInline,  #31
         GerminationTimeRefInline,     #32
         GerminationRateRefInline,     #33
-        LightRefInline,               #34
-        ConservationStatusInline,     #35
+        SeedsPerWeightRefInline,      #34
+        LightRefInline,               #35
+        ConservationStatusInline,     #36
     ]
 
 admin.site.register(Page)
