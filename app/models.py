@@ -565,7 +565,7 @@ class Taxon( models.Model ):
         return (self.get_successional_group() is not None) or (self.pollinators() is not None) or (self.get_flowering_period() is not None) or (self.get_dispersal_types() is not None) or (self.dispersers() is not None) or (self.get_fruiting_period() is not None) or (self.get_symbiotic_assoc() is not None) or (self.symbiotic_details is not None)
 
     def has_seedling_production_data( self ):
-        return (self.get_seed_gathering() is not None) or (self.seed_collection is not None) or (self.get_seed_type_display() is not None) or (self.get_pg_treatment_display() is not None) or (self.get_pg_details is not None) or (self.get_seedbed() is not None) or (self.get_sl_details() is not None) or (self.get_germination_time_lapse() is not None) or (self.get_germination_rate() is not None) or (self.get_light_display() is not None)
+        return (self.get_seed_gathering() is not None) or (self.seed_collection) or (self.get_seed_type_display() is not None) or (self.get_pg_treatment_display() is not None) or (self.pg_details) or (self.get_seedbed() is not None) or (self.sl_details) or (self.get_germination_time_lapse() is not None) or (self.get_germination_rate() is not None) or (self.get_light_display() is not None)
 
     def has_bibliography_data( self ):
         return self.taxondatareference_set.all().count()
