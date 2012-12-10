@@ -29,6 +29,16 @@ function collapse(region_id, button_id) {
   }
 }
 
+function expand_content() {
+
+  desc_panel = document.getElementById("s1");
+  if (desc_panel != null) {
+
+    // expand content by default
+    collapse("s1", "i1");
+  }
+}
+
 {% if taxon.has_points %}
 var map;
 
@@ -115,6 +125,9 @@ function setmap() {
 </script>
 {% endblock header %}
 
+{% block body_params %}onload="expand_content()"{% endblock body_params %}
+
+
 {% block content %}
 {% with synonyms=taxon.get_synonyms popnames=taxon.get_popular_names %}
 <h1><i>{{ taxon.genus }}&nbsp;{{ taxon.species }}</i>&nbsp;{{ taxon.author }}</h1>
@@ -131,6 +144,13 @@ function setmap() {
 {% endwith %}
 <p><label>{% trans "Special features" %}:</label>&nbsp;{{ taxon.get_special_features|default:"-" }}&nbsp;<sup>{{ refs.SPE }}</sup></p>
 <p><label>{% trans "Uses" %}:</label>&nbsp;{{ taxon.get_use }}</p>
+
+{% if taxon.description %}
+<div class="section"><table width="100%"><tr><td width="90%" style="font-weight: bold;">{% trans "Description" %}</td><td style="text-align: right;"><a href="#" onclick="collapse('s1', 'i1');return false;"><img id="i1" src="/static/images/expand.gif" alt="expand" title="expand"/></a></td></tr></table></div>
+<div id="s1" style="display: none;">
+<p>{{ taxon.description|default:"-" }}</p>
+</div>
+{% endif %}
 
 <div class="section"><table width="100%"><tr><td width="90%"{% if taxon.has_general_features_data %} style="font-weight: bold;"{% endif %}>{% trans "General features" %}</td><td style="text-align: right;"><a href="#" onclick="collapse('s2', 'i2');return false;"><img id="i2" src="/static/images/expand.gif" alt="expand" title="expand"/></a></td></tr></table></div>
 <div id="s2" style="display: none;">
