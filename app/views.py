@@ -176,6 +176,24 @@ def show_page(request, page_code):
     possible_templates = ['my_page.html', 'page.html']
     return render_to_response( possible_templates, c )
 
+def about(request):
+    return show_page(request, 'about')
+
+def methods(request):
+    return show_page(request, 'methods')
+
+def ethno_overview(request):
+    return show_page(request, 'ethno_overview')
+
+def ethno_results(request):
+    return show_page(request, 'ethno_results')
+
+def hist_overview(request):
+    return show_page(request, 'hist_overview')
+
+def hist_results(request):
+    return show_page(request, 'hist_results')
+
 def show_species(request, species_id):
     'Display data about a species'
     if not isinstance( species_id, int ):

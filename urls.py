@@ -19,6 +19,15 @@ urlpatterns = patterns('',
     url(r'^sp/?$', 'app.views.search_species'),
     # Species page
     url(r'^sp/(?P<species_id>\d+)/?$', 'app.views.show_species'),
+    # "Static" pages
+    url(r'^about/?$', 'app.views.about'),
+    url(r'^methods/?$', 'app.views.methods'),
+    url(r'^ethno/overview/?$', 'app.views.ethno_overview'),
+    url(r'^ethno/?$', 'app.views.ethno_overview'),
+    url(r'^ethno/results/?$', 'app.views.ethno_results'),
+    url(r'^hist/overview/?$', 'app.views.hist_overview'),
+    url(r'^hist/?$', 'app.views.hist_overview'),
+    url(r'^hist/results/?$', 'app.views.hist_results'),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
