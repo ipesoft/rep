@@ -693,6 +693,11 @@ class Interview( models.Model ):
     interviewees = models.CharField( _(u'Interviewees'), max_length=100 )
     content      = models.TextField( _(u'Content'))
 
+    class Meta:
+        verbose_name = _(u'interview')
+        verbose_name_plural = _(u'interviews')
+        ordering = [u'title']
+
     def __unicode__(self):
         return unicode(self.title)
 

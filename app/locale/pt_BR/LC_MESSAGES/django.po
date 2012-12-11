@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-11 16:19-0600\n"
+"POT-Creation-Date: 2012-12-11 17:02-0600\n"
 "PO-Revision-Date: 2012-03-07 21:05-0300\n"
 "Last-Translator: Renato De Giovanni <renato@cria . org . br>\n"
 "Language-Team: pt_BR <LL@li.org>\n"
@@ -922,6 +922,14 @@ msgstr "Entrevistadores"
 msgid "Interviewees"
 msgstr "Entrevistados"
 
+#: models.py:697
+msgid "interview"
+msgstr "entrevista"
+
+#: models.py:698
+msgid "interviews"
+msgstr "entrevistas"
+
 #: views.py:14
 msgid "indifferent"
 msgstr "indiferente"
@@ -981,7 +989,7 @@ msgstr "Pŕoxima página"
 msgid "Next"
 msgstr "Próxima"
 
-#: templates/interview.html:37
+#: templates/interview.html:38
 msgid "No content"
 msgstr "Sem conteúdo"
 
