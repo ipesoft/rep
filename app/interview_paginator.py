@@ -22,6 +22,8 @@ class InterviewPaginator(Paginator):
                 self.object_list.append(page_content)
                 page_content = ''
                 num_lines_in_page = 0
+        if len(page_content):
+            self.object_list.append(page_content)
         self.per_page = per_page
         self.orphans = orphans
         self.allow_empty_first_page = allow_empty_first_page
