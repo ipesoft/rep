@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-10 17:07-0600\n"
+"POT-Creation-Date: 2012-12-11 16:19-0600\n"
 "PO-Revision-Date: 2012-03-07 21:05-0300\n"
 "Last-Translator: Renato De Giovanni <renato@cria . org . br>\n"
 "Language-Team: pt_BR <LL@li.org>\n"
@@ -484,20 +484,20 @@ msgstr "Sigla única identificando a página"
 msgid "Language"
 msgstr "Língua"
 
-#: models.py:141
+#: models.py:141 models.py:688
 msgid "Title"
 msgstr "Título"
 
-#: models.py:142
+#: models.py:142 models.py:694
 msgid "Content"
 msgstr "Conteúdo"
 
 #: models.py:145
-msgid "page"
+msgid "static page"
 msgstr "página estática"
 
 #: models.py:146
-msgid "pages"
+msgid "static pages"
 msgstr "páginas estáticas"
 
 #: models.py:155
@@ -898,7 +898,7 @@ msgstr "Anotações adicionais, como páginas"
 msgid "Detected in fieldwork"
 msgstr "Registrado em trabalho de campo"
 
-#: models.py:656
+#: models.py:656 models.py:689
 msgid "Locality"
 msgstr "Localidade"
 
@@ -909,6 +909,18 @@ msgstr "Longitude original"
 #: models.py:658
 msgid "Original latitude"
 msgstr "Latitude original"
+
+#: models.py:691
+msgid "Duration"
+msgstr "Duração"
+
+#: models.py:692
+msgid "Interviewers"
+msgstr "Entrevistadores"
+
+#: models.py:693
+msgid "Interviewees"
+msgstr "Entrevistados"
 
 #: views.py:14
 msgid "indifferent"
@@ -944,6 +956,34 @@ msgstr "buscar"
 #: templates/adv_search_species_urban.html:33
 msgid "Advanced search for urban forestry"
 msgstr "Busca avançada para arborização urbana"
+
+#: templates/digg_paginator.html:4
+msgid "Previous Page"
+msgstr "Página Anterior"
+
+#: templates/digg_paginator.html:4
+msgid "Previous"
+msgstr "Anterior"
+
+#: templates/digg_paginator.html:15
+msgid "Current Page"
+msgstr "Página atual"
+
+#: templates/digg_paginator.html:17
+msgid "Page"
+msgstr "Página"
+
+#: templates/digg_paginator.html:28
+msgid "Next Page"
+msgstr "Pŕoxima página"
+
+#: templates/digg_paginator.html:28
+msgid "Next"
+msgstr "Próxima"
+
+#: templates/interview.html:37
+msgid "No content"
+msgstr "Sem conteúdo"
 
 #: templates/search_species.html:6
 msgid "result"
@@ -1052,3 +1092,9 @@ msgstr "Adicionar %(verbose_name)s"
 #: templates/admin/edit_inline/mytabular.html:118
 msgid "Remove"
 msgstr "Remover"
+
+#~ msgid "page"
+#~ msgstr "página estática"
+
+#~ msgid "pages"
+#~ msgstr "páginas estáticas"

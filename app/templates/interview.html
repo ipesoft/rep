@@ -1,0 +1,41 @@
+{% extends base_template %}
+{% load i18n %}
+{% load digg_paginator %}
+{% load tagify %}
+
+{% block header %}
+<link rel="stylesheet" type="text/css" href="/static/css/digg_paginator.css" />
+{% endblock header %}
+
+{% block content %}
+
+{% if page_obj.number == 1 %}
+<div class="interview">
+<h3><b>Entrevista e transcrição:</b> {{ interview.interviewers }}</h3>
+<h3><b>Entrevistados:</b> {{ interview.interviewees }}</h3>
+<h3><b>Data:</b> {{ interview.when|date:"d/m/Y" }}</h3>
+<h3><b>Local:</b> {{ interview.locality }}</h3>
+<h3><b>Horas gravadas:</b> {{ interview.duration }}</h3>
+</div>
+<dl class="explanation">
+<dt>Simbologia</dt>
+<dd>Palavra[? – tempo]: leitura da palavra correta ou aproximada.</dd>
+<dd>Frase [? – tempo]: palavra ou trecho indecifrável.</dd>
+<dd>- Frase: quando eles reproduzem suas falas ou de outras pessoas.</dd>
+</dl>
+<h1>TRANSCRIÇÃO</h1>
+{% endif %}
+
+{% for text in page_obj.object_list %}
+{{ text|tagify|safe }}
+{% endfor %}
+
+{% if paginator.num_pages > 1 %}
+{% digg_paginator %}
+{% endif %}
+
+{% if paginator.count == 0 %}
+{% trans "No content" %}
+{% endif %}
+
+{% endblock content %}

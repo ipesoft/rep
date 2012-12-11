@@ -1,6 +1,6 @@
 # coding=UTF-8
 
-from app.models import Page, Taxon, TaxonName, TaxonDataReference, COLORS, MONTHS, ROOT_SYSTEMS, CROWN_SHAPES, ConservationStatus
+from app.models import Page, Taxon, TaxonName, TaxonDataReference, COLORS, MONTHS, ROOT_SYSTEMS, CROWN_SHAPES, ConservationStatus, Interview
 from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
@@ -363,5 +363,40 @@ def search_species(request):
             # If page is out of range (e.g. 9999), deliver last page of results.
             taxa = paginator.page(paginator.num_pages)
         template_params['taxa'] = taxa
+    c = RequestContext(request, template_params)
+    return render_to_response( possible_templates, c )
+
+def interview(request, interview_id):
+    'Display interview page'
+    if not isinstance( interview_id, int ):
+        if interview_id.isdigit():
+            interview_id = int(interview_id)
+        else:
+            raise Http404
+    try:
+        interview = Interview.objects.get(pk=interview_id)
+    except Interview.DoesNotExist:
+        raise Http404
+    # Pagination
+    from app.interview_paginator import InterviewPaginator
+    paginator = InterviewPaginator(interview.content, 1, 0, True, 40) # 40 lines per page
+    if ( request.GET.has_key('page') ):
+        page = request.GET.get('page')
+    else:
+        page = 1
+    try:
+        page_obj = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        page_obj = paginator.page(paginator.num_pages)
+    possible_templates = ['my_interview.html', 'interview.html']
+    template_params = {'base_template':settings.BASE_TEMPLATE}
+    template_params['interview'] = interview
+    template_params['paginator'] = paginator
+    template_params['page_obj'] = page_obj
+    template_params['request'] = request
     c = RequestContext(request, template_params)
     return render_to_response( possible_templates, c )

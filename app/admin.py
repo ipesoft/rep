@@ -1,6 +1,6 @@
 # coding=UTF-8
 
-from app.models import Page, Taxon, TaxonName, Reference, TaxonDataReference, ConservationAssessmentSource, ConservationStatus, TypeOfUse, TaxonUse
+from app.models import Page, Taxon, TaxonName, Reference, TaxonDataReference, ConservationAssessmentSource, ConservationStatus, TypeOfUse, TaxonUse, Interview
 from django.contrib import admin
 from django.forms.models import ModelForm
 from django.utils.translation import ugettext_lazy as _
@@ -547,4 +547,5 @@ admin.site.register(Taxon, TaxonAdmin)
 admin.site.register(Reference)
 admin.site.register(TypeOfUse)
 admin.site.register(ConservationAssessmentSource)
+admin.site.register(Interview)
 

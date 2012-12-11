@@ -277,3 +277,24 @@ label {
 	background: #adefad;
 	margin-bottom: 1px;
 }
+
+.jp {
+	font-size: 12px;
+	font-weight: normal;
+	text-align: justify;
+}
+
+.interview {
+	border:1px solid #c2ee62;
+	background-color:#edfdd0;
+	color:#234f32;
+	padding:.6em;
+}
+
+.explanation {
+	margin-top: 3px;
+	font-size: 10px;
+	border:1px solid #ccc;
+	background-color:#f9f9f9;
+	padding:.6em;
+}

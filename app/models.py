@@ -142,8 +142,8 @@ class Page( models.Model ):
     content = models.TextField( _(u'Content') )
 
     class Meta:
-        verbose_name = _(u'page')
-        verbose_name_plural = _(u'pages')
+        verbose_name = _(u'static page')
+        verbose_name_plural = _(u'static pages')
         unique_together = ((u'code', u'lang'),)
         ordering = [u'title']
 
@@ -682,6 +682,19 @@ class TaxonOccurrence( models.Model ):
                 retval = -1*retval
             return retval
         raise Exception('Could not interpret latitude: '+self.lat_orig)
+
+class Interview( models.Model ):
+    "Interview"
+    title        = models.TextField( _(u'Title') )
+    locality     = models.TextField( _(u'Locality'), null=True, blank=True )
+    when         = models.DateTimeField( u'When', null=True, blank=True )
+    duration     = models.CharField( _(u'Duration'), max_length=10, null=True, blank=True )
+    interviewers = models.CharField( _(u'Interviewers'), max_length=100 )
+    interviewees = models.CharField( _(u'Interviewees'), max_length=100 )
+    content      = models.TextField( _(u'Content'))
+
+    def __unicode__(self):
+        return unicode(self.title)
 
 ############# Signal receivers #############
 
