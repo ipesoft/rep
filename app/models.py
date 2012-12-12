@@ -702,7 +702,7 @@ class Interview( models.Model ):
         return unicode(self.title)
 
     def get_citations(self):
-        return TaxonCitation.objects.filter(interview=self).order_by('cited_name')
+        return TaxonCitation.objects.filter(interview=self).order_by('cited_name', 'page')
 
     def update_citations(self):
         import re
