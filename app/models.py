@@ -758,7 +758,7 @@ class Interview( models.Model ):
                                     recs = TaxonCitation.objects.filter(interview=self, taxon=taxon, page=page_num, cited_name=name)
                                     if len(recs) > 0:
                                         # same citation already exists in the database
-                                        keys.append(rec.id)
+                                        keys.append(recs[0].id)
                                     else:
                                         # new or changed citation
                                         rec = TaxonCitation(interview=self, taxon=taxon, page=page_num, cited_name=name)
