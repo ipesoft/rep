@@ -12,7 +12,9 @@ def tagify(value):
     for paragraph in paragraphs:
         try:
             sep = paragraph.index(': ', 1)
-            paragraph = '<label>' + paragraph[:sep] + '</label>' + paragraph[sep:]
+            # Only colons close to the beginning
+            if sep < 30:
+                paragraph = '<label>' + paragraph[:sep] + '</label>' + paragraph[sep:]
         except:
             pass
         new_value += '<p class="jp">' + paragraph + "</p>\n"

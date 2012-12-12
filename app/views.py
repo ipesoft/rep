@@ -192,7 +192,12 @@ def hist_overview(request):
     return show_page(request, 'hist_overview')
 
 def hist_results(request):
-    return show_page(request, 'hist_results')
+    possible_templates = ['my_hist_results.html', 'hist_results.html']
+    template_params = {'base_template':settings.BASE_TEMPLATE}
+    interviews = Interview.objects.all().order_by('title')
+    template_params['interviews'] = interviews
+    c = RequestContext(request, template_params)
+    return render_to_response( possible_templates, c )
 
 def show_species(request, species_id):
     'Display data about a species'
@@ -205,7 +210,7 @@ def show_species(request, species_id):
         taxon = Taxon.objects.get(pk=species_id)
     except Taxon.DoesNotExist:
         raise Http404
-    #data = ('RAR','END','SPE','SUG','GRO','PRU','FLP','FLC','POL','SED','DIS','FRT','SYM','ROT','FOL','CRD','CRS','BRT','TRA','SIZ','TOS','TOA','PAD','FRP','SEC','SET','PGT','SDL','GET','GER','LIG')
+    #data = ('RAR','END','SPE','SUG','GRO','PRU','FLP','FLC','POL','SED','DIS','FRT','SYM','ROT','FOL','CRD','CRS','BRT','TRA','SIZ','TOS','TOA','PAD','FRP','SEC','SET','PGT','SDL','GET','GER','SPW','LIG')
     ctrl = {}      # reference_id => number
     citations = [] # list of(ref_number, citation)
     numbers = {}   # data_id => ref_numbers

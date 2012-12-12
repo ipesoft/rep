@@ -701,6 +701,90 @@ class Interview( models.Model ):
     def __unicode__(self):
         return unicode(self.title)
 
+    def get_citations(self):
+        return TaxonCitation.objects.filter(interview=self).order_by('cited_name')
+
+    def update_citations(self):
+        import re
+        if len(self.content):
+            import xml.etree.ElementTree as etree
+            from app.interview_paginator import InterviewPaginator
+            paginator = InterviewPaginator(self.content, 1, 0, True, 40)
+            keys = []
+            for page_num in range(1, paginator.num_pages+1):
+                page_obj = paginator.page(page_num)
+                # Note: There must always one object
+                content = page_obj.object_list[0].encode('utf-8')
+                root = etree.fromstring('<?xml version="1.0" encoding="UTF-8"?><x>'+content+'</x>')
+                nodes = root.findall(".//a")
+                for node in nodes:
+                    if node.get('class') != 'sp_citation':
+                        continue
+                    # Note: without the encode I get psycopg "can't adapt" error (??)
+                    name = node.text
+                    if node.get('href') is None:
+                        recs = TaxonCitation.objects.filter(interview=self.id, page=page_num, taxon__isnull=True, cited_name=name)
+                        if len(recs) > 0:
+                            # same citation already exists in the database
+                            keys.append(recs[0].id)
+                        else:
+                            # new or changed citation
+                            rec = TaxonCitation(interview=self, page=page_num, cited_name=name)
+                            rec.save()
+                            keys.append(rec.id)
+                    else:
+                        url = node.get('href')
+                        # patterns:
+                        # search by name: /sp/?name=sp_name
+                        # exact link: /sp/18
+                        pos = url.index('search')
+                        if pos > 0:
+                            recs = TaxonCitation.objects.filter(interview=self, page=page_num, taxon__isnull=True, cited_name=name)
+                            if len(recs) > 0:
+                                # same citation already exists in the database
+                                keys.append(recs[0].id)
+                            else:
+                                # new or changed citation
+                                rec = TaxonCitation(interview=self, page=page_num, cited_name=name)
+                                rec.save()
+                                keys.append(rec.id)
+                        else:
+                            # extract taxon id
+                            m = re.search('\/sp\/(\d+)\/?', url)
+                            if len( m.groups() ) == 1:
+                                taxon_id = int( m.group(1) )
+                                try:
+                                    taxon = Taxon.objects.get(pk=taxon_id)
+                                    recs = TaxonCitation.objects.filter(interview=self, taxon=taxon, page=page_num, cited_name=name)
+                                    if len(recs) > 0:
+                                        # same citation already exists in the database
+                                        keys.append(rec.id)
+                                    else:
+                                        # new or changed citation
+                                        rec = TaxonCitation(interview=self, taxon=taxon, page=page_num, cited_name=name)
+                                        rec.save()
+                                        keys.append(rec.id)
+                                except Taxon.DoesNotExist:
+                                    raise Exception('Taxon '+taxon_id+' referenced in page '+str(page_num)+' does not exist!')
+                            else:
+                                raise Exception('Bad formatted taxon reference link in page '+str(page_num))
+            # Remove out dated citations
+            TaxonCitation.objects.filter(interview=self).exclude(id__in=keys).delete()
+        else:
+            TaxonCitation.objects.filter(interview=self).delete()
+
+class TaxonCitation( models.Model ):
+    "Taxon citation in an interview"
+    interview = models.ForeignKey(Interview)
+    # Note1: The taxon may not be uniquely identified or even present in the DB
+    # Note2: The same taxon may be cited more than once in the same interview
+    taxon = models.ForeignKey(Taxon, null=True)
+    cited_name = models.CharField( _(u'Cited name'), max_length=50 )
+    page = models.IntegerField( _(u'Page number') )
+
+    def __unicode__(self):
+        return unicode(self.taxon) + u' ' + unicode(self.use)
+
 ############# Signal receivers #############
 
 @receiver(post_save, sender=Taxon, dispatch_uid='post_save_taxon')
@@ -731,3 +815,8 @@ def pre_save_taxon( sender, instance, raw, using, **kwargs ):
             instance.label = instance.genus + ' ' + instance.species + u' var. ' + instance.subspecies + ' ' + instance.author
         else:
             instance.label = instance.genus + ' ' + instance.species + ' ' + instance.author
+
+@receiver(post_save, sender=Interview, dispatch_uid='post_save_interview')
+def post_save_interview( sender, instance, created, raw, using, **kwargs ):
+    # Update citations
+    instance.update_citations()

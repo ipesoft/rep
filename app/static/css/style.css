@@ -141,6 +141,18 @@ a:hover {
 	text-decoration:underline;
 }
 
+.sp_citation {
+	color:#234f32;
+	text-decoration:none;
+	border:1px dashed #c2ee62;
+	background-color:#edfdd0;
+}
+
+.sp_citation:hover {
+	color:#3b7cd6;
+	text-decoration:none;
+}
+
 h1,.h1 {
 	font-family: "trebuchet ms",helvetica, sans-serif;
 	font-size:1.4em;
