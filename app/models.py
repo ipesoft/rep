@@ -737,7 +737,7 @@ class Interview( models.Model ):
                         # patterns:
                         # search by name: /sp/?name=sp_name
                         # exact link: /sp/18
-                        pos = url.find('search')
+                        pos = url.find('?name=')
                         if pos > 0:
                             recs = TaxonCitation.objects.filter(interview=self, page=page_num, taxon__isnull=True, cited_name=name)
                             if len(recs) > 0:
