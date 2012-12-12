@@ -721,7 +721,7 @@ class Interview( models.Model ):
                     if node.get('class') != 'sp_citation':
                         continue
                     # Note: without the encode I get psycopg "can't adapt" error (??)
-                    name = node.text
+                    name = node.text.lower()
                     if node.get('href') is None:
                         recs = TaxonCitation.objects.filter(interview=self.id, page=page_num, taxon__isnull=True, cited_name=name)
                         if len(recs) > 0:
