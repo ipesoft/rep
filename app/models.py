@@ -795,6 +795,71 @@ class Interview( models.Model ):
             TaxonCitation.objects.filter(interview=self).delete()
             InterPart.objects.filter(interview=self).delete()
 
+    def get_pdf_name(self):
+        return 'interview_' + str(self.id) + '.pdf'
+
+    def generate_pdf(self):
+        pdf_file = settings.PDF_ROOT + self.get_pdf_name()
+        from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+        from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+        from reportlab.lib.enums import TA_JUSTIFY
+        from reportlab.rl_config import defaultPageSize
+        from reportlab.lib.units import inch
+        PAGE_HEIGHT=defaultPageSize[1]
+        PAGE_WIDTH=defaultPageSize[0]
+        styles = getSampleStyleSheet()
+        styles.add( ParagraphStyle(name='Justify', alignment=TA_JUSTIFY) )
+        doc = SimpleDocTemplate( pdf_file )
+        Story = [Spacer(1,2*inch)]
+        style = styles['Justify']
+        px = 7.0
+        py = 0.75
+        # Page functions
+        def myFirstPage( canvas, doc ):
+            canvas.saveState()
+            x1 = 70
+            x2 = 520
+            y1 = 700
+            y2 = 820
+            crosshairs = [(x1,y1,x1,y2), (x1,y2,x2,y2), (x2,y2,x2,y1), (x2,y1,x1,y1)]
+            canvas.lines(crosshairs)
+            canvas.setFont( 'Times-Roman', 12 )
+            canvas.drawString( 1.1*inch, 11.1*inch, '%s: %s' % (u'Entrevistados', self.interviewees) )
+            canvas.drawString( 1.1*inch, 10.8*inch, '%s: %s' % (u'Entrevista e transcrição', self.interviewers) )
+            canvas.drawString( 1.1*inch, 10.5*inch, '%s: %s' % (u'Data', self.when.strftime("%d/%m/%Y")) )
+            canvas.drawString( 1.1*inch, 10.2*inch, '%s: %s' % (u'Local', self.locality) )
+            canvas.drawString( 1.1*inch, 9.9*inch, '%s: %s' % (u'Horas gravadas', self.duration) )
+            canvas.setFont( 'Times-Roman', 9 )
+            canvas.drawString( 1.1*inch, 9.5*inch, u'Palavra[? – tempo]: leitura da palavra correta ou aproximada.')
+            canvas.drawString( 1.1*inch, 9.3*inch, u'Frase [? – tempo]: palavra ou trecho indecifrável.')
+            canvas.drawString( 1.1*inch, 9.1*inch, u'- Frase: quando eles reproduzem suas falas ou de outras pessoas.')
+            canvas.setFont( 'Times-Roman', 12 )
+            canvas.drawString( 1.1*inch, 8.8*inch, u'TRANSCRIÇÃO')
+            canvas.setFont( 'Times-Roman', 9 )
+            canvas.drawString( px*inch, py*inch,"p. %d" % (doc.page) )
+            canvas.restoreState()
+        def myLaterPages( canvas, doc ):
+            canvas.saveState()
+            canvas.setFont( 'Times-Roman', 9 )
+            canvas.drawString( px*inch, py*inch,"p. %d" % (doc.page) )
+            canvas.restoreState()
+        # Strip tags
+        content = re.compile(r'<[^<]*?/?>').sub('', self.content)
+        # Loop over paragraphs
+        paragraphs = content.split("\n")
+        for paragraph in paragraphs:
+            try:
+                sep = paragraph.index(': ', 1)
+                # Only colons close to the beginning
+                if sep < 30:
+                    paragraph = '<b>' + paragraph[:sep] + '</b>' + paragraph[sep:]
+            except:
+                pass
+            p = Paragraph( paragraph, style )
+            Story.append( p )
+            Story.append( Spacer(1, 0.2*inch) )
+        doc.build( Story, onFirstPage=myFirstPage, onLaterPages=myLaterPages )
+
 class TaxonCitation( models.Model ):
     "Taxon citation in an interview"
     interview  = models.ForeignKey(Interview)
@@ -852,3 +917,4 @@ def pre_save_taxon( sender, instance, raw, using, **kwargs ):
 def post_save_interview( sender, instance, created, raw, using, **kwargs ):
     # Update citations
     instance.update_references()
+    instance.generate_pdf()
