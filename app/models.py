@@ -774,7 +774,7 @@ class Interview( models.Model ):
                                     raise Exception('Bad formatted taxon reference link in page '+str(page_num))
                     #### Parts #########################
                     elif node.get('class') == 'part':
-                        title = node.text.lower()
+                        title = node.text
                         anchor_id = node.get('id')
                         try:
                             rec = InterPart.objects.get(interview=self.id, anchor=anchor_id)
