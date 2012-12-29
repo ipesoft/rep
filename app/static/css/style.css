@@ -310,3 +310,20 @@ label {
 	background-color:#f9f9f9;
 	padding:.6em;
 }
+
+a.part {
+	color:#49a149;
+	text-decoration:none;
+	text-align:center;
+	width: 50%;
+	margin-left: auto;
+	margin-right: auto;
+	padding:0px;
+}
+
+hr.part {
+	background-color:#fff;
+	border:#000 1px dotted;
+	border-style: none none dotted;
+	color:#fff;
+}

@@ -4,11 +4,25 @@
 <h1>{% trans "List of interviews" %}</h1>
 {% if interviews %}
 {% for interview in interviews %}
-{% with citations=interview.get_citations %}
+{% with citations=interview.get_citations parts=interview.get_parts %}
 <label><a href="/hist/interview/{{ interview.id }}">{{ interview.title }}</a></label>
 {% if citations %}
 <p class="small">{% trans "Referenced species" %}:&nbsp;{% for citation in citations %}{% ifchanged citation.cited_name %}{% if forloop.first %}{% else %}), {% endif %}{{citation.cited_name}} (p. <a href="/hist/interview/{{interview.id}}/?page={{citation.page}}">{{citation.page}}</a>{% else %}, <a href="/hist/interview/{{interview.id}}/?page={{citation.page}}">{{citation.page}}</a>{% endifchanged %}{% endfor %})
 </p>
+{% endif %}
+{% if parts %}
+ <table width="100%" cellpadding="0">
+ <tr>
+  <td class="small" width="10%" valign="top">{% trans "Highlights" %}:</td>
+  <td valign="top">
+   <ul style="margin:0px;">
+   {% for part in parts %}
+     <li><a href="/hist/interview/{{interview.id}}/?page={{part.page}}#{{part.anchor}}">{{ part.title }}</a></li>
+   {% endfor %}
+   </ul>
+  </td>
+ </tr>
+ </table>
 {% endif %}
 {% endwith %}
 {% endfor %}

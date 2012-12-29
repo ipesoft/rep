@@ -704,86 +704,118 @@ class Interview( models.Model ):
     def get_citations(self):
         return TaxonCitation.objects.filter(interview=self).order_by('cited_name', 'page')
 
-    def update_citations(self):
+    def get_parts(self):
+        return InterPart.objects.filter(interview=self).order_by('page')
+
+    def update_references(self):
         import re
         if len(self.content):
             import xml.etree.ElementTree as etree
             from app.interview_paginator import InterviewPaginator
             paginator = InterviewPaginator(self.content, 1, 0, True, 40)
-            keys = []
+            cit_keys = []
+            part_keys = []
             for page_num in range(1, paginator.num_pages+1):
                 page_obj = paginator.page(page_num)
                 # Note: There must always one object
+                # Note: without the encode I get psycopg "can't adapt" error (??)
                 content = page_obj.object_list[0].encode('utf-8')
                 root = etree.fromstring('<?xml version="1.0" encoding="UTF-8"?><x>'+content+'</x>')
                 nodes = root.findall(".//a")
                 for node in nodes:
-                    if node.get('class') != 'sp_citation':
-                        continue
-                    # Note: without the encode I get psycopg "can't adapt" error (??)
-                    name = node.text.lower()
-                    if node.get('href') is None:
-                        recs = TaxonCitation.objects.filter(interview=self.id, page=page_num, taxon__isnull=True, cited_name=name)
-                        if len(recs) > 0:
-                            # same citation already exists in the database
-                            keys.append(recs[0].id)
-                        else:
-                            # new or changed citation
-                            rec = TaxonCitation(interview=self, page=page_num, cited_name=name)
-                            rec.save()
-                            keys.append(rec.id)
-                    else:
-                        url = node.get('href')
-                        # patterns:
-                        # search by name: /sp/?name=sp_name
-                        # exact link: /sp/18
-                        pos = url.find('?name=')
-                        if pos > 0:
-                            recs = TaxonCitation.objects.filter(interview=self, page=page_num, taxon__isnull=True, cited_name=name)
+                    #### Species citations ###############
+                    if node.get('class') == 'sp_citation':
+                        name = node.text.lower()
+                        if node.get('href') is None:
+                            recs = TaxonCitation.objects.filter(interview=self.id, page=page_num, taxon__isnull=True, cited_name=name)
                             if len(recs) > 0:
                                 # same citation already exists in the database
-                                keys.append(recs[0].id)
+                                cit_keys.append(recs[0].id)
                             else:
                                 # new or changed citation
                                 rec = TaxonCitation(interview=self, page=page_num, cited_name=name)
                                 rec.save()
-                                keys.append(rec.id)
+                                cit_keys.append(rec.id)
                         else:
-                            # extract taxon id
-                            m = re.search('\/sp\/(\d+)\/?', url)
-                            if len( m.groups() ) == 1:
-                                taxon_id = int( m.group(1) )
-                                try:
-                                    taxon = Taxon.objects.get(pk=taxon_id)
-                                    recs = TaxonCitation.objects.filter(interview=self, taxon=taxon, page=page_num, cited_name=name)
-                                    if len(recs) > 0:
-                                        # same citation already exists in the database
-                                        keys.append(recs[0].id)
-                                    else:
-                                        # new or changed citation
-                                        rec = TaxonCitation(interview=self, taxon=taxon, page=page_num, cited_name=name)
-                                        rec.save()
-                                        keys.append(rec.id)
-                                except Taxon.DoesNotExist:
-                                    raise Exception('Taxon '+taxon_id+' referenced in page '+str(page_num)+' does not exist!')
+                            url = node.get('href')
+                            # patterns:
+                            # search by name: /sp/?name=sp_name
+                            # exact link: /sp/18
+                            pos = url.find('?name=')
+                            if pos > 0:
+                                recs = TaxonCitation.objects.filter(interview=self, page=page_num, taxon__isnull=True, cited_name=name)
+                                if len(recs) > 0:
+                                    # same citation already exists in the database
+                                    cit_keys.append(recs[0].id)
+                                else:
+                                    # new or changed citation
+                                    rec = TaxonCitation(interview=self, page=page_num, cited_name=name)
+                                    rec.save()
+                                    cit_keys.append(rec.id)
                             else:
-                                raise Exception('Bad formatted taxon reference link in page '+str(page_num))
-            # Remove out dated citations
-            TaxonCitation.objects.filter(interview=self).exclude(id__in=keys).delete()
+                                # extract taxon id
+                                m = re.search('\/sp\/(\d+)\/?', url)
+                                if len( m.groups() ) == 1:
+                                    taxon_id = int( m.group(1) )
+                                    try:
+                                        taxon = Taxon.objects.get(pk=taxon_id)
+                                        recs = TaxonCitation.objects.filter(interview=self, taxon=taxon, page=page_num, cited_name=name)
+                                        if len(recs) > 0:
+                                            # same citation already exists in the database
+                                            cit_keys.append(recs[0].id)
+                                        else:
+                                            # new or changed citation
+                                            rec = TaxonCitation(interview=self, taxon=taxon, page=page_num, cited_name=name)
+                                            rec.save()
+                                            cit_keys.append(rec.id)
+                                    except Taxon.DoesNotExist:
+                                        raise Exception('Taxon '+taxon_id+' referenced in page '+str(page_num)+' does not exist!')
+                                else:
+                                    raise Exception('Bad formatted taxon reference link in page '+str(page_num))
+                    #### Parts #########################
+                    elif node.get('class') == 'part':
+                        title = node.text.lower()
+                        anchor_id = node.get('id')
+                        try:
+                            rec = InterPart.objects.get(interview=self.id, anchor=anchor_id)
+                            # Part already exists in the database
+                            if rec.page != page_num or rec.title != title:
+                                rec.page = page_num
+                                rec.title = title
+                                rec.save()
+                        except InterPart.DoesNotExist:
+                            # new or changed anchor
+                            rec = InterPart(interview=self, page=page_num, title=title, anchor=anchor_id)
+                            rec.save()
+                        part_keys.append(rec.id)
+            # Remove out dated references
+            TaxonCitation.objects.filter(interview=self).exclude(id__in=cit_keys).delete()
+            InterPart.objects.filter(interview=self).exclude(id__in=part_keys).delete()
         else:
             TaxonCitation.objects.filter(interview=self).delete()
+            InterPart.objects.filter(interview=self).delete()
 
 class TaxonCitation( models.Model ):
     "Taxon citation in an interview"
-    interview = models.ForeignKey(Interview)
+    interview  = models.ForeignKey(Interview)
     # Note1: The taxon may not be uniquely identified or even present in the DB
     # Note2: The same taxon may be cited more than once in the same interview
-    taxon = models.ForeignKey(Taxon, null=True)
+    taxon      = models.ForeignKey(Taxon, null=True)
     cited_name = models.CharField( _(u'Cited name'), max_length=50 )
-    page = models.IntegerField( _(u'Page number') )
+    page       = models.IntegerField( _(u'Page number') )
 
     def __unicode__(self):
-        return unicode(self.taxon) + u' ' + unicode(self.use)
+        return unicode(self.taxon) + u' in ' + unicode(self.interview) + u'(p.' + str(self.page) + u')'
+
+class InterPart( models.Model ):
+    "Highlight of an interview"
+    interview = models.ForeignKey(Interview)
+    title     = models.CharField( _(u'Title'), max_length=100 )
+    page      = models.IntegerField( _(u'Page number') )
+    anchor    = models.CharField( _(u'Anchor id'), max_length=20 )
+
+    def __unicode__(self):
+        return unicode(self.title) + u' in ' + unicode(self.interview)
 
 ############# Signal receivers #############
 
@@ -819,4 +851,4 @@ def pre_save_taxon( sender, instance, raw, using, **kwargs ):
 @receiver(post_save, sender=Interview, dispatch_uid='post_save_interview')
 def post_save_interview( sender, instance, created, raw, using, **kwargs ):
     # Update citations
-    instance.update_citations()
+    instance.update_references()
