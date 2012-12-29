@@ -29,7 +29,7 @@ urlpatterns = patterns('',
     url(r'^hist/?$', 'app.views.hist_overview'),
     url(r'^hist/results/?$', 'app.views.hist_results'),
     url(r'^hist/interview/(?P<interview_id>\d+)/?$', 'app.views.interview'),
-
+    url(r'^docs/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.PDF_ROOT,}),
     # Uncomment the admin/doc line below to enable admin documentation:
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
