@@ -5,7 +5,7 @@
 {% if interviews %}
 {% for interview in interviews %}
 {% with citations=interview.get_citations parts=interview.get_parts %}
-<label><a href="/hist/interview/{{ interview.id }}">{{ interview.title }}</a></label>
+<p><label><a href="/hist/interview/{{ interview.id }}">{{ interview.title }}</a></label></p>
 {% if citations %}
 <p class="small">{% trans "Referenced species" %}:&nbsp;{% for citation in citations %}{% ifchanged citation.cited_name %}{% if forloop.first %}{% else %}), {% endif %}{{citation.cited_name}} (p. <a href="/hist/interview/{{interview.id}}/?page={{citation.page}}">{{citation.page}}</a>{% else %}, <a href="/hist/interview/{{interview.id}}/?page={{citation.page}}">{{citation.page}}</a>{% endifchanged %}{% endfor %})
 </p>
