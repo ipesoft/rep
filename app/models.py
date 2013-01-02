@@ -692,6 +692,7 @@ class Interview( models.Model ):
     interviewers = models.CharField( _(u'Interviewers'), max_length=100 )
     interviewees = models.CharField( _(u'Interviewees'), max_length=100 )
     content      = models.TextField( _(u'Content'))
+    audio_url    = models.CharField( _(u'Audio URL'), max_length=200, null=True, blank=True )
 
     class Meta:
         verbose_name = _(u'interview')

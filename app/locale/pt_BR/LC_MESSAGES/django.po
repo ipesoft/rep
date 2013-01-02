@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-12 14:00-0600\n"
+"POT-Creation-Date: 2013-01-02 11:01-0600\n"
 "PO-Revision-Date: 2012-03-07 21:05-0300\n"
 "Last-Translator: Renato De Giovanni <renato@cria . org . br>\n"
 "Language-Team: pt_BR <LL@li.org>\n"
@@ -484,7 +484,7 @@ msgstr "Sigla única identificando a página"
 msgid "Language"
 msgstr "Língua"
 
-#: models.py:141 models.py:688
+#: models.py:141 models.py:688 models.py:879
 msgid "Title"
 msgstr "Título"
 
@@ -922,21 +922,29 @@ msgstr "Entrevistadores"
 msgid "Interviewees"
 msgstr "Entrevistados"
 
-#: models.py:697
+#: models.py:695
+msgid "Audio URL"
+msgstr "URL do áudio"
+
+#: models.py:698
 msgid "interview"
 msgstr "entrevista"
 
-#: models.py:698
+#: models.py:699
 msgid "interviews"
 msgstr "entrevistas"
 
-#: models.py:782
+#: models.py:870
 msgid "Cited name"
 msgstr "Nome citado"
 
-#: models.py:783
+#: models.py:871 models.py:880
 msgid "Page number"
 msgstr "Número da página"
+
+#: models.py:881
+msgid "Anchor id"
+msgstr "Id da âncora"
 
 #: views.py:14
 msgid "indifferent"
@@ -1006,10 +1014,14 @@ msgid "Referenced species"
 msgstr "Espécies mencionadas"
 
 #: templates/hist_results.html:16
+msgid "Highlights"
+msgstr "Destaques"
+
+#: templates/hist_results.html:30
 msgid "None"
 msgstr "Nenhuma"
 
-#: templates/interview.html:38
+#: templates/interview.html:105
 msgid "No content"
 msgstr "Sem conteúdo"
 
@@ -1120,4 +1132,3 @@ msgstr "Adicionar %(verbose_name)s"
 #: templates/admin/edit_inline/mytabular.html:118
 msgid "Remove"
 msgstr "Remover"
-
