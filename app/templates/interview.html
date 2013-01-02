@@ -16,7 +16,7 @@ $(document).ready(function(){
 
   $("#jquery_jplayer_1").jPlayer({
     ready: function (event) {
-      $(this).jPlayer("setMedia", { mp3:{{ interview.audio_url }}" });
+      $(this).jPlayer("setMedia", { mp3:"{{ interview.audio_url }}" });
     },
     swfPath: "/static/js/jplayer",
     solution: "html, flash",
