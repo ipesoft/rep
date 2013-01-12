@@ -147,7 +147,7 @@ function setmap() {
 <p><label>{% trans "Specific uses" %}:</label>&nbsp;{{ taxon.get_specific_uses|default:"-" }}</p>
 
 {% if taxon.description or taxon.ethno_notes %}
-<div class="section"><table width="100%"><tr><td width="90%" style="font-weight: bold;">{% trans "Description" %}</td><td style="text-align: right;"><a href="#" onclick="collapse('s1', 'i1');return false;"><img id="i1" src="/static/images/expand.gif" alt="expand" title="expand"/></a></td></tr></table></div>
+<div class="section" onclick="collapse('s1', 'i1');return false;"><table width="100%"><tr><td width="90%" style="font-weight: bold;">{% trans "Description" %}</td><td style="text-align: right;"><img id="i1" src="/static/images/expand.gif" alt="expand" title="expand"/></td></tr></table></div>
 <div id="s1" style="display: none;">
 {% if taxon.description %}<p>{{ taxon.description }}</p>{% endif %}
 {% if taxon.description and taxon.ethno_notes %}<hr/>{% endif %}
@@ -155,7 +155,7 @@ function setmap() {
 </div>
 {% endif %}
 
-<div class="section"><table width="100%"><tr><td width="90%"{% if taxon.has_general_features_data %} style="font-weight: bold;"{% endif %}>{% trans "General features" %}</td><td style="text-align: right;"><a href="#" onclick="collapse('s2', 'i2');return false;"><img id="i2" src="/static/images/expand.gif" alt="expand" title="expand"/></a></td></tr></table></div>
+<div class="section" onclick="collapse('s2', 'i2');return false;"><table width="100%"><tr><td width="90%"{% if taxon.has_general_features_data %} style="font-weight: bold;"{% endif %}>{% trans "General features" %}</td><td style="text-align: right;"><img id="i2" src="/static/images/expand.gif" alt="expand" title="expand"/></td></tr></table></div>
 <div id="s2" style="display: none;">
 {% with height=taxon.get_height dbh=taxon.get_dbh %}
 <p><label>{% trans "Tree size" %}:</label>{% if height %}&nbsp;{% trans "height" %}&nbsp;{{ taxon.get_height }}{% else %}{% if dbh == None %}&nbsp;-{% endif %}{% endif %}{% if dbh %}&nbsp;{% trans "DBH" %}&nbsp;{{ taxon.get_dbh }}<sup>{{ refs.SIZ }}</sup>{% endif %}</p>
@@ -172,7 +172,7 @@ function setmap() {
 <p><label>{% trans "Fruit type" %}:</label>&nbsp;{{ taxon.get_fr_type_display|default:"-" }}&nbsp;<sup>{{ refs.FRT }}</sup></p>
 </div>
 
-<div class="section"><table width="100%"><tr><td width="90%"{% if taxon.has_care_data %} style="font-weight: bold;"{% endif %}>{% trans "Care" %}</td><td style="text-align: right;"><a href="#" onclick="collapse('s3', 'i3');return false;"><img id="i3" src="/static/images/expand.gif" alt="expand" title="expand"/></a></td></tr></table></div>
+<div class="section" onclick="collapse('s3', 'i3');return false;"><table width="100%"><tr><td width="90%"{% if taxon.has_care_data %} style="font-weight: bold;"{% endif %}>{% trans "Care" %}</td><td style="text-align: right;"><img id="i3" src="/static/images/expand.gif" alt="expand" title="expand"/></td></tr></table></div>
 <div id="s3" style="display: none;">
 <p><label>{% trans "Pruning" %}:</label>&nbsp;{{ taxon.get_pruning|default:"-" }}&nbsp;<sup>{{ refs.PRU }}</sup></p>
 <p><label>{% trans "Pests and diseases" %}:</label>&nbsp;{{ taxon.pests_and_diseases|default:"-" }}&nbsp;<sup>{{ refs.PAD }}</sup></p>
@@ -180,7 +180,7 @@ function setmap() {
 <p><label>{% trans "Toxic or allergenic" %}:</label>&nbsp;{{ taxon.get_toxic_or_allergenic|default:"-" }}&nbsp;<sup>{{ refs.TOA }}</sup></p>
 </div>
 
-<div class="section"><table width="100%"><tr><td width="90%"{% if taxon.has_ecology_and_reproduction_data %} style="font-weight: bold;"{% endif %}>{% trans "Ecology & reproduction" %}</td><td style="text-align: right;"><a href="#" onclick="collapse('s4', 'i4');return false;"><img id="i4" src="/static/images/expand.gif" alt="expand" title="expand"/></a></td></tr></table></div>
+<div class="section" onclick="collapse('s4', 'i4');return false;"><table width="100%"><tr><td width="90%"{% if taxon.has_ecology_and_reproduction_data %} style="font-weight: bold;"{% endif %}>{% trans "Ecology & reproduction" %}</td><td style="text-align: right;"><img id="i4" src="/static/images/expand.gif" alt="expand" title="expand"/></td></tr></table></div>
 <div id="s4" style="display: none;">
 <p><label>{% trans "Successional group" %}:</label>&nbsp;{{ taxon.get_successional_group|default:"-" }}&nbsp;<sup>{{ refs.SUG }}</sup></p>
 <p><label>{% trans "Pollinators" %}:</label>&nbsp;{{ taxon.pollinators|default:"-" }}&nbsp;<sup>{{ refs.POL }}</sup></p>
@@ -192,7 +192,7 @@ function setmap() {
 {% if taxon.symbiotic_details %}<p>{{ taxon.symbiotic_details }}</p>{% endif %}
 </div>
 
-<div class="section"><table width="100%"><tr><td width="90%"{% if taxon.has_seedling_production_data %} style="font-weight: bold;"{% endif %}>{% trans "Seedling production" %}</td><td style="text-align: right;"><a href="#" onclick="collapse('s5', 'i5');return false;"><img id="i5" src="/static/images/expand.gif" alt="expand" title="expand"/></a></td></tr></table></div>
+<div class="section" onclick="collapse('s5', 'i5');return false;"><table width="100%"><tr><td width="90%"{% if taxon.has_seedling_production_data %} style="font-weight: bold;"{% endif %}>{% trans "Seedling production" %}</td><td style="text-align: right;"><img id="i5" src="/static/images/expand.gif" alt="expand" title="expand"/></td></tr></table></div>
 <div id="s5" style="display: none;">
 <p><label>{% trans "Seed collection" %}:</label>&nbsp;{{ taxon.get_seed_gathering|default:"-" }}&nbsp;<sup>{{ refs.SEC }}</sup></p>
 {% if taxon.seed_collection %}<p>{{ taxon.seed_collection }}</p>{% endif %}
@@ -207,7 +207,7 @@ function setmap() {
 <p><label>{% trans "Light requirements" %}:</label>&nbsp;{{ taxon.get_light_display|default:"-" }}&nbsp;<sup>{{ refs.LIG }}</sup></p>
 </div>
 
-<div class="section"><table width="100%"><tr><td width="90%"{% if taxon.has_bibliography_data %} style="font-weight: bold;"{% endif %}>{% trans "Bibliography" %}</td><td style="text-align: right;"><a href="#" onclick="collapse('s6', 'i6');return false;"><img id="i6" src="/static/images/expand.gif" alt="expand" title="expand"/></a></td></tr></table></div>
+<div class="section" onclick="collapse('s6', 'i6');return false;"><table width="100%"><tr><td width="90%"{% if taxon.has_bibliography_data %} style="font-weight: bold;"{% endif %}>{% trans "Bibliography" %}</td><td style="text-align: right;"><img id="i6" src="/static/images/expand.gif" alt="expand" title="expand"/></td></tr></table></div>
 <div id="s6" style="display: none;">
 {% for citation in citations %}
 <p class="bib"><sup>{{ citation.0 }}</sup>&nbsp;{{ citation.1 }}</p>
@@ -215,7 +215,7 @@ function setmap() {
 </div>
 
 {% if taxon.has_points %}
-<div class="section"><table width="100%"><tr><td width="90%" style="font-weight: bold;">{% trans "Occurrence locations" %}</td><td style="text-align: right;"><a href="#" onclick="collapse('s7', 'i7');setmap();return false;"><img id="i7" src="/static/images/expand.gif" alt="expand" title="expand"/></a></td></tr></table></div>
+<div class="section" onclick="collapse('s7', 'i7');setmap();return false;"><table width="100%"><tr><td width="90%" style="font-weight: bold;">{% trans "Occurrence locations" %}</td><td style="text-align: right;"><img id="i7" src="/static/images/expand.gif" alt="expand" title="expand"/></td></tr></table></div>
 <div id="s7" style="display: none; height: 320px;">
 </div>
 {% endif %}
