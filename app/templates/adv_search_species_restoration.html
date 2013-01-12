@@ -36,7 +36,8 @@ collapse('options', 'c_button');
 <input type="hidden" name="adv" value="1"/>
 <input type="hidden" name="restor" value="1"/>
 <table width="100%">
-<tr><td width="20%">{{ form.endemic.label_tag }}:</td><td width="80%">{{ form.endemic }}</td></tr>
+<tr><td width="20%">{{ form.family.label_tag }}:</td><td width="80%">{{ form.family }}</td></tr>
+<tr><td>{{ form.endemic.label_tag }}:</td><td width="80%">{{ form.endemic }}</td></tr>
 <tr><td>{{ form.rare.label_tag }}:</td><td>{{ form.rare }}</td></tr>
 <tr><td><label for="id_group">{% trans "Successional group" %}:</label></td><td>&nbsp;{{ form.sg_pioneer.label }}{{ form.sg_pioneer }}&nbsp;{{ form.sg_early_secondary.label }}{{ form.sg_early_secondary }}&nbsp;{{ form.sg_late_secondary.label }}{{ form.sg_late_secondary }}&nbsp;{{ form.sg_climax.label }}{{ form.sg_climax }}</td></tr>
 <tr><td><label for="id_growth">{% trans "Growth rate" %}</label>:</td><td>&nbsp;{{ form.gr_slow.label }}{{ form.gr_slow }}&nbsp;{{ form.gr_moderate.label }}{{ form.gr_moderate }}&nbsp;{{ form.gr_fast.label }}{{ form.gr_fast }}</td></tr>

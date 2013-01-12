@@ -16,9 +16,11 @@ null_boolean_choices = (( -1, no_matter_str ),( 1 , _(u'yes') ),( 0 , _(u'no') )
 
 # Form classes
 class CommonSearchForm(forms.Form):
+    family_choices = [('NULL', no_matter_str)] + list( Taxon.objects.filter(family__gte=u'a').distinct('family').order_by('family').values_list('family', 'family') )
     month_choices = [(0, no_matter_str)] + list(MONTHS)
     root_system_choices = [('NULL', no_matter_str)] + list(ROOT_SYSTEMS)
     status_choices = [('NULL', no_matter_str)] + [(c['status'], c['status']) for c in ConservationStatus.objects.values('status').order_by('status').distinct()]
+    family      = forms.ChoiceField(label=_(u'Family'), initial='NULL', choices=family_choices)
     rare        = forms.BooleanField(label=_(u'Rare'))
     endemic     = forms.BooleanField(label=_(u'Endemic'))
     # Growth rate
@@ -37,7 +39,7 @@ class CommonSearchForm(forms.Form):
     max_height   = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}))
     cr_min_diameter = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}))
     cr_max_diameter = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}))
-    status         = forms.ChoiceField(label=_(u'conservation status'), initial='NULL', choices=status_choices)
+    status         = forms.ChoiceField(label=_(u'Conservation status'), initial='NULL', choices=status_choices)
 
 class UrbanForestrySearchForm(CommonSearchForm):
     color_choices = [(0, no_matter_str)] + list(COLORS)
@@ -291,6 +293,8 @@ def search_species(request):
             get_params = get_params + '&' + k + '=' + v
         template_params['get_params'] = get_params
         # Advanced search filters
+        if ( request.GET.has_key('family') and request.GET['family'] != 'NULL'):
+            qs = qs.filter(family=request.GET['family'])
         if ( request.GET.has_key('endemic')):
             qs = qs.filter(endemic=True)
         if ( request.GET.has_key('rare')):
