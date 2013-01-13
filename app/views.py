@@ -1,6 +1,6 @@
 # coding=UTF-8
 
-from app.models import Page, Taxon, TaxonName, TaxonDataReference, COLORS, MONTHS, ROOT_SYSTEMS, CROWN_SHAPES, ConservationStatus, Interview
+from app.models import Page, Taxon, TaxonName, TaxonDataReference, COLORS, MONTHS, ROOT_SYSTEMS, CROWN_SHAPES, ConservationStatus, Interview, TypeOfUse, TaxonUse
 from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
@@ -62,6 +62,8 @@ class UrbanForestrySearchForm(CommonSearchForm):
     tr_crooked     = forms.BooleanField(label=_(u'Crooked'))
 
 class RestorationSearchForm(CommonSearchForm):
+    use_choices = TypeOfUse.objects.all().order_by('label').values_list('id', 'label')
+    uses = forms.MultipleChoiceField(label=_(u'Specific use'), choices=use_choices)
     symb_assoc = forms.ChoiceField(label=_(u'Symbiotic association'), initial=-1, choices=null_boolean_choices)
     # Successional group
     sg_pioneer         = forms.BooleanField(label=_(u'Pioneer'))
@@ -354,6 +356,10 @@ def search_species(request):
                 qs = qs.filter(symbiotic_assoc=True)
             elif request.GET['symb_assoc'] in ('0', 0):
                 qs = qs.filter(symbiotic_assoc=False)
+        # Specific uses
+        if ( request.GET.has_key('uses') ):
+            taxa_ids = TaxonUse.objects.filter(use__in=request.GET.getlist('uses')).values_list('taxon__id', flat=True).distinct('taxon__id')
+            qs = qs.filter(id__in=taxa_ids)
         # Limit the number of fields to be returned
         qs = qs.order_by('genus', 'species').only('id', 'genus', 'species')
         template_params['performed_query'] = True

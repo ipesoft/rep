@@ -39,19 +39,20 @@ collapse('options', 'c_button');
 <tr><td width="20%">{{ form.family.label_tag }}:</td><td width="80%">{{ form.family }}</td></tr>
 <tr><td>{{ form.endemic.label_tag }}:</td><td width="80%">{{ form.endemic }}</td></tr>
 <tr><td>{{ form.rare.label_tag }}:</td><td>{{ form.rare }}</td></tr>
-<tr><td><label for="id_group">{% trans "Successional group" %}:</label></td><td>&nbsp;{{ form.sg_pioneer.label }}{{ form.sg_pioneer }}&nbsp;{{ form.sg_early_secondary.label }}{{ form.sg_early_secondary }}&nbsp;{{ form.sg_late_secondary.label }}{{ form.sg_late_secondary }}&nbsp;{{ form.sg_climax.label }}{{ form.sg_climax }}</td></tr>
-<tr><td><label for="id_growth">{% trans "Growth rate" %}</label>:</td><td>&nbsp;{{ form.gr_slow.label }}{{ form.gr_slow }}&nbsp;{{ form.gr_moderate.label }}{{ form.gr_moderate }}&nbsp;{{ form.gr_fast.label }}{{ form.gr_fast }}</td></tr>
+<tr><td><label for="id_group">{% trans "Successional group" %}:</label></td><td>{{ form.sg_pioneer }}{{ form.sg_pioneer.label }}&nbsp;{{ form.sg_early_secondary }}{{ form.sg_early_secondary.label }}&nbsp;{{ form.sg_late_secondary }}{{ form.sg_late_secondary.label }}&nbsp;{{ form.sg_climax }}{{ form.sg_climax.label }}</td></tr>
+<tr><td><label for="id_growth">{% trans "Growth rate" %}</label>:</td><td>{{ form.gr_slow }}{{ form.gr_slow.label }}&nbsp;{{ form.gr_moderate }}{{ form.gr_moderate.label }}&nbsp;{{ form.gr_fast }}{{ form.gr_fast.label }}</td></tr>
 <tr><td><label for="id_height">{% trans "height"|capfirst %}</label>:</td><td>{{ form.min_height }}&nbsp;{% trans "to" %}&nbsp;{{ form.max_height }}m</td></tr>
 <tr><td><label for="id_diameter">{% trans "Crown diameter" %}</label>:</td><td>{{ form.cr_min_diameter }}&nbsp;{% trans "to" %}&nbsp;{{ form.cr_max_diameter }}m</td></tr>
 <tr><td>{{ form.fl_month.label_tag }}:</td><td>{{ form.fl_month }}</td></tr>
-<tr><td><label for="id_foliage">{% trans "Foliage persistence" %}:</label></td><td>&nbsp;{{ form.fo_evergreen.label }}{{ form.fo_evergreen }}&nbsp;{{ form.fo_semideciduous.label }}{{ form.fo_semideciduous }}&nbsp;{{ form.fo_deciduous.label }}{{ form.fo_deciduous }}</td></tr>
-<tr><td><label for="id_dispersion">{% trans "Seed dispersal" %}:</label></td><td>&nbsp;{{ form.dt_anemochorous.label }}{{ form.dt_anemochorous }}&nbsp;{{ form.dt_autochorous.label }}{{ form.dt_autochorous }}&nbsp;{{ form.dt_hydrochorous.label }}{{ form.dt_hydrochorous }}&nbsp;{{ form.dt_zoochorous.label }}{{ form.dt_zoochorous }}</td></tr>
+<tr><td><label for="id_foliage">{% trans "Foliage persistence" %}:</label></td><td>{{ form.fo_evergreen }}{{ form.fo_evergreen.label }}&nbsp;{{ form.fo_semideciduous }}{{ form.fo_semideciduous.label }}&nbsp;{{ form.fo_deciduous }}{{ form.fo_deciduous.label }}</td></tr>
+<tr><td><label for="id_dispersion">{% trans "Seed dispersal" %}:</label></td><td>{{ form.dt_anemochorous }}{{ form.dt_anemochorous.label }}&nbsp;{{ form.dt_autochorous }}{{ form.dt_autochorous.label }}&nbsp;{{ form.dt_hydrochorous }}{{ form.dt_hydrochorous.label }}&nbsp;{{ form.dt_zoochorous }}{{ form.dt_zoochorous.label }}</td></tr>
 <tr><td>{{ form.fr_month.label_tag }}:</td><td>{{ form.fr_month }}</td></tr>
 <tr><td>{{ form.r_type.label_tag }}:</td><td>{{ form.r_type }}</td></tr>
 <tr><td>{{ form.pruning.label_tag }}:</td><td>{{ form.pruning }}</td></tr>
 <tr><td>{{ form.symb_assoc.label_tag }}:</td><td>{{ form.symb_assoc }}</td></tr>
 {% if form.status_choices|length > 0 %}
 <tr><td>{{ form.status.label_tag }}:</td><td>{{ form.status }}</td></tr>
+<tr><td valign="top">{{ form.uses.label_tag }}:</td><td>{{ form.uses }}</td></tr>
 {% endif %}
 </table>
 <center><input type="submit" class="button" name="search" value="{% trans "search" %}"/></center>
