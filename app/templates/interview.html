@@ -5,7 +5,7 @@
 
 {% block header %}
 <link rel="stylesheet" type="text/css" href="/static/css/digg_paginator.css" />
-{% if interview.audio_url != None %}
+{% if interview.audio_url|length > 0 %}
 <link rel="stylesheet" type="text/css" href="/static/css/jplayer/blue.monday/jplayer.blue.monday.css" />
 <script type="text/javascript" src="/static/js/jquery/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="/static/js/jplayer/jquery.jplayer.min.js"></script>
