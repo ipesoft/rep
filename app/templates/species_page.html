@@ -127,31 +127,73 @@ function setmap() {
 
 {% block body_params %}onload="expand_content()"{% endblock body_params %}
 
-
 {% block content %}
-{% with synonyms=taxon.get_synonyms popnames=taxon.get_popular_names %}
-<h1><i>{{ taxon.genus }}&nbsp;{{ taxon.species }}</i>&nbsp;{{ taxon.author }}</h1>
-{% if popnames %}<h2>{% for pop in popnames %}{{pop.name}}{% if forloop.last %}{% else %}, {% endif %}{% endfor %}</h2>{% endif %}
-{% if synonyms %}<p><label>{% trans "Synonyms" %}:&nbsp;</label>{% for syn in synonyms %}{{syn.name}}{% if forloop.last %}{% else %}, {% endif %}{% endfor %}</p>{% endif %}
-<p><label>{% trans "Family" %}:</label>&nbsp;{{ taxon.family|default:"-" }}</p>
-{% endwith %}
-<p><label>{% trans "Endemic" %}:</label>&nbsp;{{ taxon.get_endemic|default:"-" }}&nbsp;<sup>{{ refs.END }}</sup></p>
-<p><label>{% trans "Rare" %}:</label>&nbsp;{{ taxon.get_rare|default:"-" }}{% if taxon.max_density %}&nbsp;({{ taxon.max_density }}&nbsp;{% trans "individuals per hectare" %}){% endif %}<sup>{{ refs.RAR }}</sup></p>
-{% with conservation_recs=taxon.conservationstatus_set.all %}
-{% if conservation_recs|length > 0 %}
-<p><label>{% trans "conservation status" %}:&nbsp;</label>{% for rec in conservation_recs %}{{ rec.status }}&nbsp;({{ rec.source.acronym }}){% endfor %}
-{% endif %}
-{% endwith %}
-<p><label>{% trans "Special features" %}:</label>&nbsp;{{ taxon.get_special_features|default:"-" }}&nbsp;<sup>{{ refs.SPE }}</sup></p>
-<p><label>{% trans "Uses" %}:</label>&nbsp;{{ taxon.get_use }}</p>
-<p><label>{% trans "Specific uses" %}:</label>&nbsp;{{ taxon.get_specific_uses|default:"-" }}</p>
+<table width="100%">
+  <tr>
+   <td>
+     <h1><i>{{ taxon.genus }}&nbsp;{{ taxon.species }}</i>&nbsp;{{ taxon.author }}</h1>
+   </td>
+  </tr>
+  <tr>
+   <td>
+    <div style="position: relative;">
+     {% if taxon.has_pictures %}
+     <div style="float: right; margin-left: 15px;">
+     <table id="flickr_badge_uber_wrapper" cellpadding="0" cellspacing="0">
+       <tr>
+         <td>
+           <table cellpadding="0" cellspacing="10" id="flickr_badge_wrapper">
+           <script type="text/javascript" src="http://www.flickr.com/badge_code_v2.gne?show_name=1&count=3&display=latest&size=t&layout=h&context=in%2Fpool-encyclopedia_of_life%2F&source=group_tag&group=806927%40N20&tag=taxonomy%3Abinomial%3D{{ taxon.genus }}+{{ taxon.species }}"></script>
+             <tr>
+               <td id="flickr_badge_source">
+               </td>
+             </tr>
+           </table>
+         </td>
+       </tr>
+       <tr>
+         <td width="100%" valign="middle" align="right"><a href="http://www.flickr.com/groups/encyclopedia_of_life/pool/tags/taxonomy:binomial={{ taxon.genus }} {{ taxon.species }}" style="color: #6d6d6d;"><img src="{{ STATIC_URL }}images/eol.png" width="33" height="15" title="Encyclopedia of Life"/> {% trans "images pool" %}</a> <a href="http://www.flickr.com" id="flickr_www">www.<strong style="color:#3993ff">flick<span style="color:#ff1c92">r</span></strong>.com</a>
+         </td>
+       </tr>
+     </table>
+     </div>
+    {% endif %}
+    {% with synonyms=taxon.get_synonyms popnames=taxon.get_popular_names %}
+    {% if popnames %}<h2>{% for pop in popnames %}{{pop.name}}{% if forloop.last %}{% else %}, {% endif %}{% endfor %}</h2>{% endif %}
+    <p><label>{% trans "Family" %}:</label>&nbsp;{{ taxon.family|default:"-" }}</p>
+    {% if synonyms %}<p><label>{% trans "Synonyms" %}:&nbsp;</label>{% for syn in synonyms %}{{syn.name}}{% if forloop.last %}{% else %}, {% endif %}{% endfor %}</p>{% endif %}
+    {% endwith %}
+    <p><label>{% trans "Endemic" %}:</label>&nbsp;{{ taxon.get_endemic|default:"-" }}&nbsp;<sup>{{ refs.END }}</sup>&nbsp;&nbsp;&nbsp;<label>{% trans "Rare" %}:</label>&nbsp;{{ taxon.get_rare|default:"-" }}{% if taxon.max_density %}&nbsp;({{ taxon.max_density }}&nbsp;{% trans "individuals per hectare" %}){% endif %}<sup>{{ refs.RAR }}</sup></p>
+    {% with conservation_recs=taxon.conservationstatus_set.all %}
+    {% if conservation_recs|length > 0 %}
+    <p><label>{% trans "conservation status" %}:&nbsp;</label>{% for rec in conservation_recs %}{{ rec.status }}&nbsp;({{ rec.source.acronym }}){% endfor %}
+    {% endif %}
+    {% endwith %}
+    <p><label>{% trans "Special features" %}:</label>&nbsp;{{ taxon.get_special_features|default:"-" }}&nbsp;<sup>{{ refs.SPE }}</sup></p>
+    <p><label>{% trans "Uses" %}:</label>&nbsp;{{ taxon.get_use }}</p>
+    {% if taxon.description %}<p style="text-align: justify;">{{ taxon.description }}</p>{% endif %}
+   </div>
+   </td>
+  </tr>
+</table>
 
-{% if taxon.description or taxon.ethno_notes %}
-<div class="section" onclick="collapse('s1', 'i1');return false;"><table width="100%"><tr><td width="90%" style="font-weight: bold;">{% trans "Description" %}</td><td style="text-align: right;"><img id="i1" src="/static/images/expand.gif" alt="expand" title="expand"/></td></tr></table></div>
+{% if taxon.ethno_notes or taxon.has_history %}
+<div class="section" onclick="collapse('s1', 'i1');return false;"><table width="100%"><tr><td width="90%" style="font-weight: bold;">{% trans "Ethnobotany & History" %}</td><td style="text-align: right;"><img id="i1" src="/static/images/expand.gif" alt="expand" title="expand"/></td></tr></table></div>
 <div id="s1" style="display: none;">
-{% if taxon.description %}<p>{{ taxon.description }}</p>{% endif %}
-{% if taxon.description and taxon.ethno_notes %}<hr/>{% endif %}
-{% if taxon.ethno_notes %}<p>{{ taxon.ethno_notes }}</p>{% endif %}
+{% if taxon.ethno_notes %}<p style="text-align: justify;">{{ taxon.ethno_notes }}</p>{% endif %}
+<p><label>{% trans "Specific uses" %}:</label>&nbsp;{{ taxon.get_specific_uses|default:"-" }}</p>
+{% if taxon.ethno_notes and taxon.has_history %}<hr/>{% endif %}
+{% if taxon.has_history %}
+  <table width="100%" cellspacing="0">
+   <tr>
+    <td width="20%" valign="top">
+      <label>{% trans "Cited in" %}:</label>
+    </td>
+    <td valign="top">{% for citation in taxon.get_citations %}{% ifchanged citation.interview %}{% if forloop.first %}{% else %})</p> {% endif %}<p style="margin-top: 0px;">{{citation.interview.title}} (p. <a href="/hist/interview/{{citation.interview.id}}/?page={{citation.page}}">{{citation.page}}</a>{% else %}, <a href="/hist/interview/{{citation.interview.id}}/?page={{citation.page}}">{{citation.page}}</a>{% endifchanged %}{% endfor %})</p>
+    </td>
+   </tr>
+  </table>
+{% endif %}
 </div>
 {% endif %}
 
