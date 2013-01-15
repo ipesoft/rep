@@ -175,6 +175,184 @@ class TypeOfUse( models.Model ):
     def __unicode__(self):
         return unicode(self.label)
 
+class Interview( models.Model ):
+    "Interview"
+    title        = models.TextField( _(u'Title') )
+    locality     = models.TextField( _(u'Locality'), null=True, blank=True )
+    when         = models.DateTimeField( u'When', null=True, blank=True )
+    duration     = models.CharField( _(u'Duration'), max_length=10, null=True, blank=True )
+    interviewers = models.CharField( _(u'Interviewers'), max_length=100 )
+    interviewees = models.CharField( _(u'Interviewees'), max_length=100 )
+    content      = models.TextField( _(u'Content'))
+    audio_url    = models.CharField( _(u'Audio URL'), max_length=200, null=True, blank=True )
+
+    class Meta:
+        verbose_name = _(u'interview')
+        verbose_name_plural = _(u'interviews')
+        ordering = [u'title']
+
+    def __unicode__(self):
+        return unicode(self.title)
+
+    def get_citations(self):
+        return TaxonCitation.objects.filter(interview=self).order_by('cited_name', 'page')
+
+    def get_parts(self):
+        return InterPart.objects.filter(interview=self).order_by('page')
+
+    def update_references(self):
+        import re
+        if len(self.content):
+            import xml.etree.ElementTree as etree
+            from app.interview_paginator import InterviewPaginator
+            paginator = InterviewPaginator(self.content, 1, 0, True, 40)
+            cit_keys = []
+            part_keys = []
+            for page_num in range(1, paginator.num_pages+1):
+                page_obj = paginator.page(page_num)
+                # Note: There must always one object
+                # Note: without the encode I get psycopg "can't adapt" error (??)
+                content = page_obj.object_list[0].encode('utf-8')
+                root = etree.fromstring('<?xml version="1.0" encoding="UTF-8"?><x>'+content+'</x>')
+                nodes = root.findall(".//a")
+                for node in nodes:
+                    #### Species citations ###############
+                    if node.get('class') == 'sp_citation':
+                        name = node.text.lower()
+                        if node.get('href') is None:
+                            recs = TaxonCitation.objects.filter(interview=self.id, page=page_num, taxon__isnull=True, cited_name=name)
+                            if len(recs) > 0:
+                                # same citation already exists in the database
+                                cit_keys.append(recs[0].id)
+                            else:
+                                # new or changed citation
+                                rec = TaxonCitation(interview=self, page=page_num, cited_name=name)
+                                rec.save()
+                                cit_keys.append(rec.id)
+                        else:
+                            url = node.get('href')
+                            # patterns:
+                            # search by name: /sp/?name=sp_name
+                            # exact link: /sp/18
+                            pos = url.find('?name=')
+                            if pos > 0:
+                                recs = TaxonCitation.objects.filter(interview=self, page=page_num, taxon__isnull=True, cited_name=name)
+                                if len(recs) > 0:
+                                    # same citation already exists in the database
+                                    cit_keys.append(recs[0].id)
+                                else:
+                                    # new or changed citation
+                                    rec = TaxonCitation(interview=self, page=page_num, cited_name=name)
+                                    rec.save()
+                                    cit_keys.append(rec.id)
+                            else:
+                                # extract taxon id
+                                m = re.search('\/sp\/(\d+)\/?', url)
+                                if len( m.groups() ) == 1:
+                                    taxon_id = int( m.group(1) )
+                                    try:
+                                        taxon = Taxon.objects.get(pk=taxon_id)
+                                        recs = TaxonCitation.objects.filter(interview=self, taxon=taxon, page=page_num, cited_name=name)
+                                        if len(recs) > 0:
+                                            # same citation already exists in the database
+                                            cit_keys.append(recs[0].id)
+                                        else:
+                                            # new or changed citation
+                                            rec = TaxonCitation(interview=self, taxon=taxon, page=page_num, cited_name=name)
+                                            rec.save()
+                                            cit_keys.append(rec.id)
+                                    except Taxon.DoesNotExist:
+                                        raise Exception('Taxon '+taxon_id+' referenced in page '+str(page_num)+' does not exist!')
+                                else:
+                                    raise Exception('Bad formatted taxon reference link in page '+str(page_num))
+                    #### Parts #########################
+                    elif node.get('class') == 'part':
+                        title = node.text
+                        anchor_id = node.get('id')
+                        try:
+                            rec = InterPart.objects.get(interview=self.id, anchor=anchor_id)
+                            # Part already exists in the database
+                            if rec.page != page_num or rec.title != title:
+                                rec.page = page_num
+                                rec.title = title
+                                rec.save()
+                        except InterPart.DoesNotExist:
+                            # new or changed anchor
+                            rec = InterPart(interview=self, page=page_num, title=title, anchor=anchor_id)
+                            rec.save()
+                        part_keys.append(rec.id)
+            # Remove out dated references
+            TaxonCitation.objects.filter(interview=self).exclude(id__in=cit_keys).delete()
+            InterPart.objects.filter(interview=self).exclude(id__in=part_keys).delete()
+        else:
+            TaxonCitation.objects.filter(interview=self).delete()
+            InterPart.objects.filter(interview=self).delete()
+
+    def get_pdf_name(self):
+        return 'interview_' + str(self.id) + '.pdf'
+
+    def generate_pdf(self):
+        pdf_file = settings.PDF_ROOT + self.get_pdf_name()
+        from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+        from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+        from reportlab.lib.enums import TA_JUSTIFY
+        from reportlab.rl_config import defaultPageSize
+        from reportlab.lib.units import inch
+        PAGE_HEIGHT=defaultPageSize[1]
+        PAGE_WIDTH=defaultPageSize[0]
+        styles = getSampleStyleSheet()
+        styles.add( ParagraphStyle(name='Justify', alignment=TA_JUSTIFY) )
+        doc = SimpleDocTemplate( pdf_file )
+        Story = [Spacer(1,2*inch)]
+        style = styles['Justify']
+        px = 7.0
+        py = 0.75
+        # Page functions
+        def myFirstPage( canvas, doc ):
+            canvas.saveState()
+            x1 = 70
+            x2 = 520
+            y1 = 700
+            y2 = 820
+            crosshairs = [(x1,y1,x1,y2), (x1,y2,x2,y2), (x2,y2,x2,y1), (x2,y1,x1,y1)]
+            canvas.lines(crosshairs)
+            canvas.setFont( 'Times-Roman', 12 )
+            canvas.drawString( 1.1*inch, 11.1*inch, '%s: %s' % (u'Entrevistados', self.interviewees) )
+            canvas.drawString( 1.1*inch, 10.8*inch, '%s: %s' % (u'Entrevista e transcrição', self.interviewers) )
+            canvas.drawString( 1.1*inch, 10.5*inch, '%s: %s' % (u'Data', self.when.strftime("%d/%m/%Y")) )
+            canvas.drawString( 1.1*inch, 10.2*inch, '%s: %s' % (u'Local', self.locality) )
+            canvas.drawString( 1.1*inch, 9.9*inch, '%s: %s' % (u'Horas gravadas', self.duration) )
+            canvas.setFont( 'Times-Roman', 9 )
+            canvas.drawString( 1.1*inch, 9.5*inch, u'Palavra[? – tempo]: leitura da palavra correta ou aproximada.')
+            canvas.drawString( 1.1*inch, 9.3*inch, u'Frase [? – tempo]: palavra ou trecho indecifrável.')
+            canvas.drawString( 1.1*inch, 9.1*inch, u'- Frase: quando eles reproduzem suas falas ou de outras pessoas.')
+            canvas.setFont( 'Times-Roman', 12 )
+            canvas.drawString( 1.1*inch, 8.8*inch, u'TRANSCRIÇÃO')
+            canvas.setFont( 'Times-Roman', 9 )
+            canvas.drawString( px*inch, py*inch,"p. %d" % (doc.page) )
+            canvas.restoreState()
+        def myLaterPages( canvas, doc ):
+            canvas.saveState()
+            canvas.setFont( 'Times-Roman', 9 )
+            canvas.drawString( px*inch, py*inch,"p. %d" % (doc.page) )
+            canvas.restoreState()
+        # Strip tags
+        content = re.compile(r'<[^<]*?/?>').sub('', self.content)
+        # Loop over paragraphs
+        paragraphs = content.split("\n")
+        for paragraph in paragraphs:
+            try:
+                sep = paragraph.index(': ', 1)
+                # Only colons close to the beginning
+                if sep < 30:
+                    paragraph = '<b>' + paragraph[:sep] + '</b>' + paragraph[sep:]
+            except:
+                pass
+            p = Paragraph( paragraph, style )
+            Story.append( p )
+            Story.append( Spacer(1, 0.2*inch) )
+        doc.build( Story, onFirstPage=myFirstPage, onLaterPages=myLaterPages )
+
 class Taxon( models.Model ):
     "Plant taxon"
     genus      = models.CharField( _(u'Genus'), max_length=50 )
@@ -187,6 +365,7 @@ class Taxon( models.Model ):
     description = models.TextField( _(u'General description'), null=True, blank=True )
     ethno_notes = models.TextField( _(u'Ethnobotany description'), null=True, blank=True )
     references = models.ManyToManyField( Reference, through='TaxonDataReference' )
+    citations = models.ManyToManyField( Interview, through='TaxonCitation' )
     restoration = models.BooleanField( _(u'Restoration') )
     urban_use   = models.BooleanField( _(u'Urban forestry') )
     uses      = models.ManyToManyField( TypeOfUse, through='TaxonUse' )
@@ -258,6 +437,7 @@ class Taxon( models.Model ):
     seeds_per_weight = models.IntegerField( _(u'Quantity'), help_text=_(u'num/Kg'), null=True, blank=True )
     #soil = models.CharField( _(u'Soil'), null=True, blank=True, choices=SOIL_TYPES, max_length=1 )
     light = models.CharField( _(u'Classification'), null=True, blank=True, choices=LIGHT_REQUIREMENTS, max_length=1 )
+    has_pictures = models.BooleanField( _(u'Has pictures') )
     created = models.DateTimeField( u'Date created', auto_now_add = True )
     modified = models.DateTimeField( u'Date modified', null=True )
 
@@ -580,6 +760,12 @@ class Taxon( models.Model ):
     def has_points( self ):
         return self.taxonoccurrence_set.all().count()
 
+    def has_history( self ):
+        return self.citations.count()
+
+    def get_citations( self ):
+        return TaxonCitation.objects.filter(taxon=self).order_by('interview', 'page')
+
 class TaxonName( models.Model ):
     "Taxon name"
     taxon = models.ForeignKey(Taxon)
@@ -682,184 +868,6 @@ class TaxonOccurrence( models.Model ):
                 retval = -1*retval
             return retval
         raise Exception('Could not interpret latitude: '+self.lat_orig)
-
-class Interview( models.Model ):
-    "Interview"
-    title        = models.TextField( _(u'Title') )
-    locality     = models.TextField( _(u'Locality'), null=True, blank=True )
-    when         = models.DateTimeField( u'When', null=True, blank=True )
-    duration     = models.CharField( _(u'Duration'), max_length=10, null=True, blank=True )
-    interviewers = models.CharField( _(u'Interviewers'), max_length=100 )
-    interviewees = models.CharField( _(u'Interviewees'), max_length=100 )
-    content      = models.TextField( _(u'Content'))
-    audio_url    = models.CharField( _(u'Audio URL'), max_length=200, null=True, blank=True )
-
-    class Meta:
-        verbose_name = _(u'interview')
-        verbose_name_plural = _(u'interviews')
-        ordering = [u'title']
-
-    def __unicode__(self):
-        return unicode(self.title)
-
-    def get_citations(self):
-        return TaxonCitation.objects.filter(interview=self).order_by('cited_name', 'page')
-
-    def get_parts(self):
-        return InterPart.objects.filter(interview=self).order_by('page')
-
-    def update_references(self):
-        import re
-        if len(self.content):
-            import xml.etree.ElementTree as etree
-            from app.interview_paginator import InterviewPaginator
-            paginator = InterviewPaginator(self.content, 1, 0, True, 40)
-            cit_keys = []
-            part_keys = []
-            for page_num in range(1, paginator.num_pages+1):
-                page_obj = paginator.page(page_num)
-                # Note: There must always one object
-                # Note: without the encode I get psycopg "can't adapt" error (??)
-                content = page_obj.object_list[0].encode('utf-8')
-                root = etree.fromstring('<?xml version="1.0" encoding="UTF-8"?><x>'+content+'</x>')
-                nodes = root.findall(".//a")
-                for node in nodes:
-                    #### Species citations ###############
-                    if node.get('class') == 'sp_citation':
-                        name = node.text.lower()
-                        if node.get('href') is None:
-                            recs = TaxonCitation.objects.filter(interview=self.id, page=page_num, taxon__isnull=True, cited_name=name)
-                            if len(recs) > 0:
-                                # same citation already exists in the database
-                                cit_keys.append(recs[0].id)
-                            else:
-                                # new or changed citation
-                                rec = TaxonCitation(interview=self, page=page_num, cited_name=name)
-                                rec.save()
-                                cit_keys.append(rec.id)
-                        else:
-                            url = node.get('href')
-                            # patterns:
-                            # search by name: /sp/?name=sp_name
-                            # exact link: /sp/18
-                            pos = url.find('?name=')
-                            if pos > 0:
-                                recs = TaxonCitation.objects.filter(interview=self, page=page_num, taxon__isnull=True, cited_name=name)
-                                if len(recs) > 0:
-                                    # same citation already exists in the database
-                                    cit_keys.append(recs[0].id)
-                                else:
-                                    # new or changed citation
-                                    rec = TaxonCitation(interview=self, page=page_num, cited_name=name)
-                                    rec.save()
-                                    cit_keys.append(rec.id)
-                            else:
-                                # extract taxon id
-                                m = re.search('\/sp\/(\d+)\/?', url)
-                                if len( m.groups() ) == 1:
-                                    taxon_id = int( m.group(1) )
-                                    try:
-                                        taxon = Taxon.objects.get(pk=taxon_id)
-                                        recs = TaxonCitation.objects.filter(interview=self, taxon=taxon, page=page_num, cited_name=name)
-                                        if len(recs) > 0:
-                                            # same citation already exists in the database
-                                            cit_keys.append(recs[0].id)
-                                        else:
-                                            # new or changed citation
-                                            rec = TaxonCitation(interview=self, taxon=taxon, page=page_num, cited_name=name)
-                                            rec.save()
-                                            cit_keys.append(rec.id)
-                                    except Taxon.DoesNotExist:
-                                        raise Exception('Taxon '+taxon_id+' referenced in page '+str(page_num)+' does not exist!')
-                                else:
-                                    raise Exception('Bad formatted taxon reference link in page '+str(page_num))
-                    #### Parts #########################
-                    elif node.get('class') == 'part':
-                        title = node.text
-                        anchor_id = node.get('id')
-                        try:
-                            rec = InterPart.objects.get(interview=self.id, anchor=anchor_id)
-                            # Part already exists in the database
-                            if rec.page != page_num or rec.title != title:
-                                rec.page = page_num
-                                rec.title = title
-                                rec.save()
-                        except InterPart.DoesNotExist:
-                            # new or changed anchor
-                            rec = InterPart(interview=self, page=page_num, title=title, anchor=anchor_id)
-                            rec.save()
-                        part_keys.append(rec.id)
-            # Remove out dated references
-            TaxonCitation.objects.filter(interview=self).exclude(id__in=cit_keys).delete()
-            InterPart.objects.filter(interview=self).exclude(id__in=part_keys).delete()
-        else:
-            TaxonCitation.objects.filter(interview=self).delete()
-            InterPart.objects.filter(interview=self).delete()
-
-    def get_pdf_name(self):
-        return 'interview_' + str(self.id) + '.pdf'
-
-    def generate_pdf(self):
-        pdf_file = settings.PDF_ROOT + self.get_pdf_name()
-        from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
-        from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-        from reportlab.lib.enums import TA_JUSTIFY
-        from reportlab.rl_config import defaultPageSize
-        from reportlab.lib.units import inch
-        PAGE_HEIGHT=defaultPageSize[1]
-        PAGE_WIDTH=defaultPageSize[0]
-        styles = getSampleStyleSheet()
-        styles.add( ParagraphStyle(name='Justify', alignment=TA_JUSTIFY) )
-        doc = SimpleDocTemplate( pdf_file )
-        Story = [Spacer(1,2*inch)]
-        style = styles['Justify']
-        px = 7.0
-        py = 0.75
-        # Page functions
-        def myFirstPage( canvas, doc ):
-            canvas.saveState()
-            x1 = 70
-            x2 = 520
-            y1 = 700
-            y2 = 820
-            crosshairs = [(x1,y1,x1,y2), (x1,y2,x2,y2), (x2,y2,x2,y1), (x2,y1,x1,y1)]
-            canvas.lines(crosshairs)
-            canvas.setFont( 'Times-Roman', 12 )
-            canvas.drawString( 1.1*inch, 11.1*inch, '%s: %s' % (u'Entrevistados', self.interviewees) )
-            canvas.drawString( 1.1*inch, 10.8*inch, '%s: %s' % (u'Entrevista e transcrição', self.interviewers) )
-            canvas.drawString( 1.1*inch, 10.5*inch, '%s: %s' % (u'Data', self.when.strftime("%d/%m/%Y")) )
-            canvas.drawString( 1.1*inch, 10.2*inch, '%s: %s' % (u'Local', self.locality) )
-            canvas.drawString( 1.1*inch, 9.9*inch, '%s: %s' % (u'Horas gravadas', self.duration) )
-            canvas.setFont( 'Times-Roman', 9 )
-            canvas.drawString( 1.1*inch, 9.5*inch, u'Palavra[? – tempo]: leitura da palavra correta ou aproximada.')
-            canvas.drawString( 1.1*inch, 9.3*inch, u'Frase [? – tempo]: palavra ou trecho indecifrável.')
-            canvas.drawString( 1.1*inch, 9.1*inch, u'- Frase: quando eles reproduzem suas falas ou de outras pessoas.')
-            canvas.setFont( 'Times-Roman', 12 )
-            canvas.drawString( 1.1*inch, 8.8*inch, u'TRANSCRIÇÃO')
-            canvas.setFont( 'Times-Roman', 9 )
-            canvas.drawString( px*inch, py*inch,"p. %d" % (doc.page) )
-            canvas.restoreState()
-        def myLaterPages( canvas, doc ):
-            canvas.saveState()
-            canvas.setFont( 'Times-Roman', 9 )
-            canvas.drawString( px*inch, py*inch,"p. %d" % (doc.page) )
-            canvas.restoreState()
-        # Strip tags
-        content = re.compile(r'<[^<]*?/?>').sub('', self.content)
-        # Loop over paragraphs
-        paragraphs = content.split("\n")
-        for paragraph in paragraphs:
-            try:
-                sep = paragraph.index(': ', 1)
-                # Only colons close to the beginning
-                if sep < 30:
-                    paragraph = '<b>' + paragraph[:sep] + '</b>' + paragraph[sep:]
-            except:
-                pass
-            p = Paragraph( paragraph, style )
-            Story.append( p )
-            Story.append( Spacer(1, 0.2*inch) )
-        doc.build( Story, onFirstPage=myFirstPage, onLaterPages=myLaterPages )
 
 class TaxonCitation( models.Model ):
     "Taxon citation in an interview"
