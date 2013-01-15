@@ -5,7 +5,7 @@
 
 {% block header %}
 <link rel="stylesheet" type="text/css" href="/static/css/digg_paginator.css" />
-{% if interview.audio_url|length > 0 %}
+{% if interview.audio_url != None and interview.audio_url|length > 0 %}
 <link rel="stylesheet" type="text/css" href="/static/css/jplayer/blue.monday/jplayer.blue.monday.css" />
 <script type="text/javascript" src="/static/js/jquery/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="/static/js/jplayer/jquery.jplayer.min.js"></script>
@@ -49,7 +49,7 @@ $(document).ready(function(){
 <dd>- Frase: quando eles reproduzem suas falas ou de outras pessoas.</dd>
 </dl>
 
-{% if interview.audio_url|length > 0 %}
+{% if interview.audio_url != None and interview.audio_url|length > 0 %}
 <div id="jquery_jplayer_1" class="jp-jplayer"></div>
 <div id="jp_container_1" class="jp-audio">
   <div class="jp-type-single">
