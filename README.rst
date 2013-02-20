@@ -9,19 +9,26 @@ Regional Flora is a web application designed to store and share data about regio
 - Combine history, ethnobotany and forest data in a new way, including information about the use of each species and its relationship with the local community over the time;
 - Provide a replicable model that can be applied to other regions interested in a similar system.
 
-This work is part of a larger project funded by the JRS Biodiversity Foundation and coordinated by IPÊ (Instituto de Pesquisas Ecológicas) for the region of Nazaré Paulista, São Paulo, Brazil.
+This work is part of a larger project funded by the JRS Biodiversity Foundation and coordinated by IPÊ (Instituto de Pesquisas Ecológicas) and originally created for the region of Nazaré Paulista, São Paulo, Brazil.
 
 The system was developed in Python using the Django Framework.
 
 Features
 ========
 
-The system is still under development and only the first module is currently available, including an administrative interface to register species data and a public interface to search and browse the registered species. More than 50 fields can be used to describe species, including taxonomic data, synonyms, vernacular names, special features for urban forestry, data about ecology and reproduction, as well as data for restoration such as guidelines for seedling production. The two other modules to be developed are related to ethnobotany and history, respectively.
+- Searchable database of plants with more than 50 fields including description, taxonomic data, synonyms, vernacular names, uses, special features for urban forestry, data about ecology and reproduction, as well as data for restoration such as guidelines for seedling production (the database must be populated according to the Flora of a particular region).
+- Possibility to share species data with the Encyclopedia of Life.
+- Images stored on Flickr and shared with the Encyclopedia of Life are also displayed on the system.
+- Ethnobotany data can be stored by indicating specific uses for the plants and a special description. 
+- Historical data can be stored by means of interviews, including textual content and audio. A specific tagging mechanism can be used in the content allowing interviews to be linked with species. Another tagging mechanism can be used to select highlights from the interview.
+- Species, ethnobotany and history are all interlinked, for instance allowing users reading an interview to click on a species mentioned in the text to access more details about it, including ethnobotany information and images.
+- Administrative interface to manage data.
+- Customizable public interface to search and browse existing content.
 
 Installation
 ============
 
-Besides a web server, you'll need Django and a relational database compatible with Django. The application was developed with Apache 2.2, PostgreSQL 8.4 and Django 1.3. After installing the basic software, create a new database, copy settings.py.ref to settings.py and edit the configuration. If you want to learn more about Django settings you can look at: https://docs.djangoproject.com/en/1.3/topics/settings/
+Besides a web server, you'll need Python, Django and a relational database compatible with Django. The application was developed with Apache 2.2, PostgreSQL 8.4 and Django 1.4.2. After installing the basic software, create a new database, copy settings.py.ref to settings.py and edit the configuration. If you want to learn more about Django settings you can look at: https://docs.djangoproject.com/en/1.4/topics/settings/
 
 When you finihsed editing the file, run the following command to create the tables:
 
@@ -35,6 +42,41 @@ You'll also be prompted to create a superuser account. After that, you can start
 
   python manage.py runserver
 
-Use your superuser credentials to log into the administrative interface where you can create other users and include species data: http://127.0.0.1:8000/admin
+Use your superuser credentials to log into the administrative interface where you can create other users and start populating the database: http://127.0.0.1:8000/admin
 
 Then try the public interface to search and visualize your data: http://127.0.0.1:8000
+
+Species data
+============
+
+Registering data
+
+Sharing with the Encyclopedia of Life
+
+Displaying images
+
+Interviews
+==========
+
+Text Format
+
+Tagging
+
+Static pages
+============
+
+Content for static pages can be included in the Django administrative interface (Page class). The default website menu requires pages with the following codes to be registered:
+
+- about: Content about the website/project.
+- methods: Content about the methods used.
+- ethno_overview: Overview about the ethnobotany work.
+- ethno_results: Results for the ethnobotany work.
+- hist_overview: Overview about history work.
+
+Customizing the look & feel
+===========================
+
+Templates
+
+Internationalization
+
