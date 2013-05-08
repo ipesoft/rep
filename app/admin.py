@@ -383,7 +383,7 @@ class TaxonAdmin(admin.ModelAdmin):
         }),
         (_('Special features'), {          #7
             #'classes': ('collapse',),
-            'fields': (('h_flowers', 'h_leaves', 'h_fruits', 'h_crown', 'h_bark'),),
+            'fields': (('h_flowers', 'h_leaves', 'h_fruits', 'h_crown', 'h_bark', 'h_seeds', 'h_wood', 'h_roots'),),
         }),
         (_('Successional group'), {        #8
             #'classes': ('collapse',),

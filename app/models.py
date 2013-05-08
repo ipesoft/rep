@@ -369,11 +369,15 @@ class Taxon( models.Model ):
     restoration = models.BooleanField( _(u'Restoration') )
     urban_use   = models.BooleanField( _(u'Urban forestry') )
     uses      = models.ManyToManyField( TypeOfUse, through='TaxonUse' )
+    # Special features
     h_flowers = models.BooleanField( _(u'Flowers') )
     h_leaves  = models.BooleanField( _(u'Leaves') )
     h_fruits  = models.BooleanField( _(u'Fruits') )
     h_crown   = models.BooleanField( _(u'Crown') )
     h_bark    = models.BooleanField( _(u'Bark') )
+    h_seeds   = models.BooleanField( _(u'Seeds') )
+    h_wood    = models.BooleanField( _(u'Wood') )
+    h_roots   = models.BooleanField( _(u'Roots') )
     # todo: potential_use
     rare        = models.NullBooleanField( _(u'Rare'), null=True, blank=True )
     max_density = models.IntegerField( _(u'Maximum density'), help_text=_(u'individuals per hectare'), null=True, blank=True )
@@ -551,7 +555,7 @@ class Taxon( models.Model ):
         return val
 
     def get_special_features(self):
-        return self._get_boolean_concat(['h_flowers', 'h_leaves', 'h_fruits', 'h_crown', 'h_bark'])
+        return self._get_boolean_concat(['h_flowers', 'h_leaves', 'h_fruits', 'h_crown', 'h_bark', 'h_seeds', 'h_wood', 'h_roots'])
 
     def get_growth_rate(self):
         return self._get_boolean_concat(['gr_slow', 'gr_moderate', 'gr_fast'])
