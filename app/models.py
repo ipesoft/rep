@@ -618,7 +618,7 @@ class Taxon( models.Model ):
                      (_('Abundance'), self.rare is not None),
 
                      (_('Endemism'), self.endemic is not None),
-                     (_('Special features'), (self.h_flowers is not None) and (self.h_leaves is not None) and (self.h_fruits is not None) and (self.h_crown is not None)),
+                     (_('Special features'), (self.h_flowers is not None) and (self.h_leaves is not None) and (self.h_fruits is not None) and (self.h_crown is not None) and (self.h_bark is not None) and (self.h_seeds is not None) and (self.h_wood is not None) and (self.h_roots is not None)),
                      (_('Successional group'), self.sg_pioneer or self.sg_early_secondary or self.sg_late_secondary or self.sg_climax),
                      (_('Growth rate'), self.gr_slow or self.gr_moderate or self.gr_fast),
                      (_('Pruning'), self.pruning is not None),

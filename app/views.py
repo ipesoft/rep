@@ -54,6 +54,9 @@ class UrbanForestrySearchForm(CommonSearchForm):
     h_fruits    = forms.BooleanField(label=_(u'Fruits'))
     h_crown     = forms.BooleanField(label=_(u'Crown'))
     h_bark      = forms.BooleanField(label=_(u'Bark'))
+    h_seeds     = forms.BooleanField(label=_(u'Seeds'))
+    h_wood      = forms.BooleanField(label=_(u'Wood'))
+    h_roots     = forms.BooleanField(label=_(u'Roots'))
     # Trunk alignement
     tr_straight    = forms.BooleanField(label=_(u'Straight'))
     tr_sl_inclined = forms.BooleanField(label=_(u'Slightly inclined'))
@@ -302,7 +305,7 @@ def search_species(request):
         if ( request.GET.has_key('rare')):
             qs = qs.filter(endemic=True)
         # Use AND conditions for special features
-        qs = _add_and_conditions(request, qs, ['h_flowers', 'h_leaves', 'h_fruits', 'h_crown', 'h_bark'])
+        qs = _add_and_conditions(request, qs, ['h_flowers', 'h_leaves', 'h_fruits', 'h_crown', 'h_bark', 'h_seeds', 'h_wood', 'h_roots'])
         # Use OR conditions for growth rate parameters
         qs = _add_or_conditions(request, qs, ['gr_slow', 'gr_moderate', 'gr_fast'])
         # Use OR conditions for trunk alignment parameters
