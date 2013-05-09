@@ -79,7 +79,7 @@ SEED_TYPES = (
 )
 
 PREGERMINATION_TREATMENTS = (
-    ( u'N', _(u'No treatment') ),
+    ( u'N', _(u'No need for treatment') ),
     ( u'C', _(u'Chemical scarification') ),
     ( u'I', _(u'Immersion in hot or cold water') ),
     ( u'M', _(u'Mechanical scarification') ),

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-08 17:59-0500\n"
+"POT-Creation-Date: 2013-05-08 19:07-0500\n"
 "PO-Revision-Date: 2012-03-07 21:05-0300\n"
 "Last-Translator: Renato De Giovanni <renato@cria . org . br>\n"
 "Language-Team: pt_BR <LL@li.org>\n"
@@ -401,8 +401,8 @@ msgid "Orthodox"
 msgstr "Ortodoxa"
 
 #: models.py:82
-msgid "No treatment"
-msgstr "Sem tratamento"
+msgid "No need for treatment"
+msgstr "Sem necessidade de tratamento"
 
 #: models.py:83
 msgid "Chemical scarification"
