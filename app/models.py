@@ -434,7 +434,7 @@ class Taxon( models.Model ):
     seed_type = models.CharField( _(u'Type'), null=True, blank=True, choices=SEED_TYPES, max_length=1 )
     pg_treatment = models.CharField( _(u'Treatment'), null=True, blank=True, choices=PREGERMINATION_TREATMENTS, max_length=1 )
     pg_details = models.TextField( _(u'Details'), null=True, blank=True )
-    sl_seedbed = models.BooleanField( _(u'Seedbed under half shadow') )
+    sl_seedbed = models.BooleanField( _(u'Seedbed') )
     sl_containers = models.BooleanField( _(u'Individual containers') )
     sl_details = models.TextField( _(u'Details'), null=True, blank=True )
     seed_gmin_time = models.IntegerField( _(u'Minimum'), help_text=_(u'days'), null=True, blank=True )
