@@ -203,6 +203,7 @@ function setmap() {
 <p><label>{% trans "Tree size" %}:</label>{% if height %}&nbsp;{% trans "height" %}&nbsp;{{ taxon.get_height }}{% else %}{% if dbh == None %}&nbsp;-{% endif %}{% endif %}{% if dbh %}&nbsp;{% trans "DBH" %}&nbsp;{{ taxon.get_dbh }}<sup>{{ refs.SIZ }}</sup>{% endif %}</p>
 {% endwith %}
 <p><label>{% trans "Flowering color" %}:</label>&nbsp;{{ taxon.get_fl_color_display|default:"-" }}&nbsp;<sup>{{ refs.FLC }}</sup></p>
+{% if taxon.fl_color_details %}<p>{{ taxon.fl_color_details }}</p>{% endif %}
 <p><label>{% trans "Growth rate" %}:</label>&nbsp;{{ taxon.get_growth_rate|default:"-" }}&nbsp;<sup>{{ refs.GRO }}</sup></p>
 {% if taxon.gr_comments %}<p>{{ taxon.gr_comments }}</p>{% endif %}
 <p><label>{% trans "Foliage persistence" %}:</label>&nbsp;{{ taxon.get_foliage_persistence|default:"-" }}&nbsp;<sup>{{ refs.FOL }}</sup></p>
@@ -227,9 +228,11 @@ function setmap() {
 <p><label>{% trans "Successional group" %}:</label>&nbsp;{{ taxon.get_successional_group|default:"-" }}&nbsp;<sup>{{ refs.SUG }}</sup></p>
 <p><label>{% trans "Pollinators" %}:</label>&nbsp;{{ taxon.pollinators|default:"-" }}&nbsp;<sup>{{ refs.POL }}</sup></p>
 <p><label>{% trans "Flowering period" %}:</label>&nbsp;{{ taxon.get_flowering_period|default:"-" }}&nbsp;<sup>{{ refs.FLP }}</sup></p>
+{% if taxon.fl_details %}<p>{{ taxon.fl_details }}</p>{% endif %}
 <p><label>{% trans "Seed dispersal" %}:</label>&nbsp;{{ taxon.get_dispersal_types|default:"-" }}&nbsp;<sup>{{ refs.SED }}</sup></p>
 <p><label>{% trans "Dispersion agents" %}:</label>&nbsp;{{ taxon.dispersers|default:"-" }}&nbsp;<sup>{{ refs.DIS }}</sup></p>
 <p><label>{% trans "Fruiting period" %}:</label>&nbsp;{{ taxon.get_fruiting_period|default:"-" }}&nbsp;<sup>{{ refs.FRP }}</sup></p>
+{% if taxon.fr_details %}<p>{{ taxon.fr_details }}</p>{% endif %}
 <p><label>{% trans "Symbiotic association" %}:</label>&nbsp;{{ taxon.get_symbiotic_assoc|default:"-" }}&nbsp;<sup>{{ refs.SYM }}</sup></p>
 {% if taxon.symbiotic_details %}<p>{{ taxon.symbiotic_details }}</p>{% endif %}
 </div>
@@ -247,6 +250,7 @@ function setmap() {
 <p><label>{% trans "Germination rate" %}:</label>&nbsp;{{ taxon.get_germination_rate|default:"-" }}&nbsp;<sup>{{ refs.GER }}</sup></p>
 <p><label>{% trans "Number of seeds per weight" %}:</label>&nbsp;{{ taxon.seeds_per_weight|default:"-" }}{% if taxon.seeds_per_weight %}/Kg{% endif %}&nbsp;<sup>{{ refs.SPW }}</sup></p>
 <p><label>{% trans "Light requirements" %}:</label>&nbsp;{{ taxon.get_light_display|default:"-" }}&nbsp;<sup>{{ refs.LIG }}</sup></p>
+{% if taxon.light_details %}<p>{{ taxon.light_details }}</p>{% endif %}
 </div>
 
 <div class="section" onclick="collapse('s6', 'i6');return false;"><table width="100%"><tr><td width="90%"{% if taxon.has_bibliography_data %} style="font-weight: bold;"{% endif %}>{% trans "Bibliography" %}</td><td style="text-align: right;"><img id="i6" src="/static/images/expand.gif" alt="expand" title="expand"/></td></tr></table></div>

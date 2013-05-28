@@ -393,7 +393,9 @@ class Taxon( models.Model ):
     pruning = models.NullBooleanField( _(u'Requires pruning'), null=True, blank=True )
     fl_start = models.IntegerField( _(u'Start'), null=True, blank=True, choices=MONTHS )
     fl_end   = models.IntegerField( _(u'End'), null=True, blank=True, choices=MONTHS )
+    fl_details = models.TextField( _(u'Details'), null=True, blank=True )
     fl_color = models.IntegerField( _(u'Color'), null=True, blank=True, choices=COLORS )
+    fl_color_details = models.TextField( _(u'Details'), null=True, blank=True )
     pollinators = models.TextField( _(u'Pollinators'), null=True, blank=True )
     dt_anemochorous = models.BooleanField( _(u'Anemochorous') )
     dt_autochorous  = models.BooleanField( _(u'Autochorous') )
@@ -425,6 +427,7 @@ class Taxon( models.Model ):
     pests_and_diseases = models.TextField( _(u'Information'), null=True, blank=True )
     fr_start = models.IntegerField( _(u'Start'), null=True, blank=True, choices=MONTHS )
     fr_end   = models.IntegerField( _(u'End'), null=True, blank=True, choices=MONTHS )
+    fr_details = models.TextField( _(u'Details'), null=True, blank=True )
     seed_tree = models.BooleanField( _(u'Collect fruits from tree') )
     seed_soil = models.BooleanField( _(u'Collect fruits from soil') )
     seed_collection = models.TextField( _(u'Details'), null=True, blank=True )
@@ -441,6 +444,7 @@ class Taxon( models.Model ):
     seeds_per_weight = models.IntegerField( _(u'Quantity'), help_text=_(u'num/Kg'), null=True, blank=True )
     #soil = models.CharField( _(u'Soil'), null=True, blank=True, choices=SOIL_TYPES, max_length=1 )
     light = models.CharField( _(u'Classification'), null=True, blank=True, choices=LIGHT_REQUIREMENTS, max_length=1 )
+    light_details = models.TextField( _(u'Details'), null=True, blank=True )
     has_pictures = models.BooleanField( _(u'Has pictures') )
     created = models.DateTimeField( u'Date created', auto_now_add = True )
     modified = models.DateTimeField( u'Date modified', null=True )
@@ -747,16 +751,16 @@ class Taxon( models.Model ):
         return self.taxonname_set.filter(ntype=u'S').order_by('name')
 
     def has_general_features_data(self):
-        return (self.get_height() is not None) or (self.get_dbh() is not None) or (self.get_fl_color_display() is not None) or (self.get_growth_rate() is not None) or (self.gr_comments is not None and len(self.gr_comments) > 0) or (self.get_foliage_persistence() is not None) or (self.get_r_type_display() is not None) or (self.get_cr_shape_display() is not None) or (self.get_crown_diameter() is not None) or (self.get_trunk_alignment() is not None) or (self.get_bark_texture_display() is not None) or (self.get_fr_type_display() is not None) 
+        return (self.get_height() is not None) or (self.get_dbh() is not None) or (self.get_fl_color_display() is not None) or (self.get_growth_rate() is not None) or (self.gr_comments is not None and len(self.gr_comments) > 0) or (self.get_foliage_persistence() is not None) or (self.get_r_type_display() is not None) or (self.get_cr_shape_display() is not None) or (self.get_crown_diameter() is not None) or (self.get_trunk_alignment() is not None) or (self.get_bark_texture_display() is not None) or (self.get_fr_type_display() is not None) or (self.fl_color_details is not None and len(self.fl_color_details) > 0)
 
     def has_care_data( self ):
         return (self.get_pruning() is not None) or (self.pests_and_diseases() is not None) or (self.get_thorns_or_spines() is not None) or (self.get_toxic_or_allergenic() is not None)
 
     def has_ecology_and_reproduction_data( self ):
-        return (self.get_successional_group() is not None) or (self.pollinators() is not None) or (self.get_flowering_period() is not None) or (self.get_dispersal_types() is not None) or (self.dispersers() is not None) or (self.get_fruiting_period() is not None) or (self.get_symbiotic_assoc() is not None) or (self.symbiotic_details is not None)
+        return (self.get_successional_group() is not None) or (self.pollinators is not None and len(self.pollinators) > 0) or (self.get_flowering_period() is not None) or (self.get_dispersal_types() is not None) or (self.dispersers is not None and len(self.dispersers) > 0) or (self.get_fruiting_period() is not None) or (self.get_symbiotic_assoc() is not None) or (self.symbiotic_details is not None and len(self.symbiotic_details) > 0) or (self.fr_details is not None and len(self.fr_details) > 0) or (self.fl_details is not None and len(self.fl_details) > 0)
 
     def has_seedling_production_data( self ):
-        return (self.get_seed_gathering() is not None) or (self.seed_collection) or (self.get_seed_type_display() is not None) or (self.get_pg_treatment_display() is not None) or (self.pg_details) or (self.get_seedbed() is not None) or (self.sl_details) or (self.get_germination_time_lapse() is not None) or (self.get_germination_rate() is not None) or (self.get_light_display() is not None) or (self.seeds_per_weight is not None)
+        return (self.get_seed_gathering() is not None) or (self.seed_collection) or (self.get_seed_type_display() is not None) or (self.get_pg_treatment_display() is not None) or (self.pg_details) or (self.get_seedbed() is not None) or (self.sl_details) or (self.get_germination_time_lapse() is not None) or (self.get_germination_rate() is not None) or (self.get_light_display() is not None) or (self.seeds_per_weight is not None) or (self.light_details is not None and len(self.light_details) > 0)
 
     def has_bibliography_data( self ):
         return self.taxondatareference_set.all().count()

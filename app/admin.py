@@ -399,11 +399,11 @@ class TaxonAdmin(admin.ModelAdmin):
         }),
         (_('Flowering period'), {          #11
             #'classes': ('collapse',),
-            'fields': (('fl_start', 'fl_end'),),
+            'fields': (('fl_start', 'fl_end'),'fl_details',),
         }),
         (_('Flowering color'), {           #12
             #'classes': ('collapse',),
-            'fields': ('fl_color',),
+            'fields': ('fl_color','fl_color_details',),
         }),
         (_('Pollination'), {               #13
             #'classes': ('collapse',),
@@ -467,7 +467,7 @@ class TaxonAdmin(admin.ModelAdmin):
         }),
         (_('Fruiting period'), {           #28
             #'classes': ('collapse',),
-            'fields': (('fr_start', 'fr_end'),),
+            'fields': (('fr_start', 'fr_end'),'fr_details',),
         }),
         (_('Seed collection'), {           #29
             #'classes': ('collapse',),
@@ -499,7 +499,7 @@ class TaxonAdmin(admin.ModelAdmin):
         }),
         (_('Light requirements'), {        #36
             #'classes': ('collapse',),
-            'fields': ('light',),
+            'fields': ('light','light_details',),
         }),
     )
     inlines = [
