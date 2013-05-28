@@ -4,6 +4,9 @@
 
 {% block header %}
 
+<script type="text/javascript" src="/static/js/jquery/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/static/js/jquery/jquery-ui-1.8.22.custom.min.js"></script>
+
 {% if taxon.has_points %}
 <link rel="stylesheet" href="/static/js/openlayers/theme/default/style.css" type="text/css">
 <script type="text/javascript" src="/static/js/openlayers/OpenLayers.js"></script>
@@ -12,7 +15,9 @@
 {% endif %}
 
 <script type="text/javascript">
+
 function collapse(region_id, button_id) {
+
   obj = document.getElementById(region_id);
   button = document.getElementById(button_id);
   if (obj.style.display == "none") {
@@ -34,9 +39,22 @@ function expand_content() {
   desc_panel = document.getElementById("s1");
   if (desc_panel != null) {
 
-    // expand content by default
+    // expand description content by default
     collapse("s1", "i1");
   }
+}
+
+function highlight(ref_id) {
+
+  bib_panel = document.getElementById("s6");
+  if (bib_panel != null && bib_panel.style.display == "none") {
+
+    // expand bibliography if necessary
+    collapse("s6", "i6");
+  }
+
+  // highlight text
+  $("#ref-text-"+ref_id).effect( "highlight", {color:"#E3EF62"}, 3000 );
 }
 
 {% if taxon.has_points %}
@@ -158,6 +176,9 @@ function setmap() {
      </table>
      </div>
     {% endif %}
+
+{% autoescape off %}
+
     {% with synonyms=taxon.get_synonyms popnames=taxon.get_popular_names %}
     {% if popnames %}<h2>{% for pop in popnames %}{{pop.name}}{% if forloop.last %}{% else %}, {% endif %}{% endfor %}</h2>{% endif %}
     <p><label>{% trans "Family" %}:</label>&nbsp;{{ taxon.family|default:"-" }}</p>
@@ -256,7 +277,7 @@ function setmap() {
 <div class="section" onclick="collapse('s6', 'i6');return false;"><table width="100%"><tr><td width="90%"{% if taxon.has_bibliography_data %} style="font-weight: bold;"{% endif %}>{% trans "Bibliography" %}</td><td style="text-align: right;"><img id="i6" src="/static/images/expand.gif" alt="expand" title="expand"/></td></tr></table></div>
 <div id="s6" style="display: none;">
 {% for citation in citations %}
-<p class="bib"><sup>{{ citation.0 }}</sup>&nbsp;{{ citation.1 }}</p>
+<a id="ref-{{ citation.0 }}"></a><p id="ref-text-{{ citation.0 }}" class="bib"><sup>{{ citation.0 }}</sup>&nbsp;{{ citation.1 }}</p>
 {% endfor %}
 </div>
 
@@ -265,5 +286,7 @@ function setmap() {
 <div id="s7" style="display: none; height: 320px;">
 </div>
 {% endif %}
+
+{% endautoescape %}
 
 {% endblock content %}

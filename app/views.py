@@ -230,9 +230,9 @@ def show_species(request, species_id):
             cnt = cnt + 1
     for ref in refs:
         if numbers.has_key(ref.data):
-            numbers[ref.data] = numbers[ref.data] + ',' + ctrl[ref.reference_id]
+            numbers[ref.data] = numbers[ref.data] + ',' + '<a href="#ref-'+ctrl[ref.reference_id]+'" onclick="highlight(' + ctrl[ref.reference_id] + ');">' + ctrl[ref.reference_id] + '</a>'
         else:
-            numbers[ref.data] = ctrl[ref.reference_id]
+            numbers[ref.data] = '<a href="#ref-'+ctrl[ref.reference_id]+'" onclick="highlight(' + ctrl[ref.reference_id] + ');">' + ctrl[ref.reference_id] + '</a>'
     points = []
     for occ in taxon.taxonoccurrence_set.all():
         points.append({'x':occ.get_decimal_long(), 'y':occ.get_decimal_lat(), 'label':occ.label})
