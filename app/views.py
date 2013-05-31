@@ -204,7 +204,7 @@ def _pdf_for_species_list( qs ):
     for sp in qs:
         myp = '<i>' + sp.genus + ' ' + sp.species + '</i>'
         popnames = sp.get_popular_names().values_list('name', flat=True)
-        sep = ','
+        sep = ', '
         if len(popnames) > 0:
             myp += ' <font size="8" color="gray">('+ sep.join(popnames) +')</font>'
         if sp.has_pictures:
