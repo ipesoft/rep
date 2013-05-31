@@ -6,6 +6,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django import forms
 from django.db.models import Q, F
@@ -161,6 +162,68 @@ def _json_raw_encode(data):
     else:
         return JSONEncoder().encode(data)
 
+def _pdf_for_species_list( qs ):
+    """
+    Generate a PDF for a species list retrieved by the provided query.
+    """
+    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+    from reportlab.lib.units import inch
+    from reportlab.lib.enums import TA_LEFT
+    from reportlab.rl_config import defaultPageSize
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+
+    PAGE_HEIGHT=defaultPageSize[1]
+    PAGE_WIDTH=defaultPageSize[0]
+    styles = getSampleStyleSheet()
+    styles.add( ParagraphStyle(name='Left', alignment=TA_LEFT) )
+    
+    response = HttpResponse( content_type='application/pdf' )
+    response['Content-Disposition'] = 'attachment; filename="somefilename.pdf"'
+
+    # Create the PDF object, using the response object as its "file."
+    doc = SimpleDocTemplate( response, topMargin=0.2*inch, showBoundary=0 )
+    Story = [Spacer(1,2*inch)]
+    style = styles['Left']
+    px = 7.0
+    py = 0.75
+
+    def myFirstPage( canvas, doc ):
+        canvas.saveState()
+        canvas.setFont( 'Times-Roman', 14 )
+        canvas.drawString( 1.1*inch, 10.5*inch, _(u'Search Results') )
+        canvas.setFont( 'Times-Roman', 9 )
+        canvas.drawString( px*inch, py*inch,"p. %d" % (doc.page) )
+        canvas.restoreState()
+    def myLaterPages( canvas, doc ):
+        canvas.saveState()
+        canvas.setFont( 'Times-Roman', 9 )
+        canvas.drawString( px*inch, py*inch,"p. %d" % (doc.page) )
+        canvas.restoreState()
+
+    # Add content
+    for sp in qs:
+        myp = '<i>' + sp.genus + ' ' + sp.species + '</i>'
+        popnames = sp.get_popular_names().values_list('name', flat=True)
+        sep = ','
+        if len(popnames) > 0:
+            myp += ' <font size="8" color="gray">('+ sep.join(popnames) +')</font>'
+        if sp.has_pictures:
+            myp += ' <img src="'+ settings.STATIC_ROOT + 'images/photo.png" width="10" height="8" valign="middle"/>'
+        if sp.has_history():
+            myp += ' <img src="'+ settings.STATIC_ROOT + 'images/microphone.png" width="10" height="10"/>'
+        if sp.ethno_notes is not None and len(sp.ethno_notes) > 0:
+            myp += ' <img src="'+ settings.STATIC_ROOT + 'images/hand.png" width="10" height="10"/>'
+        synonyms = sp.get_synonyms().values_list('name', flat=True)
+        if len(synonyms) > 0:
+            myp += '<br/><font size="8">' + ugettext(u'Synonyms') + ': ' + sep.join(synonyms) + '</font>'
+        p = Paragraph( myp, style )
+        Story.append( p )
+        Story.append( Spacer(1, 0.2*inch) )
+    
+    doc.build( Story, onFirstPage=myFirstPage, onLaterPages=myLaterPages )
+    
+    return response
+
 # View methods
 def index(request):
     'Index page'
@@ -245,30 +308,30 @@ def show_species(request, species_id):
 def search_species(request):
     template_params = {'base_template':settings.BASE_TEMPLATE}
     perform_query = True
-    if ( request.GET.has_key('adv') ):
-        if ( request.GET.has_key('urban') ):
+    if request.GET.has_key('adv'):
+        if request.GET.has_key('urban'):
             possible_templates = ['my_adv_search_species_urban.html', 'adv_search_species_urban.html']
-            if ( request.GET.has_key('search') ):
+            if request.GET.has_key('search'):
                 form = UrbanForestrySearchForm(request.GET)
             else:
                 form = UrbanForestrySearchForm()
         else:
             possible_templates = ['my_adv_search_species_restoration.html', 'adv_search_species_restoration.html']
-            if ( request.GET.has_key('search') ):
+            if request.GET.has_key('search'):
                 form = RestorationSearchForm(request.GET)
             else:
                 form = RestorationSearchForm()
         template_params['form'] = form
-        if ( not request.GET.has_key('search') ):
+        if not request.GET.has_key('search'):
             perform_query = False
     else:
         possible_templates = ['my_search_species.html', 'search_species.html']
     # Queryset
     if perform_query:
         name = None
-        if ( request.GET.has_key('name') ):
+        if request.GET.has_key('name'):
             name = request.GET.get('name')
-        if ( name is not None ):
+        if name is not None:
             template_params['name'] = name
             # First attempt
             ids = TaxonName.objects.filter(name__iexact=name).values_list('taxon_id')
@@ -288,7 +351,7 @@ def search_species(request):
             qs = Taxon.objects.all()
         if ( request.GET.has_key('restor') ):
             qs = qs.filter(restoration=True)
-        if ( request.GET.has_key('urban') ):
+        if request.GET.has_key('urban'):
             qs = qs.filter(urban_use=True)
         # GET params used in pagination
         get_params = ''
@@ -298,11 +361,11 @@ def search_species(request):
             get_params = get_params + '&' + k + '=' + v
         template_params['get_params'] = get_params
         # Advanced search filters
-        if ( request.GET.has_key('family') and request.GET['family'] != 'NULL'):
+        if request.GET.has_key('family') and request.GET['family'] != 'NULL':
             qs = qs.filter(family=request.GET['family'])
-        if ( request.GET.has_key('endemic')):
+        if request.GET.has_key('endemic'):
             qs = qs.filter(endemic=True)
-        if ( request.GET.has_key('rare')):
+        if request.GET.has_key('rare'):
             qs = qs.filter(endemic=True)
         # Use AND conditions for special features
         qs = _add_and_conditions(request, qs, ['h_flowers', 'h_leaves', 'h_fruits', 'h_crown', 'h_bark', 'h_seeds', 'h_wood', 'h_roots'])
@@ -317,34 +380,34 @@ def search_species(request):
         # Crown diameter
         qs = _add_interval_condition(request, qs, 'cr_min_diameter', 'cr_max_diameter')
         # Crown shape
-        if ( request.GET.has_key('cr_shape') and request.GET['cr_shape'] != 'NULL'):
+        if request.GET.has_key('cr_shape') and request.GET['cr_shape'] != 'NULL':
             qs = qs.filter(cr_shape=request.GET['cr_shape'])
         # Flower color
-        if ( request.GET.has_key('color') and request.GET['color'] not in ('0', 0)):
+        if request.GET.has_key('color') and request.GET['color'] not in ('0', 0):
             qs = qs.filter(fl_color=request.GET['color'])
         # Root system
-        if ( request.GET.has_key('r_type') and request.GET['r_type'] != 'NULL'):
+        if request.GET.has_key('r_type') and request.GET['r_type'] != 'NULL':
             qs = qs.filter(r_type=request.GET['r_type'])
         # Flowering period
-        if ( request.GET.has_key('fl_month') ):
+        if request.GET.has_key('fl_month'):
             qs = _add_month_condition(request, qs, 'fl_month', 'fl_start', 'fl_end')
         # Fruiting period
-        if ( request.GET.has_key('fr_month') ):
+        if request.GET.has_key('fr_month'):
             qs = _add_month_condition(request, qs, 'fr_month', 'fr_start', 'fr_end')
         # Pruning
-        if ( request.GET.has_key('pruning') ):
+        if request.GET.has_key('pruning'):
             if request.GET['pruning'] in ('1', 1):
                 qs = qs.filter(pruning=True)
             elif request.GET['pruning'] in ('0', 0):
                 qs = qs.filter(pruning=False)
         # Thorns
-        if ( request.GET.has_key('thorns') ):
+        if request.GET.has_key('thorns'):
             if request.GET['thorns'] in ('1', 1):
                 qs = qs.filter(thorns_or_spines__isnull=False).exclude(thorns_or_spines='')
             elif request.GET['thorns'] in ('0', 0):
                 qs = qs.filter(Q(thorns_or_spines__isnull=True) | Q(thorns_or_spines=''))
         # Toxic
-        if ( request.GET.has_key('toxic') ):
+        if request.GET.has_key('toxic'):
             if request.GET['toxic'] in ('1', 1):
                 qs = qs.filter(toxic_or_allergenic__isnull=False).exclude(toxic_or_allergenic='')
             elif request.GET['toxic'] in ('0', 0):
@@ -354,17 +417,19 @@ def search_species(request):
         # Use OR condition for seed dispersal
         qs = _add_or_conditions(request, qs, ['dt_anemochorous', 'dt_autochorous', 'dt_hydrochorous', 'dt_zoochorous'])
         # Symbiotic association
-        if ( request.GET.has_key('symb_assoc') ):
+        if request.GET.has_key('symb_assoc'):
             if request.GET['symb_assoc'] in ('1', 1):
                 qs = qs.filter(symbiotic_assoc=True)
             elif request.GET['symb_assoc'] in ('0', 0):
                 qs = qs.filter(symbiotic_assoc=False)
         # Specific uses
-        if ( request.GET.has_key('uses') ):
+        if request.GET.has_key('uses'):
             taxa_ids = TaxonUse.objects.filter(use__in=request.GET.getlist('uses')).values_list('taxon__id', flat=True).distinct('taxon__id')
             qs = qs.filter(id__in=taxa_ids)
         # Limit the number of fields to be returned
         qs = qs.order_by('genus', 'species').only('id', 'genus', 'species')
+        if request.GET.has_key('pdf'):
+            return _pdf_for_species_list( qs )
         template_params['performed_query'] = True
         # Pagination
         paginator = Paginator(qs, 25) # Show 25 items per page
@@ -381,6 +446,7 @@ def search_species(request):
             # If page is out of range (e.g. 9999), deliver last page of results.
             taxa = paginator.page(paginator.num_pages)
         template_params['taxa'] = taxa
+    template_params['full_path'] = request.get_full_path()
     c = RequestContext(request, template_params)
     return render_to_response( possible_templates, c )
 

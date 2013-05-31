@@ -763,13 +763,13 @@ class Taxon( models.Model ):
         return (self.get_seed_gathering() is not None) or (self.seed_collection) or (self.get_seed_type_display() is not None) or (self.get_pg_treatment_display() is not None) or (self.pg_details) or (self.get_seedbed() is not None) or (self.sl_details) or (self.get_germination_time_lapse() is not None) or (self.get_germination_rate() is not None) or (self.get_light_display() is not None) or (self.seeds_per_weight is not None) or (self.light_details is not None and len(self.light_details) > 0)
 
     def has_bibliography_data( self ):
-        return self.taxondatareference_set.all().count()
+        return (self.taxondatareference_set.all().count() > 0)
 
     def has_points( self ):
-        return self.taxonoccurrence_set.all().count()
+        return (self.taxonoccurrence_set.all().count() > 0)
 
     def has_history( self ):
-        return self.citations.count()
+        return (self.citations.count() > 0)
 
     def get_citations( self ):
         return TaxonCitation.objects.filter(taxon=self).order_by('interview', 'page')
