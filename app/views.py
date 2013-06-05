@@ -333,6 +333,8 @@ def _pdf_for_species_page( taxon, refs, citations ):
         if dbh is None:
             c += '-'
     if dbh:
+        if height:
+            c += ' '
         c += ugettext(u'DBH') + ' ' + str(dbh)
     _appendLabelAndContent( Story, ugettext(u'Tree size')          , c                               , 'SIZ' )
     _appendLabelAndContent( Story, ugettext(u'Flowering color')    , taxon.get_fl_color_display()    , 'FLC' )
