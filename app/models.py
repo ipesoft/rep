@@ -85,13 +85,13 @@ PREGERMINATION_TREATMENTS = (
     ( u'M', _(u'Mechanical scarification') ),
 )
 
-SOIL_TYPES = (
-    ( u'F', _(u'wetland (frequent floods)') ),
-    ( u'U', _(u'wetland (unfrequent floods)') ),
-    ( u'M', _(u'marsh') ),
-    ( u'D', _(u'dry and rocky') ),
-    ( u'A', _(u'wet or dry') ),
-)
+#SOIL_TYPES = (
+#    ( u'F', _(u'wetland (frequent floods)') ),
+#    ( u'U', _(u'wetland (unfrequent floods)') ),
+#    ( u'M', _(u'marsh') ),
+#    ( u'D', _(u'dry and rocky') ),
+#    ( u'A', _(u'wet or dry') ),
+#)
 
 LIGHT_REQUIREMENTS = (
     ( u'S', _(u'Shadow tolerant') ),
@@ -131,6 +131,7 @@ TAXON_DATA = (
     ( u'GER', _(u'Germination rate') ),
     ( u'SPW', _(u'Seeds per weight') ),
     ( u'LIG', _(u'Light requirements') ),
+    ( u'TER', _(u'Terrain drainage') ),
     ( u'USE', _(u'Use') ),
 )
 
@@ -444,6 +445,9 @@ class Taxon( models.Model ):
     seed_gmax_rate = models.IntegerField( _(u'Maximum'), help_text=_(u'%'), null=True, blank=True )
     seeds_per_weight = models.IntegerField( _(u'Quantity'), help_text=_(u'num/Kg'), null=True, blank=True )
     #soil = models.CharField( _(u'Soil'), null=True, blank=True, choices=SOIL_TYPES, max_length=1 )
+    wetland = models.BooleanField( _(u'Wetland') )
+    dry = models.BooleanField( _(u'Well-drained') )
+    terrain_details = models.TextField( _(u'Details'), null=True, blank=True )
     light = models.CharField( _(u'Classification'), null=True, blank=True, choices=LIGHT_REQUIREMENTS, max_length=1 )
     light_details = models.TextField( _(u'Details'), null=True, blank=True )
     has_pictures = models.BooleanField( _(u'Has pictures') )
@@ -614,6 +618,9 @@ class Taxon( models.Model ):
     def get_foliage_persistence(self):
         return self._get_boolean_concat(['fo_evergreen', 'fo_semideciduous', 'fo_deciduous'])
 
+    def get_terrain_drainage(self):
+        return self._get_boolean_concat(['wetland', 'dry'])
+
     # Functions used by the admin change list form
     def data_completeness(self):
         fieldsets = ((_('Taxonomic data'), bool(self.genus) and bool(self.species) and bool(self.author) and bool(self.family)),
@@ -653,6 +660,7 @@ class Taxon( models.Model ):
                      (_('Germination rate'), bool(self.seed_gmin_rate) and bool(self.seed_gmax_rate)), 
                      (_('Seeds per weight'), bool(self.seeds_per_weight)), 
                      (_('Light requirements'), self.light is not None), 
+                     (_('Terrain drainage'), self.wetland or self.dry), 
                      )
         html = ''
         cnt = 1
@@ -755,7 +763,7 @@ class Taxon( models.Model ):
         return (self.get_height() is not None) or (self.get_dbh() is not None) or (self.get_fl_color_display() is not None) or (self.get_growth_rate() is not None) or (self.gr_comments is not None and len(self.gr_comments) > 0) or (self.get_foliage_persistence() is not None) or (self.get_r_type_display() is not None) or (self.get_cr_shape_display() is not None) or (self.get_crown_diameter() is not None) or (self.get_trunk_alignment() is not None) or (self.get_bark_texture_display() is not None) or (self.get_fr_type_display() is not None) or (self.fl_color_details is not None and len(self.fl_color_details) > 0)
 
     def has_care_data( self ):
-        return (self.get_pruning() is not None) or (self.pests_and_diseases() is not None) or (self.get_thorns_or_spines() is not None) or (self.get_toxic_or_allergenic() is not None)
+        return (self.get_pruning() is not None) or (self.pests_and_diseases() is not None) or (self.get_thorns_or_spines() is not None) or (self.get_toxic_or_allergenic() is not None) or self.wetland or self.dry
 
     def has_ecology_and_reproduction_data( self ):
         return (self.get_successional_group() is not None) or (self.pollinators is not None and len(self.pollinators) > 0) or (self.get_flowering_period() is not None) or (self.get_dispersal_types() is not None) or (self.dispersers is not None and len(self.dispersers) > 0) or (self.get_fruiting_period() is not None) or (self.get_symbiotic_assoc() is not None) or (self.symbiotic_details is not None and len(self.symbiotic_details) > 0) or (self.fr_details is not None and len(self.fr_details) > 0) or (self.fl_details is not None and len(self.fl_details) > 0)

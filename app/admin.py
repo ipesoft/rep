@@ -275,6 +275,13 @@ class LightRefInline(RefInline):
     #verbose_name = _('light requirements reference')
     #verbose_name_plural = _('light requirements references')
 
+class TerrainRefForm(RefForm):
+    taxondata = 'TER'
+class TerrainRefInline(RefInline):
+    form = TerrainRefForm
+    #verbose_name = _('terrain reference')
+    #verbose_name_plural = _('terrain references')
+
 class ConservationStatusInline(admin.TabularInline):
     model = ConservationStatus
     extra = 0
@@ -501,6 +508,10 @@ class TaxonAdmin(admin.ModelAdmin):
             #'classes': ('collapse',),
             'fields': ('light','light_details',),
         }),
+        (_('Terrain drainage'), {          #37
+            #'classes': ('collapse',),
+            'fields': (('wetland', 'dry'),'terrain_details',),
+        }),
     )
     inlines = [
         SynonymsInline,               #0
@@ -539,7 +550,8 @@ class TaxonAdmin(admin.ModelAdmin):
         GerminationRateRefInline,     #33
         SeedsPerWeightRefInline,      #34
         LightRefInline,               #35
-        ConservationStatusInline,     #36
+        TerrainRefInline,             #36
+        ConservationStatusInline,     #37
     ]
 
 admin.site.register(Page)

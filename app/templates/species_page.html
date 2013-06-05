@@ -242,6 +242,8 @@ function setmap() {
 <p><label>{% trans "Pests and diseases" %}:</label>&nbsp;{{ taxon.pests_and_diseases|default:"-" }}&nbsp;<sup>{{ refs.PAD }}</sup></p>
 <p><label>{% trans "Thorns or spines" %}:</label>&nbsp;{{ taxon.get_thorns_or_spines|default:"-" }}&nbsp;<sup>{{ refs.TOS }}</sup></p>
 <p><label>{% trans "Toxic or allergenic" %}:</label>&nbsp;{{ taxon.get_toxic_or_allergenic|default:"-" }}&nbsp;<sup>{{ refs.TOA }}</sup></p>
+<p><label>{% trans "Terrain drainage" %}:</label>&nbsp;{{ taxon.get_terrain_drainage|default:"-" }}&nbsp;<sup>{{ refs.TER }}</sup></p>
+{% if taxon.terrain_details %}<p>{{ taxon.terrain_details }}</p>{% endif %}
 </div>
 
 <div class="section" onclick="collapse('s4', 'i4');return false;"><table width="100%"><tr><td width="90%"{% if taxon.has_ecology_and_reproduction_data %} style="font-weight: bold;"{% endif %}>{% trans "Ecology & reproduction" %}</td><td style="text-align: right;"><img id="i4" src="/static/images/expand.gif" alt="expand" title="expand"/></td></tr></table></div>

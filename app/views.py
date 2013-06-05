@@ -354,6 +354,8 @@ def _pdf_for_species_page( taxon, refs, citations ):
     _appendLabelAndContent( Story, ugettext(u'Pests and diseases') , taxon.pests_and_diseases       , 'PAD' )
     _appendLabelAndContent( Story, ugettext(u'Thorns or spines')   , taxon.get_thorns_or_spines()   , 'TOS' )
     _appendLabelAndContent( Story, ugettext(u'Toxic or allergenic'), taxon.get_toxic_or_allergenic(), 'TOA' )
+    _appendLabelAndContent( Story, ugettext(u'Terrain drainage')          , taxon.get_terrain_drainage()      , 'TER' )
+    _appendDetails( Story, taxon.terrain_details )
     #########################################################
     _appendSection( Story, ugettext(u'Ecology')+' '+ugettext(u'and')+' '+ugettext(u'Reproduction') )
     _appendLabelAndContent( Story, ugettext(u'Successional group')   , taxon.get_successional_group(), 'SUG' )
