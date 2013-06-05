@@ -531,6 +531,8 @@ def search_species(request):
             qs = qs.filter(restoration=True)
         if request.GET.has_key('urban'):
             qs = qs.filter(urban_use=True)
+        if request.GET.has_key('silv'):
+            qs = qs.filter(silviculture=True)
         # GET params used in pagination
         get_params = ''
         for k, v in request.GET.items():

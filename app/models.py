@@ -366,8 +366,9 @@ class Taxon( models.Model ):
     ethno_notes = models.TextField( _(u'Ethnobotany description'), null=True, blank=True )
     references = models.ManyToManyField( Reference, through='TaxonDataReference' )
     citations = models.ManyToManyField( Interview, through='TaxonCitation' )
-    restoration = models.BooleanField( _(u'Restoration') )
-    urban_use   = models.BooleanField( _(u'Urban forestry') )
+    restoration  = models.BooleanField( _(u'Restoration') )
+    urban_use    = models.BooleanField( _(u'Urban forestry') )
+    silviculture = models.BooleanField( _(u'Silviculture') )
     uses      = models.ManyToManyField( TypeOfUse, through='TaxonUse' )
     # Special features
     h_flowers = models.BooleanField( _(u'Flowers') )
@@ -504,7 +505,7 @@ class Taxon( models.Model ):
         return None
 
     def get_use(self):
-        return self._get_boolean_concat(['restoration', 'urban_use'])
+        return self._get_boolean_concat(['restoration', 'urban_use', 'silviculture'])
 
     def get_specific_uses(self):
         uses = self.uses.all().order_by('label').values_list('label', flat=True)
@@ -618,7 +619,7 @@ class Taxon( models.Model ):
         fieldsets = ((_('Taxonomic data'), bool(self.genus) and bool(self.species) and bool(self.author) and bool(self.family)),
                      (_('General description'), bool(self.description)),
                      (_('Ethnobotany description'), bool(self.ethno_notes)),
-                     (_('Uses'), bool(self.restoration) or bool(self.urban_use)),
+                     (_('Uses'), bool(self.restoration) or bool(self.urban_use) or bool(self.silviculture)),
                      (_('Abundance'), self.rare is not None),
 
                      (_('Endemism'), self.endemic is not None),

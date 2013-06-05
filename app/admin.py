@@ -371,7 +371,7 @@ class TaxonAdmin(admin.ModelAdmin):
         }),
         (_('Uses'), {                      #4
             #'classes': ('collapse',),
-            'fields': (('restoration', 'urban_use'),),
+            'fields': (('restoration', 'urban_use', 'silviculture'),),
         }),
         (_('Abundance'), {                 #5
             #'classes': ('collapse',),
