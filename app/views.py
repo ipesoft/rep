@@ -295,16 +295,16 @@ def _pdf_for_species_page( taxon, refs, citations ):
     t += c
     if refs.has_key( 'END' ):
         t += '<sup>' + refs['END'] + '</sup>'
-    t += '    <b>'+ugettext(u'Rare')+':</b> '
-    r = force_text( taxon.get_rare() )
-    if r == 'None':
-        r = '-'
-    t += r
-    m = taxon.max_density
-    if m is not None:
-        t += str(m) + ugettext(u' individuals per hectare')
-    if refs.has_key( 'RAR' ):
-        t += '<sup>' + refs['RAR'] + '</sup>'
+    #t += '    <b>'+ugettext(u'Rare')+':</b> '
+    #r = force_text( taxon.get_rare() )
+    #if r == 'None':
+    #    r = '-'
+    #t += r
+    #m = taxon.max_density
+    #if m is not None:
+    #    t += str(m) + ugettext(u' individuals per hectare')
+    #if refs.has_key( 'RAR' ):
+    #    t += '<sup>' + refs['RAR'] + '</sup>'
     Story.append( Paragraph( t, styles['Left'] ) )
     Story.append( spacer )
     conservation_recs = taxon.conservationstatus_set.all()

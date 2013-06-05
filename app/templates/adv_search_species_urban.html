@@ -38,7 +38,7 @@ collapse('options', 'c_button');
 <table width="100%">
 <tr><td width="20%">{{ form.family.label_tag }}:</td><td width="80%">{{ form.family }}</td></tr>
 <tr><td>{{ form.endemic.label_tag }}:</td><td width="80%">{{ form.endemic }}</td></tr>
-<tr><td>{{ form.rare.label_tag }}:</td><td>{{ form.rare }}</td></tr>
+{% comment %}<tr><td>{{ form.rare.label_tag }}:</td><td>{{ form.rare }}</td></tr>{% endcomment %}
 {% comment %}<tr><td><label for="id_features">{% trans "Special features" %}</label>:</td><td>&nbsp;{{ form.h_flowers.label }}{{ form.h_flowers }}&nbsp;{{ form.h_leaves.label }}{{ form.h_leaves }}&nbsp;{{ form.h_fruits.label }}{{ form.h_fruits }}&nbsp;{{ form.h_crown.label }}{{ form.h_crown }}&nbsp;{{ form.h_bark.label }}{{ form.h_bark }}&nbsp;{{ form.h_seeds.label }}{{ form.h_seeds }}&nbsp;{{ form.h_wood.label }}{{ form.h_wood }}&nbsp;{{ form.h_roots.label }}{{ form.h_roots }}</td></tr>{% endcomment %}
 <tr><td><label for="id_height">{% trans "height"|capfirst %}</label>:</td><td>{{ form.min_height }}&nbsp;{% trans "to" %}&nbsp;{{ form.max_height }}m</td></tr>
 <tr><td><label for="id_diameter">{% trans "Crown diameter" %}</label>:</td><td>{{ form.cr_min_diameter }}&nbsp;{% trans "to" %}&nbsp;{{ form.cr_max_diameter }}m</td></tr>

@@ -184,7 +184,7 @@ function setmap() {
     <p><label>{% trans "Family" %}:</label>&nbsp;{{ taxon.family|default:"-" }}</p>
     {% if synonyms %}<p><label>{% trans "Synonyms" %}:&nbsp;</label>{% for syn in synonyms %}{{syn.name}}{% if forloop.last %}{% else %}, {% endif %}{% endfor %}</p>{% endif %}
     {% endwith %}
-    <p><label>{% trans "Endemic" %}:</label>&nbsp;{{ taxon.get_endemic|default:"-" }}&nbsp;<sup>{{ refs.END }}</sup>&nbsp;&nbsp;&nbsp;<label>{% trans "Rare" %}:</label>&nbsp;{{ taxon.get_rare|default:"-" }}{% if taxon.max_density %}&nbsp;({{ taxon.max_density }}&nbsp;{% trans "individuals per hectare" %}){% endif %}<sup>{{ refs.RAR }}</sup></p>
+    <p><label>{% trans "Endemic" %}:</label>&nbsp;{{ taxon.get_endemic|default:"-" }}&nbsp;<sup>{{ refs.END }}</sup>{% comment %}&nbsp;&nbsp;&nbsp;<label>{% trans "Rare" %}:</label>&nbsp;{{ taxon.get_rare|default:"-" }}{% if taxon.max_density %}&nbsp;({{ taxon.max_density }}&nbsp;{% trans "individuals per hectare" %}){% endif %}<sup>{{ refs.RAR }}</sup>{% endcomment %}</p>
     {% with conservation_recs=taxon.conservationstatus_set.all %}
     {% if conservation_recs|length > 0 %}
     <p><label>{% trans "conservation status" %}:&nbsp;</label>{% for rec in conservation_recs %}{{ rec.status }}&nbsp;({{ rec.source.acronym }}){% endfor %}

@@ -38,7 +38,7 @@ collapse('options', 'c_button');
 <table width="100%">
 <tr><td width="20%">{{ form.family.label_tag }}:</td><td width="80%">{{ form.family }}</td></tr>
 <tr><td>{{ form.endemic.label_tag }}:</td><td width="80%">{{ form.endemic }}</td></tr>
-<tr><td>{{ form.rare.label_tag }}:</td><td>{{ form.rare }}</td></tr>
+{% comment %}<tr><td>{{ form.rare.label_tag }}:</td><td>{{ form.rare }}</td></tr>{% endcomment %}
 <tr><td><label for="id_group">{% trans "Successional group" %}:</label></td><td>{{ form.sg_pioneer }}{{ form.sg_pioneer.label }}&nbsp;{{ form.sg_early_secondary }}{{ form.sg_early_secondary.label }}&nbsp;{{ form.sg_late_secondary }}{{ form.sg_late_secondary.label }}&nbsp;{{ form.sg_climax }}{{ form.sg_climax.label }}</td></tr>
 <tr><td><label for="id_growth">{% trans "Growth rate" %}</label>:</td><td>{{ form.gr_slow }}{{ form.gr_slow.label }}&nbsp;{{ form.gr_moderate }}{{ form.gr_moderate.label }}&nbsp;{{ form.gr_fast }}{{ form.gr_fast.label }}</td></tr>
 <tr><td><label for="id_height">{% trans "height"|capfirst %}</label>:</td><td>{{ form.min_height }}&nbsp;{% trans "to" %}&nbsp;{{ form.max_height }}m</td></tr>
