@@ -264,7 +264,7 @@ def _pdf_for_species_page( taxon, refs, citations ):
         p = '<b>'+ugettext(label)+':</b> '
         if not content:
             content = '-'
-        p += content
+        p += force_text( content )
         if refs.has_key( key ):
             p += '<sup>' + refs[key] + '</sup>'
         Story.append( Paragraph( p, styles['Left'] ) )
