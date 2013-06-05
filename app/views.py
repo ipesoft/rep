@@ -7,6 +7,7 @@ from django.template import RequestContext
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext
+from django.utils.encoding import force_text
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django import forms
 from django.db.models import Q, F
@@ -178,7 +179,7 @@ def _pdf_for_species_list( qs ):
     styles.add( ParagraphStyle(name='Left', alignment=TA_LEFT) )
     
     response = HttpResponse( content_type='application/pdf' )
-    response['Content-Disposition'] = 'attachment; filename="somefilename.pdf"'
+    response['Content-Disposition'] = 'attachment; filename="search_result.pdf"'
 
     # Create the PDF object, using the response object as its "file."
     doc = SimpleDocTemplate( response, topMargin=0.2*inch, showBoundary=0 )
@@ -221,6 +222,172 @@ def _pdf_for_species_list( qs ):
         Story.append( Spacer(1, 0.2*inch) )
     
     doc.build( Story, onFirstPage=myFirstPage, onLaterPages=myLaterPages )
+    
+    return response
+
+def _pdf_for_species_page( taxon, refs, citations ):
+    """
+    Generate a PDF for the species page.
+    """
+    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+    from reportlab.lib.units import inch
+    from reportlab.lib.enums import TA_LEFT, TA_JUSTIFY
+    from reportlab.rl_config import defaultPageSize
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+
+    PAGE_HEIGHT=defaultPageSize[1]
+    PAGE_WIDTH=defaultPageSize[0]
+    styles = getSampleStyleSheet()
+    styles.add( ParagraphStyle(name='Left', alignment=TA_LEFT) )
+    styles.add( ParagraphStyle(name='Justify', alignment=TA_JUSTIFY) )
+    
+    response = HttpResponse( content_type='application/pdf' )
+    response['Content-Disposition'] = 'attachment; filename="'+taxon.genus+'_'+taxon.species+'.pdf"'
+
+    # Create the PDF object, using the response object as its "file."
+    doc = SimpleDocTemplate( response, topMargin=0.2*inch, showBoundary=0 )
+    Story = []
+    style = styles['Left']
+    px = 7.0
+    py = 0.75
+    spacer = Spacer(1,0.2*inch)
+
+    def myPage( canvas, doc ):
+        canvas.saveState()
+        canvas.setFont( 'Times-Roman', 9 )
+        canvas.drawString( px*inch, py*inch,"p. %d" % (doc.page) )
+        canvas.restoreState()
+    def _appendSection( story, title ):
+        story.append( Paragraph( '<font size="13"><u>'+title+'</u></font>', styles['Justify'] ) )
+        story.append( spacer )
+    def _appendLabelAndContent( story, label, content, key ):
+        p = '<b>'+ugettext(label)+':</b> '
+        if not content:
+            content = '-'
+        p += content
+        if refs.has_key( key ):
+            p += '<sup>' + refs[key] + '</sup>'
+        Story.append( Paragraph( p, styles['Left'] ) )
+        Story.append( spacer )
+    def _appendDetails( story, content ):
+        if content:
+            Story.append( Paragraph( content, styles['Justify'] ) )
+            Story.append( spacer )
+
+    # Add content
+    myp = '<font size="14"><i>' + taxon.genus + ' ' + taxon.species + '</i> ' + taxon.author + '</font>'
+    popnames = taxon.get_popular_names().values_list('name', flat=True)
+    sep = ', '
+    if len(popnames) > 0:
+        myp += '<br/><br/><font size="11">('+ sep.join(popnames) +')</font>'
+    p = Paragraph( myp, style )
+    Story.append( p )
+    Story.append( spacer )
+    _appendLabelAndContent( Story, ugettext(u'Family'), taxon.family, '' )
+    synonyms = taxon.get_synonyms().values_list('name', flat=True)
+    if len(synonyms) > 0:
+        Story.append( Paragraph( '<font size="10"><b>' + ugettext(u'Synonyms') + ':</b> ' + sep.join(synonyms) + '</font>', style ) )
+        Story.append( spacer )
+    t = '<b>'+ugettext(u'Endemic')+':</b> '
+    c = force_text( taxon.get_endemic() )
+    if c == 'None':
+        c = '-'
+    t += c
+    if refs.has_key( 'END' ):
+        t += '<sup>' + refs['END'] + '</sup>'
+    t += '    <b>'+ugettext(u'Rare')+':</b> '
+    r = force_text( taxon.get_rare() )
+    if r == 'None':
+        r = '-'
+    t += r
+    m = taxon.max_density
+    if m is not None:
+        t += str(m) + ugettext(u' individuals per hectare')
+    if refs.has_key( 'RAR' ):
+        t += '<sup>' + refs['RAR'] + '</sup>'
+    Story.append( Paragraph( t, styles['Left'] ) )
+    Story.append( spacer )
+    conservation_recs = taxon.conservationstatus_set.all()
+    if len( conservation_recs ) > 0:
+        cs = ''
+        for rec in conservation_recs:
+            if len( cs ) > 0:
+                cs += ', '
+            cs += rec.status + ' (' + rec.source.acronym + ')'
+        _appendLabelAndContent( Story, ugettext(u'conservation status'), cs, '' )
+    #_appendLabelAndContent( Story, ugettext(u'Special features'), taxon.get_special_features(), 'SPE' )
+    _appendLabelAndContent( Story, ugettext(u'Uses'), force_text(taxon.get_use()), '' )
+    _appendDetails( Story, taxon.description )
+    #########################################################
+    _appendSection( Story, ugettext(u'Ethnobotany')+' '+ugettext(u'and')+' '+ugettext(u'History') )
+    _appendDetails( Story, taxon.ethno_notes )
+    _appendLabelAndContent( Story, ugettext(u'Specific uses'), taxon.get_specific_uses(), '' )
+    #########################################################
+    _appendSection( Story, ugettext(u'General features') )
+    height = taxon.get_height()
+    dbh = taxon.get_dbh()
+    c = ''
+    if height:
+        c += ugettext(u'height') + ' ' + str(height)
+    else:
+        if dbh is None:
+            c += '-'
+    if dbh:
+        c += ugettext(u'DBH') + ' ' + str(dbh)
+    _appendLabelAndContent( Story, ugettext(u'Tree size')          , c                               , 'SIZ' )
+    _appendLabelAndContent( Story, ugettext(u'Flowering color')    , taxon.get_fl_color_display()    , 'FLC' )
+    _appendDetails( Story, taxon.fl_color_details )
+    _appendLabelAndContent( Story, ugettext(u'Growth rate')        , taxon.get_growth_rate()         , 'GRO' )
+    _appendDetails( Story, taxon.gr_comments )
+    _appendLabelAndContent( Story, ugettext(u'Foliage persistence'), taxon.get_foliage_persistence() , 'FOL' )
+    _appendLabelAndContent( Story, ugettext(u'Root system')        , taxon.get_r_type_display()      , 'ROT' )
+    _appendLabelAndContent( Story, ugettext(u'Crown shape')        , taxon.get_cr_shape_display()    , 'CRS' )
+    _appendLabelAndContent( Story, ugettext(u'Crown diameter')     , taxon.get_crown_diameter()      , 'CRD' )
+    _appendLabelAndContent( Story, ugettext(u'Trunk alignment')    , taxon.get_trunk_alignment()     , 'TRA' )
+    _appendLabelAndContent( Story, ugettext(u'Bark texture')       , taxon.get_bark_texture_display(), 'BRT' )
+    _appendLabelAndContent( Story, ugettext(u'Fruit type')         , taxon.get_fr_type_display()     , 'FRT' )
+    #########################################################
+    _appendSection( Story, ugettext(u'Care') )
+    _appendLabelAndContent( Story, ugettext(u'Pruning')            , taxon.get_pruning()            , 'PRU' )
+    _appendLabelAndContent( Story, ugettext(u'Pests and diseases') , taxon.pests_and_diseases       , 'PAD' )
+    _appendLabelAndContent( Story, ugettext(u'Thorns or spines')   , taxon.get_thorns_or_spines()   , 'TOS' )
+    _appendLabelAndContent( Story, ugettext(u'Toxic or allergenic'), taxon.get_toxic_or_allergenic(), 'TOA' )
+    #########################################################
+    _appendSection( Story, ugettext(u'Ecology')+' '+ugettext(u'and')+' '+ugettext(u'Reproduction') )
+    _appendLabelAndContent( Story, ugettext(u'Successional group')   , taxon.get_successional_group(), 'SUG' )
+    _appendLabelAndContent( Story, ugettext(u'Pollinators')          , taxon.pollinators             , 'POL' )
+    _appendLabelAndContent( Story, ugettext(u'Flowering period')     , taxon.get_flowering_period()  , 'FLP' )
+    _appendDetails( Story, taxon.fl_details )
+    _appendLabelAndContent( Story, ugettext(u'Seed dispersal')       , taxon.get_dispersal_types()   , 'SED' )
+    _appendLabelAndContent( Story, ugettext(u'Dispersion agents')    , taxon.dispersers              , 'DIS' )
+    _appendLabelAndContent( Story, ugettext(u'Fruiting period')      , taxon.get_fruiting_period()   , 'FRP' )
+    _appendDetails( Story, taxon.fr_details )
+    _appendLabelAndContent( Story, ugettext(u'Symbiotic association'), taxon.get_symbiotic_assoc()   , 'SYM' )
+    _appendDetails( Story, taxon.symbiotic_details )
+    #########################################################
+    _appendSection( Story, ugettext(u'Seedling production') )
+    _appendLabelAndContent( Story, ugettext(u'Seed collection')           , taxon.get_seed_gathering()        , 'SEC' )
+    _appendDetails( Story, taxon.seed_collection )
+    _appendLabelAndContent( Story, ugettext(u'Seed type')                 , taxon.get_seed_type_display()     , 'SET' )
+    _appendLabelAndContent( Story, ugettext(u'Pre-germination treatment') , taxon.get_pg_treatment_display()  , 'PGT' )
+    _appendDetails( Story, taxon.pg_details )
+    _appendLabelAndContent( Story, ugettext(u'Seedling production')       , taxon.get_seedbed()               , 'SDL' )
+    _appendDetails( Story, taxon.sl_details )
+    _appendLabelAndContent( Story, ugettext(u'Germination time lapse')    , taxon.get_germination_time_lapse(), 'GET' )
+    _appendLabelAndContent( Story, ugettext(u'Germination rate')          , taxon.get_germination_rate()      , 'GER' )
+    c = taxon.seeds_per_weight
+    if c:
+        c = str(c) + '/Kg'
+    _appendLabelAndContent( Story, ugettext(u'Number of seeds per weight'), c                                 , 'SPW' )
+    _appendLabelAndContent( Story, ugettext(u'Light requirements')        , taxon.get_light_display()         , 'LIG' )
+    _appendDetails( Story, taxon.light_details )
+    #########################################################
+    _appendSection( Story, ugettext(u'Bibliography') )
+    for citation in citations:
+        Story.append( Paragraph( '<font size="8"><sup>'+citation[0]+'</sup> '+citation[1]+'</font>', styles['Left'] ) )
+        Story.append( spacer )
+
+    doc.build( Story, onFirstPage=myPage, onLaterPages=myPage )
     
     return response
 
@@ -292,16 +459,25 @@ def show_species(request, species_id):
             citations.append( (str(cnt), ref.reference.full) )
             cnt = cnt + 1
     for ref in refs:
-        if numbers.has_key(ref.data):
-            numbers[ref.data] = numbers[ref.data] + ',' + '<a href="#ref-'+ctrl[ref.reference_id]+'" onclick="highlight(' + ctrl[ref.reference_id] + ');">' + ctrl[ref.reference_id] + '</a>'
+        if request.GET.has_key('pdf'):
+            if numbers.has_key(ref.data):
+                numbers[ref.data] = numbers[ref.data] + ',' + ctrl[ref.reference_id]
+            else:
+                numbers[ref.data] = ctrl[ref.reference_id]
         else:
-            numbers[ref.data] = '<a href="#ref-'+ctrl[ref.reference_id]+'" onclick="highlight(' + ctrl[ref.reference_id] + ');">' + ctrl[ref.reference_id] + '</a>'
+            if numbers.has_key(ref.data):
+                numbers[ref.data] = numbers[ref.data] + ',' + '<a href="#ref-'+ctrl[ref.reference_id]+'" onclick="highlight(' + ctrl[ref.reference_id] + ');">' + ctrl[ref.reference_id] + '</a>'
+            else:
+                numbers[ref.data] = '<a href="#ref-'+ctrl[ref.reference_id]+'" onclick="highlight(' + ctrl[ref.reference_id] + ');">' + ctrl[ref.reference_id] + '</a>'
     points = []
     for occ in taxon.taxonoccurrence_set.all():
         points.append({'x':occ.get_decimal_long(), 'y':occ.get_decimal_lat(), 'label':occ.label})
+    if request.GET.has_key('pdf'):
+        return _pdf_for_species_page( taxon, numbers, citations )
     points = _json_raw_encode( points )
     c = RequestContext(request, {'taxon': taxon, 'refs': numbers, 'citations': citations, 
-                                 'points': points, 'base_template':settings.BASE_TEMPLATE})
+                                 'points': points, 'base_template':settings.BASE_TEMPLATE,
+                                 'full_path': request.get_full_path()})
     possible_templates = ['my_species_page.html', 'species_page.html']
     return render_to_response( possible_templates, c )
 
