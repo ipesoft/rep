@@ -363,6 +363,7 @@ class CommonNamesInline(NamesInline):
 class TaxonAdmin(admin.ModelAdmin):
     change_form_template = 'admin/taxon_change_form.html'
     list_display = ('label', 'family', 'data_completeness')
+    list_max_show_all = 300
     fieldsets = (
         (_('Taxonomic data'), {            #1
             #'classes': ('collapse',),
@@ -553,10 +554,12 @@ class TaxonAdmin(admin.ModelAdmin):
         TerrainRefInline,             #36
         ConservationStatusInline,     #37
     ]
+class ReferenceAdmin(admin.ModelAdmin):
+    list_max_show_all = 300
 
 admin.site.register(Page)
 admin.site.register(Taxon, TaxonAdmin)
-admin.site.register(Reference)
+admin.site.register(Reference, ReferenceAdmin)
 admin.site.register(TypeOfUse)
 admin.site.register(ConservationAssessmentSource)
 admin.site.register(Interview)
