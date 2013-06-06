@@ -719,7 +719,7 @@ class Taxon( models.Model ):
         c_data = self._get_checklist_data()
         status = ''
         if len( c_data ):
-            if c_data[1] == genus and c_data[2] == species:
+            if c_data[1] == self.genus and c_data[2] == self.species:
                 pass
             else:
                 status = u'-> synonym of '+c_data[1]+' '+c_data[2]
