@@ -670,7 +670,7 @@ class Taxon( models.Model ):
             if p[1]:
                 icon = 'yes'
                 alt = 'v'
-            html = string_concat(html, '<a href="'+str(self.id)+'/#fset'+str(cnt)+'" title="',p[0],'"><img src="/static/admin/img/admin/icon-'+icon+'.gif" alt="'+alt+'" /></a>')
+            html = string_concat(html, '<a href="'+str(self.id)+'/#fset'+str(cnt)+'" title="',p[0],'"><img src="/static/admin/img/icon-'+icon+'.gif" alt="'+alt+'" /></a>')
             cnt = cnt + 1
         return html
     data_completeness.short_description = _(u'Data completeness')
