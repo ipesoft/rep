@@ -362,7 +362,7 @@ class CommonNamesInline(NamesInline):
 
 class TaxonAdmin(admin.ModelAdmin):
     change_form_template = 'admin/taxon_change_form.html'
-    list_display = ('label', 'data_completeness')
+    list_display = ('label', 'family', 'data_completeness')
     fieldsets = (
         (_('Taxonomic data'), {            #1
             #'classes': ('collapse',),
