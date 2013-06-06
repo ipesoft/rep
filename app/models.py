@@ -715,16 +715,20 @@ class Taxon( models.Model ):
     def add_synonym(self, name):
         self._add_name(u'S', name) 
 
-    def check_name( self ):
-        c_data = self._get_checklist_data()
+    def check_name( self, verbose=False ):
         status = ''
-        if len( c_data ):
-            if c_data[1] == self.genus and c_data[2] == self.species:
-                pass
+        try:
+            c_data = self._get_checklist_data( verbose )
+            if len( c_data ):
+                if c_data[1] == self.genus and c_data[2] == self.species:
+                    pass
+                else:
+                    status = u'-> synonym of '+c_data[1]+' '+c_data[2]
             else:
-                status = u'-> synonym of '+c_data[1]+' '+c_data[2]
-        else:
-            status = u'Not found!'
+                status = u' Not found!'
+        except Exception, e:
+            status = u' Exception: ' + str(e)
+        return status
 
     def _add_name(self, ntype, name):
         try:
@@ -735,8 +739,10 @@ class Taxon( models.Model ):
             n = TaxonName(taxon=self, ntype=ntype, name=name)
             n.save()
 
-    def _get_checklist_data( self ):
+    def _get_checklist_data( self, verbose=False ):
         query = 'http://checklist.florabrasil.net/service/ACCEPTED/FORMAT/xml/LANG/en/GENUS/'+self.genus+'/SPECIES/'+self.species
+        if verbose:
+            print query
         h = httplib2.Http()
         resp, content = h.request(query)
         if resp.status == 200:
