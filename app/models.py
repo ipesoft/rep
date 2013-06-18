@@ -401,6 +401,7 @@ class Taxon( models.Model ):
     pollinators = models.TextField( _(u'Pollinators'), null=True, blank=True )
     dt_anemochorous = models.BooleanField( _(u'Anemochorous') )
     dt_autochorous  = models.BooleanField( _(u'Autochorous') )
+    dt_barochorous = models.BooleanField( _(u'Barochorous') )
     dt_hydrochorous = models.BooleanField( _(u'Hydrochorous') )
     dt_zoochorous   = models.BooleanField( _(u'Zoochorous') )
     dispersers  = models.TextField( _(u'Dispersers'), null=True, blank=True )
@@ -570,7 +571,7 @@ class Taxon( models.Model ):
         return self._get_boolean_concat(['gr_slow', 'gr_moderate', 'gr_fast'])
 
     def get_dispersal_types(self):
-        return self._get_boolean_concat(['dt_anemochorous', 'dt_autochorous', 'dt_hydrochorous', 'dt_zoochorous'])
+        return self._get_boolean_concat(['dt_anemochorous', 'dt_autochorous', 'dt_barochorous', 'dt_hydrochorous', 'dt_zoochorous'])
 
     def get_endemic(self):
         return self._get_yes_no(self.endemic)
@@ -637,7 +638,7 @@ class Taxon( models.Model ):
                      (_('Flowering period'), (self.fl_start is not None) and (self.fl_end is not None)),
                      (_('Flowering color'), self.fl_color is not None),
                      (_('Pollination'), bool(self.pollinators)),
-                     (_('Seed dispersal'), (self.dt_anemochorous or self.dt_autochorous or self.dt_hydrochorous or self.dt_zoochorous)),
+                     (_('Seed dispersal'), (self.dt_anemochorous or self.dt_autochorous or self.dt_barochorous or self.dt_hydrochorous or self.dt_zoochorous)),
                      (_('Dispersion agents'), bool(self.dispersers)),
                      (_('Fruits'), self.fr_type is not None),
                      (_('Symbiotic association'), (self.symbiotic_assoc is not None) or bool(self.symbiotic_details)), 
