@@ -78,6 +78,7 @@ class RestorationSearchForm(CommonSearchForm):
     # Type of dispersion
     dt_anemochorous = forms.BooleanField(label=_(u'Anemochorous'))
     dt_autochorous  = forms.BooleanField(label=_(u'Autochorous'))
+    dt_barochorous  = forms.BooleanField(label=_(u'Barochorous'))
     dt_hydrochorous = forms.BooleanField(label=_(u'Hydrochorous'))
     dt_zoochorous   = forms.BooleanField(label=_(u'Zoochorous'))
 
@@ -597,7 +598,7 @@ def search_species(request):
         # Use OR condition for successional group
         qs = _add_or_conditions(request, qs, ['sg_pioneer', 'sg_early_secondary', 'sg_late_secondary', 'sg_climax'])
         # Use OR condition for seed dispersal
-        qs = _add_or_conditions(request, qs, ['dt_anemochorous', 'dt_autochorous', 'dt_hydrochorous', 'dt_zoochorous'])
+        qs = _add_or_conditions(request, qs, ['dt_anemochorous', 'dt_autochorous', 'dt_barochorous', 'dt_hydrochorous', 'dt_zoochorous'])
         # Symbiotic association
         if request.GET.has_key('symb_assoc'):
             if request.GET['symb_assoc'] in ('1', 1):
