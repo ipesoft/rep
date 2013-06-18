@@ -419,7 +419,7 @@ class TaxonAdmin(admin.ModelAdmin):
         }),
         (_('Seed dispersal'), {            #14
             #'classes': ('collapse',),
-            'fields': (('dt_anemochorous', 'dt_autochorous', 'dt_hydrochorous', 'dt_zoochorous'),),
+            'fields': (('dt_anemochorous', 'dt_autochorous', 'dt_barochorous', 'dt_hydrochorous', 'dt_zoochorous'),),
         }),
         (_('Dispersion agents'), {         #15
             #'classes': ('collapse',),
