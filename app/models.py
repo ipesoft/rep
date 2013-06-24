@@ -7,6 +7,8 @@ from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
+from django.utils.translation import ugettext
+from django.utils import translation
 
 import httplib2, datetime, re, string
 from xml.etree.ElementTree import fromstring
@@ -293,6 +295,10 @@ class Interview( models.Model ):
         return 'interview_' + str(self.id) + '.pdf'
 
     def generate_pdf(self):
+        # For now, save document only in the settings language
+        cur_language = translation.get_language()
+        if cur_language <> settings.LANGUAGE_CODE:
+            translation.activate( settings.LANGUAGE_CODE )
         pdf_file = settings.PDF_ROOT + self.get_pdf_name()
         from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
         from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -318,17 +324,18 @@ class Interview( models.Model ):
             crosshairs = [(x1,y1,x1,y2), (x1,y2,x2,y2), (x2,y2,x2,y1), (x2,y1,x1,y1)]
             canvas.lines(crosshairs)
             canvas.setFont( 'Times-Roman', 12 )
-            canvas.drawString( 1.1*inch, 11.1*inch, '%s: %s' % (u'Entrevistados', self.interviewees) )
-            canvas.drawString( 1.1*inch, 10.8*inch, '%s: %s' % (u'Entrevista e transcrição', self.interviewers) )
-            canvas.drawString( 1.1*inch, 10.5*inch, '%s: %s' % (u'Data', self.when.strftime("%d/%m/%Y")) )
-            canvas.drawString( 1.1*inch, 10.2*inch, '%s: %s' % (u'Local', self.locality) )
-            canvas.drawString( 1.1*inch, 9.9*inch, '%s: %s' % (u'Horas gravadas', self.duration) )
+            # IMPORTANT: String concatenation doesn't seem to work here, but you can use the % operator
+            #            otherwise you get a utf parameter number error
+            canvas.drawString( 1.1*inch, 11.1*inch, '%s: %s' % ( ugettext(u'Interviewee(s)'), self.interviewees) )
+            canvas.drawString( 1.1*inch, 10.8*inch, '%s: %s' % ( ugettext(u'Interviewer(s) and transcription'), self.interviewers) )
+            canvas.drawString( 1.1*inch, 10.5*inch, '%s: %s' % ( ugettext(u'Date'), self.when.strftime("%d/%m/%Y")) )
+            canvas.drawString( 1.1*inch, 10.2*inch, '%s: %s' % ( ugettext(u'Place'), self.locality) )
+            canvas.drawString( 1.1*inch, 9.9*inch, '%s: %s' % ( ugettext(u'Duration'), self.duration) )
             canvas.setFont( 'Times-Roman', 9 )
-            canvas.drawString( 1.1*inch, 9.5*inch, u'Palavra[? – tempo]: leitura da palavra correta ou aproximada.')
-            canvas.drawString( 1.1*inch, 9.3*inch, u'Frase [? – tempo]: palavra ou trecho indecifrável.')
-            canvas.drawString( 1.1*inch, 9.1*inch, u'- Frase: quando eles reproduzem suas falas ou de outras pessoas.')
+            canvas.drawString( 1.1*inch, 9.5*inch, '%s' % ugettext(u'Symbology') )
+            canvas.drawString( 1.1*inch, 9.3*inch, '[...]: %s.' % ugettext(u'excerpt removed or not transcribed') )
             canvas.setFont( 'Times-Roman', 12 )
-            canvas.drawString( 1.1*inch, 8.8*inch, u'TRANSCRIÇÃO')
+            canvas.drawString( 1.1*inch, 8.8*inch, '%s' % ugettext(u'TRANSCRIPTION') )
             canvas.setFont( 'Times-Roman', 9 )
             canvas.drawString( px*inch, py*inch,"p. %d" % (doc.page) )
             canvas.restoreState()

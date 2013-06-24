@@ -6,7 +6,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
   <meta http-equiv="PRAGMA" content="NO-CACHE">
   <meta http-equiv="EXPIRES" content="-1">
-  <title>Regional Flora</title>
+  <title>{% trans "Regional Flora" %}</title>
   <link rel="stylesheet" type="text/css" href="/static/css/style.css" />
 {% block header %}
 {% endblock header %}
@@ -16,41 +16,45 @@
  <div id="header">
   <div class="inner">
    <div id="logo">
-    <a href="/"><h1>Regional<span>Flora</span></h1></a>
+    <a href="/"><h1>{% trans "Regional<span>Flora</span>" %}</h1></a>
    </div>
    <div id="searchbox">
-    <form method="get" action="/sp/"><span>Search&nbsp;species:&nbsp;</span><input type="text" name="name" id="name" class="textbox" /></form>
+    <form method="get" action="/sp/"><span>{% trans "Search species" %}:&nbsp;</span><input type="text" name="name" id="name" class="textbox" /></form>
    </div>
   </div>
  </div>
 
  <div id="wrapper">
   <div id="col1">
-   <h3><a href="/about">About</a></h3>
-   <h3><a href="/methods">Methods</a></h3>
-   <h3>Ethnobotany</h3>
+   <h3><a href="/about">{% trans "About" %}</a></h3>
+   <h3><a href="/methods">{% trans "Methods" %}</a></h3>
+   <h3>{% trans "Ethnobotany" %}</h3>
    <ul>
-    <li><a href="/ethno/overview">overview</a></li>
-    <li><a href="/ethno/results">results</a></li>
+    <li><a href="/ethno/overview">{% trans "overview" %}</a></li>
+    <li><a href="/ethno/results">{% trans "results" %}</a></li>
    </ul>
-   <h3>History</h3>
+   <h3>{% trans "History" %}</h3>
    <ul>
-    <li><a href="/hist/overview">overview</a></li>
-    <li><a href="/hist/results">results</a></li>
+    <li><a href="/hist/overview">{% trans "overview" %}</a></li>
+    <li><a href="/hist/results">{% trans "results" %}</a></li>
    </ul>
-   <h3>List of species</h3>
+   <h3>{% trans "List of species" %}</h3>
+   {% filter lower %}
    <ul>
-    <li><a href="/sp/">all</a></li>
-    <li><a href="/sp/?restor=1">restoration</a></li>
-    <li><a href="/sp/?urban=1">urban forestry</a></li>
-    <li><a href="/sp/?silv=1">silviculture</a></li>
+    <li><a href="/sp/">{% trans "all" %}</a></li>
+    <li><a href="/sp/?restor=1">{% trans "Restoration" %}</a></li>
+    <li><a href="/sp/?urban=1">{% trans "Urban forestry" %}</a></li>
+    <li><a href="/sp/?silv=1">{% trans "Silviculture" %}</a></li>
    </ul>
-   <h3>Advanced search</h3>
+   {% endfilter %}
+   <h3>{% trans "Advanced search" %}</h3>
+   {% filter lower %}
    <ul>
-    <li><a href="/sp/?restor=1&amp;adv=1">restoration</a></li>
-    <li><a href="/sp/?urban=1&amp;adv=1">urban forestry</a></li>
+    <li><a href="/sp/?restor=1&amp;adv=1">{% trans "Restoration" %}</a></li>
+    <li><a href="/sp/?urban=1&amp;adv=1">{% trans "Urban forestry" %}</a></li>
    </ul>
-   <h3><a href="/">Contact</a></h3>
+   {% endfilter %}
+   <h3><a href="/">{% trans "Contact" %}</a></h3>
   </div>
 
   <div id="col2">
@@ -63,7 +67,7 @@
 
  <div id="footer">
   <div class="inner">
-   Created by <a href="http://www.ipe.org.br">IPÊ</a> with funding from <a href="http://www.jrsbdf.org">JRS</a>
+   {% trans "Created by" %} <a href="http://www.ipe.org.br">IPÊ</a> {% trans "with funding from" %} <a href="http://www.jrsbdf.org">JRS</a>
   </div>
  </div>
 </div>
