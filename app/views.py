@@ -7,6 +7,7 @@ from django.template import RequestContext
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext
+from django.utils import translation
 from django.utils.encoding import force_text
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django import forms
@@ -83,6 +84,15 @@ class RestorationSearchForm(CommonSearchForm):
     dt_zoochorous   = forms.BooleanField(label=_(u'Zoochorous'))
 
 # Internal methods
+def _handle_language(request):
+    if request.GET.has_key('setlang'):
+        translation.activate( request.GET['setlang'] )
+        request.session['django_language'] = request.GET['setlang']
+    else:
+        if not request.session.has_key('django_language'):
+            translation.activate( settings.LANGUAGE_CODE )
+            request.session['django_language'] = settings.LANGUAGE_CODE
+
 def _add_and_conditions(request, qs, fields):
     for field in fields:
         if ( request.GET.has_key(field)):
@@ -399,12 +409,14 @@ def _pdf_for_species_page( taxon, refs, citations ):
 # View methods
 def index(request):
     'Index page'
+    _handle_language( request )
     c = RequestContext(request, {'base_template':settings.BASE_TEMPLATE})
     possible_templates = ['my_index.html', 'index.html']
     return render_to_response( possible_templates, c )
 
 def show_page(request, page_code):
     'Generic method to show a page stored in the database'
+    _handle_language( request )
     pages = Page.objects.filter(code=page_code)
     if len(pages) == 0:
         raise Http404
@@ -434,6 +446,7 @@ def hist_overview(request):
     return show_page(request, 'hist_overview')
 
 def hist_results(request):
+    _handle_language( request )
     possible_templates = ['my_hist_results.html', 'hist_results.html']
     template_params = {'base_template':settings.BASE_TEMPLATE}
     interviews = Interview.objects.all().order_by('title')
@@ -443,6 +456,7 @@ def hist_results(request):
 
 def show_species(request, species_id):
     'Display data about a species'
+    _handle_language( request )
     if not isinstance( species_id, int ):
         if species_id.isdigit():
             species_id = int(species_id)
@@ -487,6 +501,7 @@ def show_species(request, species_id):
     return render_to_response( possible_templates, c )
 
 def search_species(request):
+    _handle_language( request )
     template_params = {'base_template':settings.BASE_TEMPLATE}
     perform_query = True
     if request.GET.has_key('adv'):
@@ -635,6 +650,7 @@ def search_species(request):
 
 def interview(request, interview_id):
     'Display interview page'
+    _handle_language( request )
     if not isinstance( interview_id, int ):
         if interview_id.isdigit():
             interview_id = int(interview_id)
