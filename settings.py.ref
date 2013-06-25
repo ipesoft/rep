@@ -102,12 +102,12 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.locale.LocaleMiddleware', # must be after SessionMiddleware
+    'django.middleware.common.CommonMiddleware',
     'utils.multilang.middleware.AdminLocaleURLMiddleware',
 )
 
@@ -127,6 +127,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.media',
     'django.core.context_processors.static',
     'django.contrib.messages.context_processors.messages',
+    'rep.app.lib.context_processor',
 )
 
 INSTALLED_APPS = (
@@ -169,6 +170,12 @@ LOGGING = {
 
 # Custom settings
 BASE_TEMPLATE = 'base.html'
+
+CONTACT_EMAIL = 'public_contact_email'
+
+PDF_ROOT = 'app_absolute_path/docs'
+
+FLICKR_API_KEY = 'your_flickr_api_key'
 
 # The next items are all used to share data with EoL
 
