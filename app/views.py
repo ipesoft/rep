@@ -1,6 +1,6 @@
 # coding=UTF-8
 
-from app.models import Page, Taxon, TaxonName, TaxonDataReference, COLORS, MONTHS, ROOT_SYSTEMS, CROWN_SHAPES, ConservationStatus, Interview, TypeOfUse, TaxonUse
+from app.models import StaticContent, Taxon, TaxonName, TaxonDataReference, COLORS, MONTHS, ROOT_SYSTEMS, CROWN_SHAPES, ConservationStatus, Interview, TypeOfUse, TaxonUse
 from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
@@ -415,9 +415,9 @@ def index(request):
     return render_to_response( possible_templates, c )
 
 def show_page(request, page_code):
-    'Generic method to show a page stored in the database'
+    'Generic method to show a static page stored in the database'
     _handle_language( request )
-    pages = Page.objects.filter(code=page_code)
+    pages = StaticContent.objects.filter(code=page_code)
     if len(pages) == 0:
         raise Http404
     try:

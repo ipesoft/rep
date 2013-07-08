@@ -137,22 +137,6 @@ TAXON_DATA = (
     ( u'USE', _(u'Use') ),
 )
 
-class Page( models.Model ):
-    "Custom flat page"
-    code = models.SlugField( _(u'Code'), help_text=_(u'Unique code to identify the page'), db_index=True )
-    lang = models.CharField( _(u'Language'), choices=settings.LANGUAGES, max_length=12 )
-    title = models.TextField( _(u'Title') )
-    content = models.TextField( _(u'Content') )
-
-    class Meta:
-        verbose_name = _(u'static page')
-        verbose_name_plural = _(u'static pages')
-        unique_together = ((u'code', u'lang'),)
-        ordering = [u'title']
-
-    def __unicode__(self):
-        return unicode(self.title)
-
 class StaticContent( models.Model ):
     "Static content"
     code = models.SlugField( _(u'Code'), help_text=_(u'Unique code'), db_index=True )

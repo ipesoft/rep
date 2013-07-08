@@ -1,6 +1,6 @@
 # coding=UTF-8
 
-from app.models import Page, StaticContent, Taxon, TaxonName, Reference, TaxonDataReference, ConservationAssessmentSource, ConservationStatus, TypeOfUse, TaxonUse, Interview
+from app.models import StaticContent, Taxon, TaxonName, Reference, TaxonDataReference, ConservationAssessmentSource, ConservationStatus, TypeOfUse, TaxonUse, Interview
 from django.contrib import admin
 from django.forms.models import ModelForm
 from django.utils.translation import ugettext_lazy as _
@@ -557,7 +557,6 @@ class TaxonAdmin(admin.ModelAdmin):
 class ReferenceAdmin(admin.ModelAdmin):
     list_max_show_all = 300
 
-admin.site.register(Page)
 admin.site.register(StaticContent)
 admin.site.register(Taxon, TaxonAdmin)
 admin.site.register(Reference, ReferenceAdmin)
