@@ -153,6 +153,23 @@ class Page( models.Model ):
     def __unicode__(self):
         return unicode(self.title)
 
+class StaticContent( models.Model ):
+    "Static content"
+    code = models.SlugField( _(u'Code'), help_text=_(u'Unique code'), db_index=True )
+    lang = models.CharField( _(u'Language'), choices=settings.LANGUAGES, max_length=12 )
+    description = models.TextField( _(u'Description') )
+    title = models.TextField( _(u'Title'), null=True, blank=True )
+    content = models.TextField( _(u'Content') )
+
+    class Meta:
+        verbose_name = _(u'static content')
+        verbose_name_plural = _(u'static contents')
+        unique_together = ((u'code', u'lang'),)
+        ordering = [u'description']
+
+    def __unicode__(self):
+        return unicode(self.description)
+
 class Reference( models.Model ):
     "Bibliographic reference"
     citation = models.TextField( _(u'Citation'), help_text=_(u'e.g. Paranagua et al. 2011'), unique=True )
