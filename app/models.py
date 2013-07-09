@@ -78,6 +78,7 @@ BARK_TEXTURES = (
 SEED_TYPES = (
     ( u'R', _(u'Recalcitrant') ),
     ( u'O', _(u'Orthodox') ),
+    ( u'U', _(u'Unclassified') ),
 )
 
 PREGERMINATION_TREATMENTS = (
