@@ -416,8 +416,6 @@ def index(request):
 
 def show_help(request, content_id):
     'Generic method to retrieve help content stored in the database'
-    import time
-    time.sleep(3)
     _handle_language( request )
     options = StaticContent.objects.filter(code=content_id)
     if len(options) == 0:
