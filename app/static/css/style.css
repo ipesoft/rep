@@ -302,6 +302,8 @@ label {
 	text-align: justify;
 }
 
+.help	{ border: none; vertical-align: middle; margin-left: 5px; }
+
 .interview {
 	border:1px solid #c2ee62;
 	background-color:#edfdd0;

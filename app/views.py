@@ -414,6 +414,21 @@ def index(request):
     possible_templates = ['my_index.html', 'index.html']
     return render_to_response( possible_templates, c )
 
+def show_help(request, content_id):
+    'Generic method to retrieve help content stored in the database'
+    import time
+    time.sleep(3)
+    _handle_language( request )
+    options = StaticContent.objects.filter(code=content_id)
+    if len(options) == 0:
+        raise Http404
+    try:
+        h = options.get(lang=request.LANGUAGE_CODE)
+    except StaticContent.DoesNotExist:
+        # Get first
+        h = options[0]
+    return HttpResponse(h.content)
+
 def show_page(request, page_code):
     'Generic method to show a static page stored in the database'
     _handle_language( request )
@@ -466,6 +481,7 @@ def show_species(request, species_id):
         taxon = Taxon.objects.get(pk=species_id)
     except Taxon.DoesNotExist:
         raise Http404
+    # Bibliographic references
     #data = ('RAR','END','SPE','SUG','GRO','PRU','FLP','FLC','POL','SED','DIS','FRT','SYM','ROT','FOL','CRD','CRS','BRT','TRA','SIZ','TOS','TOA','PAD','FRP','SEC','SET','PGT','SDL','GET','GER','SPW','LIG')
     ctrl = {}      # reference_id => number
     citations = [] # list of(ref_number, citation)
@@ -488,15 +504,19 @@ def show_species(request, species_id):
                 numbers[ref.data] = numbers[ref.data] + ',' + '<a href="#ref-'+ctrl[ref.reference_id]+'" onclick="highlight(' + ctrl[ref.reference_id] + ');">' + ctrl[ref.reference_id] + '</a>'
             else:
                 numbers[ref.data] = '<a href="#ref-'+ctrl[ref.reference_id]+'" onclick="highlight(' + ctrl[ref.reference_id] + ');">' + ctrl[ref.reference_id] + '</a>'
+    # Points
     points = []
     for occ in taxon.taxonoccurrence_set.all():
         points.append({'x':occ.get_decimal_long(), 'y':occ.get_decimal_lat(), 'label':occ.label})
     if request.GET.has_key('pdf'):
         return _pdf_for_species_page( taxon, numbers, citations )
     points = _json_raw_encode( points )
+    # Help content
+    help_entries = StaticContent.objects.filter(code__startswith='HELP-').values_list('code', flat=True)
+    # Page rendering
     c = RequestContext(request, {'taxon': taxon, 'refs': numbers, 'citations': citations, 
                                  'points': points, 'base_template':settings.BASE_TEMPLATE,
-                                 'full_path': request.get_full_path()})
+                                 'full_path': request.get_full_path(), 'help_entries':help_entries})
     possible_templates = ['my_species_page.html', 'species_page.html']
     return render_to_response( possible_templates, c )
 
