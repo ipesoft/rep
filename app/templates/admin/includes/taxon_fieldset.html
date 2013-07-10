@@ -48,14 +48,17 @@ The following code is a hack to embed inlines between certain fieldsets.
     {% with inline_admin_formset=inline_admin_formsets.2 %}
     {% include inline_admin_formset.opts.template %}
     {% endwith %}
+  {% comment %}INSERT AFTER THE FIFTH FIELDSET{% endcomment %}
+  {% elif fset_cnt == 5 %}
     {% comment %}FOURTH INLINE (USE REFS){% endcomment %}
     {% with inline_admin_formset=inline_admin_formsets.3 %}
     {% include inline_admin_formset.opts.template %}
     {% endwith %}
-  {% elif fset_cnt > 4 %}
-    {% comment %}PICK THE CORRESPONDING REFERENCE INLINE{% endcomment %}
-    {% for inline_admin_formset in inline_admin_formsets %}{% if forloop.counter == fset_cnt|add:0 %}{% include inline_admin_formset.opts.template %}{% endif %}{% endfor %}
-  {% elif fset_cnt == 37 %}
+  {% elif fset_cnt > 5 %}
+    {% comment %}PICK THE CORRESPONDING REFERENCE INLINE AFTER THE NEXT FIELDSETS{% endcomment %}
+    {% comment %}i.e. for each fieldset n greater than 5, include inline n-1 (count starts at 1!){% endcomment %}
+    {% for inline_admin_formset in inline_admin_formsets %}{% if forloop.counter == fset_cnt|add:-1 %}{% include inline_admin_formset.opts.template %}{% endif %}{% endfor %}
+  {% elif fset_cnt == 38 %}
     {% with inline_admin_formset=inline_admin_formsets.36 %}
     {% include inline_admin_formset.opts.template %}
     {% endwith %}

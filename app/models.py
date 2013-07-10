@@ -10,6 +10,8 @@ from django.utils.translation import string_concat
 from django.utils.translation import ugettext
 from django.utils import translation
 
+from taggit_autocomplete_modified.managers import TaggableManagerAutocomplete as TaggableManager
+
 import httplib2, datetime, re, string
 from xml.etree.ElementTree import fromstring
 
@@ -461,6 +463,7 @@ class Taxon( models.Model ):
     light = models.CharField( _(u'Classification'), null=True, blank=True, choices=LIGHT_REQUIREMENTS, max_length=1 )
     light_details = models.TextField( _(u'Details'), null=True, blank=True )
     has_pictures = models.BooleanField( _(u'Has pictures') )
+    tags = TaggableManager( _(u'TaxonTags'), blank=True )
     created = models.DateTimeField( u'Date created', auto_now_add = True )
     modified = models.DateTimeField( u'Date modified', null=True )
 
