@@ -85,9 +85,12 @@ SEED_TYPES = (
 
 PREGERMINATION_TREATMENTS = (
     ( u'N', _(u'No need for treatment') ),
-    ( u'C', _(u'Chemical scarification') ),
-    ( u'I', _(u'Immersion in hot or cold water') ),
+    ( u'L', _(u'Thermal treatment') ),
+    ( u'C', _(u'Chemical treatment') ),
+    ( u'I', _(u'Immersion in water') ),
     ( u'M', _(u'Mechanical scarification') ),
+    ( u'T', _(u'Combined treatments') ),
+    ( u'O', _(u'Other') ),
 )
 
 #SOIL_TYPES = (
