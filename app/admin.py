@@ -1,6 +1,6 @@
 # coding=UTF-8
 
-from app.models import StaticContent, Taxon, TaxonName, Reference, TaxonDataReference, ConservationAssessmentSource, ConservationStatus, TypeOfUse, TaxonUse, Interview, Temp
+from app.models import StaticContent, Taxon, TaxonName, Reference, TaxonDataReference, ConservationAssessmentSource, ConservationStatus, TypeOfUse, TaxonUse, Interview
 from django.contrib import admin
 from django.forms.models import ModelForm
 from django.utils.translation import ugettext_lazy as _
