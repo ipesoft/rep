@@ -333,7 +333,7 @@ function setmap() {
 <div class="section" onclick="collapse('s6', 'i6');return false;"><table width="100%"><tr><td width="90%"{% if taxon.has_bibliography_data %} style="font-weight: bold;"{% endif %}>{% trans "Bibliography" %}</td><td style="text-align: right;"><img id="i6" src="/static/images/expand.gif" alt="expand" title="expand"/></td></tr></table></div>
 <div id="s6" style="display: none;">
 {% for citation in citations %}
-<a id="ref-{{ citation.0 }}"></a><p id="ref-text-{{ citation.0 }}" class="bib"><sup>{{ citation.0 }}</sup>&nbsp;{{ citation.1 }}</p>
+<a id="ref-{{ citation.0 }}"></a><p id="ref-text-{{ citation.0 }}" class="bib"><sup>{{ citation.0 }}</sup>&nbsp;{% autoescape on %}{{ citation.1 }}{% endautoescape %}</p>
 {% endfor %}
 </div>
 
