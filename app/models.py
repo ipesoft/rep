@@ -80,6 +80,7 @@ BARK_TEXTURES = (
 SEED_TYPES = (
     ( u'R', _(u'Recalcitrant') ),
     ( u'O', _(u'Orthodox') ),
+    ( u'I', _(u'Intermediary') ),
     ( u'U', _(u'Unclassified') ),
 )
 
