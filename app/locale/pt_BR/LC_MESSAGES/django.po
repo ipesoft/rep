@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-12 15:57-0500\n"
+"POT-Creation-Date: 2013-07-12 16:04-0500\n"
 "PO-Revision-Date: 2012-03-07 21:05-0300\n"
 "Last-Translator: Renato De Giovanni <renato@cria . org . br>\n"
 "Language-Team: pt_BR <LL@li.org>\n"
@@ -133,8 +133,7 @@ msgstr "Agentes dispersores"
 msgid "Fruits"
 msgstr "Frutos"
 
-#: admin.py:436 models.py:134 models.py:671 views.py:73 views.py:380
-#: management/commands/export_data.py:117 templates/species_page.html:315
+#: admin.py:436 management/commands/export_data.py:117
 msgid "Symbiotic association"
 msgstr "Associação simbiótica"
 
@@ -518,6 +517,11 @@ msgstr "Dispersores"
 #: models.py:133 models.py:434 views.py:361 templates/species_page.html:292
 msgid "Fruit type"
 msgstr "Tipo de fruto"
+
+#: models.py:134 models.py:671 views.py:73 views.py:380
+#: templates/species_page.html:315
+msgid "Symbiotic association with roots"
+msgstr "Associação simbiótica com raízes"
 
 #: models.py:135 models.py:437 views.py:36 views.py:356
 #: templates/species_page.html:287

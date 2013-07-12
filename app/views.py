@@ -70,7 +70,7 @@ class UrbanForestrySearchForm(CommonSearchForm):
 class RestorationSearchForm(CommonSearchForm):
     use_choices = TypeOfUse.objects.all().order_by('label').values_list('id', 'label')
     uses = forms.MultipleChoiceField(label=_(u'Specific use'), choices=use_choices)
-    symb_assoc = forms.ChoiceField(label=_(u'Symbiotic association'), initial=-1, choices=null_boolean_choices)
+    symb_assoc = forms.ChoiceField(label=_(u'Symbiotic association with roots'), initial=-1, choices=null_boolean_choices)
     # Successional group
     sg_pioneer         = forms.BooleanField(label=_(u'Pioneer'))
     sg_early_secondary = forms.BooleanField(label=_(u'Early secondary'))
@@ -377,7 +377,7 @@ def _pdf_for_species_page( taxon, refs, citations ):
     _appendLabelAndContent( Story, ugettext(u'Dispersion agents')    , taxon.dispersers              , 'DIS' )
     _appendLabelAndContent( Story, ugettext(u'Fruiting period')      , taxon.get_fruiting_period()   , 'FRP' )
     _appendDetails( Story, taxon.fr_details )
-    _appendLabelAndContent( Story, ugettext(u'Symbiotic association'), taxon.get_symbiotic_assoc()   , 'SYM' )
+    _appendLabelAndContent( Story, ugettext(u'Symbiotic association with roots'), taxon.get_symbiotic_assoc()   , 'SYM' )
     _appendDetails( Story, taxon.symbiotic_details )
     #########################################################
     _appendSection( Story, ugettext(u'Seedling production') )

@@ -310,7 +310,7 @@ function setmap() {
 <p><label>{% trans "Dispersion agents" %}:</label>&nbsp;{{ taxon.dispersers|default:"-" }}&nbsp;<sup>{{ refs.DIS }}</sup></p>
 <p><label>{% trans "Fruiting period" %}:</label>&nbsp;{{ taxon.get_fruiting_period|default:"-" }}&nbsp;<sup>{{ refs.FRP }}</sup></p>
 {% if taxon.fr_details %}<p>{{ taxon.fr_details }}</p>{% endif %}
-<p><label>{% trans "Symbiotic association" %}:</label>&nbsp;{{ taxon.get_symbiotic_assoc|default:"-" }}&nbsp;<sup>{{ refs.SYM }}</sup></p>
+<p><label>{% trans "Symbiotic association with roots" %}:</label>&nbsp;{{ taxon.get_symbiotic_assoc|default:"-" }}&nbsp;<sup>{{ refs.SYM }}</sup></p>
 {% if taxon.symbiotic_details %}<p>{{ taxon.symbiotic_details }}</p>{% endif %}
 </div>
 
