@@ -52,6 +52,17 @@ FRUIT_TYPES = (
     ( u'C', _(u'Capsule') ),
     ( u'D', _(u'Drupe') ),
     ( u'L', _(u'Legume') ),
+    ( u'F', _(u'Follicle') ),
+    ( u'S', _(u'Silicle') ),
+    ( u'M', _(u'Samara') ),
+    ( u'A', _(u'Achene') ),
+    ( u'Y', _(u'Caryopsis') ),
+    ( u'N', _(u'Syconium') ),
+    ( u'H', _(u'Hesperidium') ),
+    ( u'P', _(u'Pepo') ),
+    ( u'X', _(u'Pyxis') ),
+    ( u'O', _(u'Operculate') ),
+    ( u'G', _(u'Calybion') ),
 )
 
 ROOT_SYSTEMS = (
