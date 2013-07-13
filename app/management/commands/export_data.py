@@ -114,7 +114,7 @@ class Command( BaseCommand ):
             if taxon.symbiotic_assoc:
                 if len(assoc):
                     assoc = assoc + '. '
-                assoc = string_concat(assoc, _(u'Symbiotic association'),': ', taxon.symbiotic_details)
+                assoc = string_concat(assoc, _(u'Symbiotic association with roots'),': ', taxon.symbiotic_details)
             if len(assoc):
                 self._add_data_object( f, taxon, u'Associations', ['POL', 'SYM'], assoc, lang)
             ## Dispersal
@@ -156,8 +156,8 @@ class Command( BaseCommand ):
             if taxon.seed_type is not None:
                 repro = string_concat( repro, _(u'Seed type'), ': ', taxon.get_seed_type_display(), '. ' )
                 repro_ref.append('SET')
-            if taxon.pg_treatment is not None:
-                repro = string_concat( repro, taxon._get_field_label('pg_treatment'), ': ', taxon.get_pg_treatment_display(), '. ' )
+            if taxon.has_pregermination_treatment():
+                repro = string_concat( repro, _(u'Pre-germination treatment'), ': ', taxon.get_pregermination_treatment(), '. ' )
                 repro_ref.append('PGT')
             seedbed = taxon.get_seedbed()
             if seedbed != '-':

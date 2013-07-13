@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-13 07:54-0500\n"
+"POT-Creation-Date: 2013-07-13 08:54-0500\n"
 "PO-Revision-Date: 2012-03-07 21:05-0300\n"
 "Last-Translator: Renato De Giovanni <renato@cria . org . br>\n"
 "Language-Team: pt_BR <LL@li.org>\n"
@@ -26,11 +26,11 @@ msgstr "referência"
 msgid "references"
 msgstr "referências"
 
-#: admin.py:288 models.py:893 views.py:328 templates/species_page.html:245
+#: admin.py:288 models.py:906 views.py:328 templates/species_page.html:245
 msgid "conservation status"
 msgstr "status de conservação"
 
-#: admin.py:289 models.py:894
+#: admin.py:289 models.py:907
 msgid "conservation statuses"
 msgstr "status de conservação"
 
@@ -58,185 +58,186 @@ msgstr "nome popular"
 msgid "common names"
 msgstr "nomes populares"
 
-#: admin.py:368 models.py:676
+#: admin.py:368 models.py:689
 msgid "Taxonomic data"
 msgstr "Dados taxonômicos"
 
-#: admin.py:372 models.py:402 models.py:677
+#: admin.py:372 models.py:402 models.py:690
 msgid "General description"
 msgstr "Descrição geral"
 
-#: admin.py:376 models.py:403 models.py:678
+#: admin.py:376 models.py:403 models.py:691
 msgid "Ethnobotany description"
 msgstr "Descrição da etnobotânica"
 
-#: admin.py:380 models.py:679 views.py:330 templates/species_page.html:250
+#: admin.py:380 models.py:692 views.py:330 templates/species_page.html:250
 msgid "Uses"
 msgstr "Recomendação de uso"
 
-#: admin.py:388 models.py:680
+#: admin.py:388 models.py:693
 msgid "Abundance"
 msgstr "Abundância"
 
-#: admin.py:392 models.py:682
+#: admin.py:392 models.py:695
 msgid "Endemism"
 msgstr "Endemismo"
 
-#: admin.py:396 models.py:134 models.py:683
+#: admin.py:396 models.py:134 models.py:696
 msgid "Special features"
 msgstr "Características de destaque"
 
-#: admin.py:400 models.py:135 models.py:684 views.py:372
+#: admin.py:400 models.py:135 models.py:697 views.py:372
 #: templates/adv_search_species_restoration.html:43
 #: templates/species_page.html:307
 msgid "Successional group"
 msgstr "Grupo sucessional"
 
-#: admin.py:404 models.py:136 models.py:685 views.py:353
+#: admin.py:404 models.py:136 models.py:698 views.py:353
 #: management/commands/export_data.py:109
 #: templates/adv_search_species_restoration.html:44
 #: templates/adv_search_species_urban.html:47 templates/species_page.html:284
 msgid "Growth rate"
 msgstr "Velocidade de desenvolvimento"
 
-#: admin.py:408 models.py:137 models.py:686 views.py:364
+#: admin.py:408 models.py:137 models.py:699 views.py:364
 #: templates/species_page.html:297
 msgid "Pruning"
 msgstr "Poda de condução e galhos"
 
-#: admin.py:412 models.py:138 models.py:687 views.py:374
+#: admin.py:412 models.py:138 models.py:700 views.py:374
 #: management/commands/export_data.py:67 templates/species_page.html:309
 msgid "Flowering period"
 msgstr "Período de floração"
 
-#: admin.py:416 models.py:139 models.py:688 views.py:52 views.py:351
+#: admin.py:416 models.py:139 models.py:701 views.py:52 views.py:351
 #: management/commands/export_data.py:63 templates/species_page.html:282
 msgid "Flowering color"
 msgstr "Cor da floração"
 
-#: admin.py:420 models.py:689
+#: admin.py:420 models.py:702
 msgid "Pollination"
 msgstr "Polinização"
 
-#: admin.py:424 models.py:141 models.py:690 views.py:376
+#: admin.py:424 models.py:141 models.py:703 views.py:376
 #: management/commands/export_data.py:124
 #: templates/adv_search_species_restoration.html:49
 #: templates/species_page.html:311
 msgid "Seed dispersal"
 msgstr "Tipo de dispersão"
 
-#: admin.py:428 models.py:691 views.py:377 templates/species_page.html:312
+#: admin.py:428 models.py:704 views.py:377 templates/species_page.html:312
 msgid "Dispersion agents"
 msgstr "Agentes dispersores"
 
-#: admin.py:432 models.py:413 models.py:692 views.py:57
+#: admin.py:432 models.py:413 models.py:705 views.py:57
 msgid "Fruits"
 msgstr "Frutos"
 
-#: admin.py:436 management/commands/export_data.py:117
-msgid "Symbiotic association"
-msgstr "Associação simbiótica"
+#: admin.py:436 models.py:144 models.py:706 views.py:73 views.py:380
+#: management/commands/export_data.py:117 templates/species_page.html:315
+msgid "Symbiotic association with roots"
+msgstr "Associação simbiótica com raízes"
 
-#: admin.py:440 models.py:418 models.py:694 views.py:62
+#: admin.py:440 models.py:418 models.py:707 views.py:62
 msgid "Roots"
 msgstr "Raízes"
 
-#: admin.py:444 models.py:146 models.py:695 views.py:355
+#: admin.py:444 models.py:146 models.py:708 views.py:355
 #: management/commands/export_data.py:60
 #: templates/adv_search_species_restoration.html:48
 #: templates/adv_search_species_urban.html:53 templates/species_page.html:286
 msgid "Foliage persistence"
 msgstr "Persistência foliar"
 
-#: admin.py:448 models.py:147 models.py:696 views.py:358
+#: admin.py:448 models.py:147 models.py:709 views.py:358
 #: management/commands/export_data.py:95
 #: templates/adv_search_species_restoration.html:46
 #: templates/adv_search_species_urban.html:46 templates/species_page.html:289
 msgid "Crown diameter"
 msgstr "Diâmetro da copa"
 
-#: admin.py:452 models.py:148 models.py:697 views.py:53 views.py:357
+#: admin.py:452 models.py:148 models.py:710 views.py:53 views.py:357
 #: management/commands/export_data.py:73 templates/species_page.html:288
 msgid "Crown shape"
 msgstr "Formato da copa"
 
-#: admin.py:456 models.py:149 models.py:698 views.py:360
+#: admin.py:456 models.py:149 models.py:711 views.py:360
 #: management/commands/export_data.py:80 templates/species_page.html:291
 msgid "Bark texture"
 msgstr "Superfície do tronco"
 
-#: admin.py:460 models.py:150 models.py:699 views.py:359
+#: admin.py:460 models.py:150 models.py:712 views.py:359
 #: management/commands/export_data.py:77
 #: templates/adv_search_species_urban.html:49 templates/species_page.html:290
 msgid "Trunk alignment"
 msgstr "Alinhamento do tronco"
 
-#: admin.py:464 models.py:151 models.py:700 views.py:350
+#: admin.py:464 models.py:151 models.py:713 views.py:350
 #: templates/species_page.html:280
 msgid "Tree size"
 msgstr "Porte"
 
-#: admin.py:468 models.py:152 models.py:701 views.py:51 views.py:366
+#: admin.py:468 models.py:152 models.py:714 views.py:51 views.py:366
 #: templates/species_page.html:299
 msgid "Thorns or spines"
 msgstr "Acúleos ou espinhos"
 
-#: admin.py:472 models.py:153 models.py:702 views.py:50 views.py:367
+#: admin.py:472 models.py:153 models.py:715 views.py:50 views.py:367
 #: templates/species_page.html:300
 msgid "Toxic or allergenic"
 msgstr "Princípios tóxicos ou alergênicos"
 
-#: admin.py:476 models.py:154 models.py:703 views.py:365
+#: admin.py:476 models.py:154 models.py:716 views.py:365
 #: templates/species_page.html:298
 msgid "Pests and diseases"
 msgstr "Pragas e doenças"
 
-#: admin.py:480 models.py:155 models.py:704 views.py:378
+#: admin.py:480 models.py:155 models.py:717 views.py:378
 #: management/commands/export_data.py:150 templates/species_page.html:313
 msgid "Fruiting period"
 msgstr "Período de frutificação"
 
-#: admin.py:484 models.py:156 models.py:705 views.py:384
+#: admin.py:484 models.py:156 models.py:718 views.py:384
 #: templates/species_page.html:321
 msgid "Seed collection"
 msgstr "Obtenção de sementes"
 
-#: admin.py:488 models.py:157 models.py:706 views.py:386
+#: admin.py:488 models.py:157 models.py:719 views.py:386
 #: management/commands/export_data.py:157 templates/species_page.html:323
 msgid "Seed type"
 msgstr "Tipo de semente"
 
-#: admin.py:492 models.py:158 models.py:707 views.py:387
-#: templates/species_page.html:324
+#: admin.py:492 models.py:158 models.py:720 views.py:387
+#: management/commands/export_data.py:160 templates/species_page.html:324
 msgid "Pre-germination treatment"
 msgstr "Tratamento para germinação"
 
-#: admin.py:496 models.py:159 models.py:708 views.py:383 views.py:389
+#: admin.py:496 models.py:159 models.py:721 views.py:383 views.py:389
 #: management/commands/export_data.py:164 templates/species_page.html:319
 #: templates/species_page.html.py:326
 msgid "Seedling production"
 msgstr "Produção de mudas"
 
-#: admin.py:500 models.py:160 models.py:709 views.py:391
+#: admin.py:500 models.py:160 models.py:722 views.py:391
 #: management/commands/export_data.py:168 templates/species_page.html:328
 msgid "Germination time lapse"
 msgstr "Tempo de germinação"
 
-#: admin.py:504 models.py:161 models.py:710 views.py:392
+#: admin.py:504 models.py:161 models.py:723 views.py:392
 #: management/commands/export_data.py:172 templates/species_page.html:329
 msgid "Germination rate"
 msgstr "Taxa de germinação"
 
-#: admin.py:508 models.py:162 models.py:711
+#: admin.py:508 models.py:162 models.py:724
 msgid "Seeds per weight"
 msgstr "Sementes por peso"
 
-#: admin.py:512 models.py:163 models.py:712 views.py:397
+#: admin.py:512 models.py:163 models.py:725 views.py:397
 #: management/commands/export_data.py:175 templates/species_page.html:331
 msgid "Light requirements"
 msgstr "Exigência em luminosidade"
 
-#: admin.py:516 models.py:164 models.py:713 views.py:368
+#: admin.py:516 models.py:164 models.py:726 views.py:368
 #: templates/species_page.html:301
 msgid "Terrain drainage"
 msgstr "Drenagem do terreno"
@@ -485,31 +486,31 @@ msgstr "Intermediária"
 msgid "Unclassified"
 msgstr "Não classificada"
 
-#: models.py:109
+#: models.py:109 models.py:476
 msgid "No need for treatment"
 msgstr "Sem necessidade de tratamento"
 
-#: models.py:110
+#: models.py:110 models.py:477
 msgid "Thermal treatment"
 msgstr "Tratamento térmico"
 
-#: models.py:111
+#: models.py:111 models.py:478
 msgid "Chemical treatment"
 msgstr "Tratamento químico"
 
-#: models.py:112
+#: models.py:112 models.py:479
 msgid "Immersion in water"
 msgstr "Imersão em água"
 
-#: models.py:113
+#: models.py:113 models.py:480
 msgid "Mechanical scarification"
 msgstr "Escarificação mecânica"
 
-#: models.py:114
+#: models.py:114 models.py:481
 msgid "Combined treatments"
 msgstr "Tratamentos combinados"
 
-#: models.py:115
+#: models.py:115 models.py:482
 msgid "Other"
 msgstr "Outro"
 
@@ -542,11 +543,6 @@ msgstr "Dispersores"
 msgid "Fruit type"
 msgstr "Tipo de fruto"
 
-#: models.py:144 models.py:693 views.py:73 views.py:380
-#: templates/species_page.html:315
-msgid "Symbiotic association with roots"
-msgstr "Associação simbiótica com raízes"
-
 #: models.py:145 models.py:448 views.py:36 views.py:356
 #: templates/species_page.html:287
 msgid "Root system"
@@ -572,7 +568,7 @@ msgstr "Língua"
 msgid "Description"
 msgstr "Descrição"
 
-#: models.py:173 models.py:212 models.py:970
+#: models.py:173 models.py:212 models.py:983
 msgid "Title"
 msgstr "Título"
 
@@ -614,11 +610,11 @@ msgstr "referência bibliográfica"
 msgid "bibliographic references"
 msgstr "referências bibliográficas"
 
-#: models.py:200 models.py:401 models.py:924
+#: models.py:200 models.py:401 models.py:937
 msgid "Label"
 msgstr "Nome"
 
-#: models.py:203 models.py:912
+#: models.py:203 models.py:925
 msgid "type of use"
 msgstr "Tipo de uso"
 
@@ -626,7 +622,7 @@ msgstr "Tipo de uso"
 msgid "types of use"
 msgstr "Tipos de uso"
 
-#: models.py:213 models.py:925
+#: models.py:213 models.py:938
 msgid "Locality"
 msgstr "Localidade"
 
@@ -807,7 +803,7 @@ msgid "End"
 msgstr "Fim"
 
 #: models.py:434 models.py:436 models.py:447 models.py:470 models.py:473
-#: models.py:476 models.py:479 models.py:488 models.py:490
+#: models.py:483 models.py:486 models.py:495 models.py:497
 msgid "Details"
 msgstr "Detalhes"
 
@@ -855,7 +851,7 @@ msgstr "Semidecídua"
 msgid "Deciduous"
 msgstr "Decídua"
 
-#: models.py:452 models.py:480 models.py:482
+#: models.py:452 models.py:487 models.py:489
 msgid "Minimum"
 msgstr "Mínimo"
 
@@ -863,11 +859,11 @@ msgstr "Mínimo"
 msgid "meters"
 msgstr "metros"
 
-#: models.py:453 models.py:481 models.py:483
+#: models.py:453 models.py:488 models.py:490
 msgid "Maximum"
 msgstr "Máximo"
 
-#: models.py:454 models.py:455 models.py:474 models.py:856
+#: models.py:454 models.py:455 models.py:474 models.py:869
 msgid "Type"
 msgstr "Tipo"
 
@@ -927,75 +923,75 @@ msgstr "Coleta de frutos no solo"
 msgid "Treatment"
 msgstr "Tratamento"
 
-#: models.py:477
+#: models.py:484
 msgid "Seedbed"
 msgstr "Canteiros"
 
-#: models.py:478
+#: models.py:485
 msgid "Individual containers"
 msgstr "Recipientes individuais"
 
-#: models.py:480 models.py:481 models.py:586 models.py:588
+#: models.py:487 models.py:488 models.py:596 models.py:598
 msgid "days"
 msgstr "dias"
 
-#: models.py:482 models.py:483
+#: models.py:489 models.py:490
 msgid "%"
 msgstr ""
 
-#: models.py:484
+#: models.py:491
 msgid "Quantity"
 msgstr "Quantidade"
 
-#: models.py:484
+#: models.py:491
 msgid "num/Kg"
 msgstr ""
 
-#: models.py:486
+#: models.py:493
 msgid "Wetland"
 msgstr "Áreas encharcadas/alagadas"
 
-#: models.py:487
+#: models.py:494
 msgid "Well-drained"
 msgstr "Áreas bem drenadas"
 
-#: models.py:489
+#: models.py:496
 msgid "Classification"
 msgstr "Classificação"
 
-#: models.py:491
+#: models.py:498
 msgid "Has pictures"
 msgstr "Possui fotos"
 
-#: models.py:492
+#: models.py:499
 msgid "TaxonTags"
 msgstr "Marcadores"
 
-#: models.py:497
+#: models.py:504
 msgid "plant"
 msgstr "planta"
 
-#: models.py:498
+#: models.py:505
 msgid "plants"
 msgstr "plantas"
 
-#: models.py:529 views.py:18
+#: models.py:536 views.py:18
 msgid "yes"
 msgstr "sim"
 
-#: models.py:531 views.py:18
+#: models.py:538 views.py:18
 msgid "no"
 msgstr "não"
 
-#: models.py:565
+#: models.py:575
 msgid "Collect fruits from tree or soil"
 msgstr "Coleta de frutos na árvore ou no solo"
 
-#: models.py:574
+#: models.py:584
 msgid "or"
 msgstr "ou"
 
-#: models.py:586 models.py:598 models.py:642 models.py:650
+#: models.py:596 models.py:608 models.py:652 models.py:660
 #: templates/adv_search_species_restoration.html:45
 #: templates/adv_search_species_restoration.html:46
 #: templates/adv_search_species_urban.html:45
@@ -1003,103 +999,103 @@ msgstr "ou"
 msgid "to"
 msgstr "a"
 
-#: models.py:726
+#: models.py:739
 msgid "Data completeness"
 msgstr "Preenchimento"
 
-#: models.py:732
+#: models.py:745
 msgid "Foliage persistence cannot be evergreen and decidous simultaneously!"
 msgstr "Não é possível ser perenifolia e decídua simultaneamente"
 
-#: models.py:735
+#: models.py:748
 msgid "Minimum crown diameter cannot be greater than the maximum diameter!"
 msgstr "Diâmetro mínimo da copa não pode ser maior que o diâmetro máximo!"
 
-#: models.py:739
+#: models.py:752
 msgid "Minimum height cannot be greater than the maximum height!"
 msgstr "Altura mínima da árvore não pode ser maior que a altura máxima!"
 
-#: models.py:743
+#: models.py:756
 msgid "Minimum DBH cannot be greater than the maximum DBH!"
 msgstr "DAP mínimo não pode ser maior que o DAP máximo!"
 
-#: models.py:756 models.py:758 models.py:760 models.py:762
+#: models.py:769 models.py:771 models.py:773 models.py:775
 msgid "Fruit type incompatible with fruit class!"
 msgstr "Tipo de fruto incompatível com a classe de fruto!"
 
-#: models.py:855
+#: models.py:868
 msgid "Name"
 msgstr "Nome"
 
-#: models.py:855
+#: models.py:868
 msgid "Taxon name"
 msgstr "Nome"
 
-#: models.py:859
+#: models.py:872
 msgid "name"
 msgstr "nome"
 
-#: models.py:860
+#: models.py:873
 msgid "names"
 msgstr "nomes"
 
-#: models.py:877
+#: models.py:890
 msgid "Acronym"
 msgstr "Sigla"
 
-#: models.py:880
+#: models.py:893
 msgid "conservation assessment source"
 msgstr "Fonte de avaliação de status de conservação"
 
-#: models.py:881
+#: models.py:894
 msgid "conservation assessment sources"
 msgstr "Fontes de avaliação de status de conservação"
 
-#: models.py:889
+#: models.py:902
 msgid "Source"
 msgstr "Fonte"
 
-#: models.py:890
+#: models.py:903
 msgid "Status"
 msgstr "Status"
 
-#: models.py:902
+#: models.py:915
 msgid "Reference"
 msgstr "Referência"
 
-#: models.py:903
+#: models.py:916
 msgid "Data"
 msgstr "Dado"
 
-#: models.py:904
+#: models.py:917
 msgid "Notes"
 msgstr "Anotações"
 
-#: models.py:904
+#: models.py:917
 msgid "Additional notes, such as page numbers"
 msgstr "Anotações adicionais, como páginas"
 
-#: models.py:913
+#: models.py:926
 msgid "Detected in fieldwork"
 msgstr "Registrado em trabalho de campo"
 
-#: models.py:926
+#: models.py:939
 msgid "Original longitude"
 msgstr "Longitude original"
 
-#: models.py:927
+#: models.py:940
 msgid "Original latitude"
 msgstr "Latitude original"
 
-#: models.py:961
+#: models.py:974
 msgid "Cited name"
 msgstr "Nome citado"
 
-#: models.py:962 models.py:971
+#: models.py:975 models.py:984
 msgid "Page number"
 msgstr "Número da página"
 
-#: models.py:972
+#: models.py:985
 msgid "Anchor id"
 msgstr "Id da âncora"
 

@@ -473,6 +473,13 @@ class Taxon( models.Model ):
     seed_collection = models.TextField( _(u'Details'), null=True, blank=True )
     seed_type = models.CharField( _(u'Type'), null=True, blank=True, choices=SEED_TYPES, max_length=1 )
     pg_treatment = models.CharField( _(u'Treatment'), null=True, blank=True, choices=PREGERMINATION_TREATMENTS, max_length=1 )
+    pg_no_need    = models.BooleanField( _(u'No need for treatment') )
+    pg_thermal    = models.BooleanField( _(u'Thermal treatment') )
+    pg_chemical   = models.BooleanField( _(u'Chemical treatment') )
+    pg_water      = models.BooleanField( _(u'Immersion in water') )
+    pg_mechanical = models.BooleanField( _(u'Mechanical scarification') )
+    pg_combined   = models.BooleanField( _(u'Combined treatments') )
+    pg_other      = models.BooleanField( _(u'Other') )
     pg_details = models.TextField( _(u'Details'), null=True, blank=True )
     sl_seedbed = models.BooleanField( _(u'Seedbed') )
     sl_containers = models.BooleanField( _(u'Individual containers') )
@@ -556,6 +563,9 @@ class Taxon( models.Model ):
 
     def get_successional_group(self):
         return self._get_boolean_concat(['sg_pioneer', 'sg_early_secondary', 'sg_late_secondary', 'sg_climax'])
+
+    def get_pregermination_treatment(self):
+        return self._get_boolean_concat(['pg_no_need', 'pg_thermal', 'pg_chemical', 'pg_water', 'pg_mechanical', 'pg_combined', 'pg_other'])
 
     def get_rare(self):
         return self._get_yes_no(self.rare)
@@ -671,6 +681,9 @@ class Taxon( models.Model ):
                 val = self.get_fr_type_display()
         return val
 
+    def has_pregermination_treatment(self):
+        return (self.pg_no_need or self.pg_thermal or self.pg_chemical or self.pg_water or self.pg_mechanical or self.pg_combined or self.pg_other)
+
     # Functions used by the admin change list form
     def data_completeness(self):
         fieldsets = ((_('Taxonomic data'), bool(self.genus) and bool(self.species) and bool(self.author) and bool(self.family)),
@@ -704,7 +717,7 @@ class Taxon( models.Model ):
                      (_('Fruiting period'), (self.fr_start is not None) and (self.fr_end is not None)), 
                      (_('Seed collection'), self.seed_tree or self.seed_soil), 
                      (_('Seed type'), bool(self.seed_type)), 
-                     (_('Pre-germination treatment'), self.pg_treatment is not None), 
+                     (_('Pre-germination treatment'), self.has_pregermination_treatment()), 
                      (_('Seedling production'), self.sl_seedbed or self.sl_containers), 
                      (_('Germination time lapse'), bool(self.seed_gmin_time) and bool(self.seed_gmax_time)), 
                      (_('Germination rate'), bool(self.seed_gmin_rate) and bool(self.seed_gmax_rate)), 
@@ -835,7 +848,7 @@ class Taxon( models.Model ):
         return (self.get_successional_group() is not None) or (self.pollinators is not None and len(self.pollinators) > 0) or (self.get_flowering_period() is not None) or (self.get_dispersal_types() is not None) or (self.dispersers is not None and len(self.dispersers) > 0) or (self.get_fruiting_period() is not None) or (self.get_symbiotic_assoc() is not None) or (self.symbiotic_details is not None and len(self.symbiotic_details) > 0) or (self.fr_details is not None and len(self.fr_details) > 0) or (self.fl_details is not None and len(self.fl_details) > 0)
 
     def has_seedling_production_data( self ):
-        return (self.get_seed_gathering() is not None) or (self.seed_collection) or (self.get_seed_type_display() is not None) or (self.get_pg_treatment_display() is not None) or (self.pg_details) or (self.get_seedbed() is not None) or (self.sl_details) or (self.get_germination_time_lapse() is not None) or (self.get_germination_rate() is not None) or (self.get_light_display() is not None) or (self.seeds_per_weight is not None) or (self.light_details is not None and len(self.light_details) > 0)
+        return (self.get_seed_gathering() is not None) or (self.seed_collection) or (self.get_seed_type_display() is not None) or (self.get_pregermination_treatment() is not None) or (self.pg_details) or (self.get_seedbed() is not None) or (self.sl_details) or (self.get_germination_time_lapse() is not None) or (self.get_germination_rate() is not None) or (self.get_light_display() is not None) or (self.seeds_per_weight is not None) or (self.light_details is not None and len(self.light_details) > 0)
 
     def has_bibliography_data( self ):
         return (self.taxondatareference_set.all().count() > 0)

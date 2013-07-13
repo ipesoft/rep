@@ -381,20 +381,20 @@ def _pdf_for_species_page( taxon, refs, citations ):
     _appendDetails( Story, taxon.symbiotic_details )
     #########################################################
     _appendSection( Story, ugettext(u'Seedling production') )
-    _appendLabelAndContent( Story, ugettext(u'Seed collection')           , taxon.get_seed_gathering()        , 'SEC' )
+    _appendLabelAndContent( Story, ugettext(u'Seed collection')           , taxon.get_seed_gathering()          , 'SEC' )
     _appendDetails( Story, taxon.seed_collection )
-    _appendLabelAndContent( Story, ugettext(u'Seed type')                 , taxon.get_seed_type_display()     , 'SET' )
-    _appendLabelAndContent( Story, ugettext(u'Pre-germination treatment') , taxon.get_pg_treatment_display()  , 'PGT' )
+    _appendLabelAndContent( Story, ugettext(u'Seed type')                 , taxon.get_seed_type_display()       , 'SET' )
+    _appendLabelAndContent( Story, ugettext(u'Pre-germination treatment') , taxon.get_pregermination_treatment(), 'PGT' )
     _appendDetails( Story, taxon.pg_details )
-    _appendLabelAndContent( Story, ugettext(u'Seedling production')       , taxon.get_seedbed()               , 'SDL' )
+    _appendLabelAndContent( Story, ugettext(u'Seedling production')       , taxon.get_seedbed()                 , 'SDL' )
     _appendDetails( Story, taxon.sl_details )
-    _appendLabelAndContent( Story, ugettext(u'Germination time lapse')    , taxon.get_germination_time_lapse(), 'GET' )
-    _appendLabelAndContent( Story, ugettext(u'Germination rate')          , taxon.get_germination_rate()      , 'GER' )
+    _appendLabelAndContent( Story, ugettext(u'Germination time lapse')    , taxon.get_germination_time_lapse()  , 'GET' )
+    _appendLabelAndContent( Story, ugettext(u'Germination rate')          , taxon.get_germination_rate()        , 'GER' )
     c = taxon.seeds_per_weight
     if c:
         c = str(c) + '/Kg'
-    _appendLabelAndContent( Story, ugettext(u'Number of seeds per weight'), c                                 , 'SPW' )
-    _appendLabelAndContent( Story, ugettext(u'Light requirements')        , taxon.get_light_display()         , 'LIG' )
+    _appendLabelAndContent( Story, ugettext(u'Number of seeds per weight'), c                                   , 'SPW' )
+    _appendLabelAndContent( Story, ugettext(u'Light requirements')        , taxon.get_light_display()           , 'LIG' )
     _appendDetails( Story, taxon.light_details )
     #########################################################
     _appendSection( Story, ugettext(u'Bibliography') )

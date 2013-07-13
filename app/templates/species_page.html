@@ -319,7 +319,7 @@ function setmap() {
 <p><label>{% trans "Seed collection" %}:</label>&nbsp;{{ taxon.get_seed_gathering|default:"-" }}&nbsp;<sup>{{ refs.SEC }}</sup></p>
 {% if taxon.seed_collection %}<p>{{ taxon.seed_collection }}</p>{% endif %}
 <p><label>{% trans "Seed type" %}:</label>&nbsp;{{ taxon.get_seed_type_display|default:"-" }}&nbsp;<sup>{{ refs.SET }}</sup></p>
-<p><label>{% trans "Pre-germination treatment" %}:</label>&nbsp;{{ taxon.get_pg_treatment_display|default:"-" }}&nbsp;<sup>{{ refs.PGT }}</sup></p>
+<p><label>{% trans "Pre-germination treatment" %}:</label>&nbsp;{{ taxon.get_pregermination_treatment|default:"-" }}&nbsp;<sup>{{ refs.PGT }}</sup></p>
 {% if taxon.pg_details %}<p>{{ taxon.pg_details }}</p>{% endif %}
 <p><label>{% trans "Seedling production" %}:</label>&nbsp;{{ taxon.get_seedbed|default:"-" }}&nbsp;<sup>{{ refs.SDL }}</sup></p>
 {% if taxon.sl_details %}<p>{{ taxon.sl_details }}</p>{% endif %}
