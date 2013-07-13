@@ -431,7 +431,7 @@ class TaxonAdmin(admin.ModelAdmin):
         }),
         (_('Fruits'), {                    #17
             #'classes': ('collapse',),
-            'fields': ('fr_type',),
+            'fields': (('fr_class','fr_type'),),
         }),
         (_('Symbiotic association'), {     #18
             #'classes': ('collapse',),

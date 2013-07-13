@@ -287,7 +287,7 @@ function setmap() {
 <p><label>{% trans "Crown diameter" %}:</label>&nbsp;{{ taxon.get_crown_diameter|default:"-" }}&nbsp;<sup>{{ refs.CRD }}</sup></p>
 <p><label>{% trans "Trunk alignment" %}:</label>&nbsp;{{ taxon.get_trunk_alignment|default:"-" }}&nbsp;<sup>{{ refs.TRA }}</sup></p>
 <p><label>{% trans "Bark texture" %}:</label>&nbsp;{{ taxon.get_bark_texture_display|default:"-" }}&nbsp;<sup>{{ refs.BRT }}</sup></p>
-<p><label>{% trans "Fruit type" %}:</label>&nbsp;{{ taxon.get_fr_type_display|default:"-" }}&nbsp;<sup>{{ refs.FRT }}</sup></p>
+<p><label>{% trans "Fruit type" %}:</label>&nbsp;{{ taxon.get_fruit_classification|default:"-" }}&nbsp;<sup>{{ refs.FRT }}</sup></p>
 </div>
 
 <div class="section" onclick="collapse('s3', 'i3');return false;"><table width="100%"><tr><td width="90%"{% if taxon.has_care_data %} style="font-weight: bold;"{% endif %}>{% trans "Care" %}</td><td style="text-align: right;"><img id="i3" src="/static/images/expand.gif" alt="expand" title="expand"/></td></tr></table></div>

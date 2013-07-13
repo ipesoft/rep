@@ -358,14 +358,14 @@ def _pdf_for_species_page( taxon, refs, citations ):
     _appendLabelAndContent( Story, ugettext(u'Crown diameter')     , taxon.get_crown_diameter()      , 'CRD' )
     _appendLabelAndContent( Story, ugettext(u'Trunk alignment')    , taxon.get_trunk_alignment()     , 'TRA' )
     _appendLabelAndContent( Story, ugettext(u'Bark texture')       , taxon.get_bark_texture_display(), 'BRT' )
-    _appendLabelAndContent( Story, ugettext(u'Fruit type')         , taxon.get_fr_type_display()     , 'FRT' )
+    _appendLabelAndContent( Story, ugettext(u'Fruit type')         , taxon.get_fruit_classification(), 'FRT' )
     #########################################################
     _appendSection( Story, ugettext(u'Care') )
     _appendLabelAndContent( Story, ugettext(u'Pruning')            , taxon.get_pruning()            , 'PRU' )
     _appendLabelAndContent( Story, ugettext(u'Pests and diseases') , taxon.pests_and_diseases       , 'PAD' )
     _appendLabelAndContent( Story, ugettext(u'Thorns or spines')   , taxon.get_thorns_or_spines()   , 'TOS' )
     _appendLabelAndContent( Story, ugettext(u'Toxic or allergenic'), taxon.get_toxic_or_allergenic(), 'TOA' )
-    _appendLabelAndContent( Story, ugettext(u'Terrain drainage')          , taxon.get_terrain_drainage()      , 'TER' )
+    _appendLabelAndContent( Story, ugettext(u'Terrain drainage')   , taxon.get_terrain_drainage()   , 'TER' )
     _appendDetails( Story, taxon.terrain_details )
     #########################################################
     _appendSection( Story, ugettext(u'Ecology')+' '+ugettext(u'and')+' '+ugettext(u'Reproduction') )

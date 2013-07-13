@@ -11,6 +11,7 @@ from django.utils.translation import ugettext
 from django.utils import translation
 
 from taggit_autocomplete_modified.managers import TaggableManagerAutocomplete as TaggableManager
+#from taggit.managers import TaggableManager
 
 import httplib2, datetime, re, string
 from xml.etree.ElementTree import fromstring
@@ -47,6 +48,15 @@ COLORS = (
     ( 8 , _(u'purple') ),
 )
 
+FRUIT_CLASSES = (
+    ( u'D', _(u'Dry dehiscent') ),
+    ( u'I', _(u'Dry indehiscent') ),
+    ( u'W', _(u'Fleshy indehiscent') ),
+    ( u'I', _(u'Infructescence') ),
+    ( u'M', _(u'Multiple') ),
+    ( u'P', _(u'Pseudofruit') ),
+)
+
 FRUIT_TYPES = (
     ( u'B', _(u'Berry') ),
     ( u'C', _(u'Capsule') ),
@@ -62,7 +72,7 @@ FRUIT_TYPES = (
     ( u'P', _(u'Pepo') ),
     ( u'X', _(u'Pyxis') ),
     ( u'O', _(u'Operculate') ),
-    ( u'G', _(u'Calybion') ),
+    ( u'G', _(u'Glans') ),
 )
 
 ROOT_SYSTEMS = (
@@ -431,6 +441,7 @@ class Taxon( models.Model ):
     dt_hydrochorous = models.BooleanField( _(u'Hydrochorous') )
     dt_zoochorous   = models.BooleanField( _(u'Zoochorous') )
     dispersers  = models.TextField( _(u'Dispersers'), null=True, blank=True )
+    fr_class = models.CharField( _(u'Fruit class'), null=True, blank=True, choices=FRUIT_CLASSES, max_length=1 )
     fr_type = models.CharField( _(u'Fruit type'), null=True, blank=True, choices=FRUIT_TYPES, max_length=1 )
     symbiotic_assoc   = models.NullBooleanField( _(u'Presence'), null=True, blank=True )
     symbiotic_details = models.TextField( _(u'Details'), null=True, blank=True )
@@ -649,6 +660,17 @@ class Taxon( models.Model ):
     def get_terrain_drainage(self):
         return self._get_boolean_concat(['wetland', 'dry'])
 
+    def get_fruit_classification(self):
+        val = None
+        if self.fr_class:
+            val = self.get_fr_class_display()
+        if self.fr_type:
+            if self.fr_class:
+                val += ' (' + self.get_fr_type_display() + ')'
+            else:
+                val = self.get_fr_type_display()
+        return val
+
     # Functions used by the admin change list form
     def data_completeness(self):
         fieldsets = ((_('Taxonomic data'), bool(self.genus) and bool(self.species) and bool(self.author) and bool(self.family)),
@@ -667,7 +689,7 @@ class Taxon( models.Model ):
                      (_('Pollination'), bool(self.pollinators)),
                      (_('Seed dispersal'), (self.dt_anemochorous or self.dt_autochorous or self.dt_barochorous or self.dt_hydrochorous or self.dt_zoochorous)),
                      (_('Dispersion agents'), bool(self.dispersers)),
-                     (_('Fruits'), self.fr_type is not None),
+                     (_('Fruits'), (self.fr_type is not None or self.fr_class is not None)),
                      (_('Symbiotic association with roots'), (self.symbiotic_assoc is not None) or bool(self.symbiotic_details)), 
                      (_('Roots'), self.r_type is not None), 
                      (_('Foliage persistence'), self.fo_evergreen or self.fo_semideciduous or self.fo_deciduous), 
@@ -794,7 +816,7 @@ class Taxon( models.Model ):
         return self.taxonname_set.filter(ntype=u'S').order_by('name')
 
     def has_general_features_data(self):
-        return (self.get_height() is not None) or (self.get_dbh() is not None) or (self.get_fl_color_display() is not None) or (self.get_growth_rate() is not None) or (self.gr_comments is not None and len(self.gr_comments) > 0) or (self.get_foliage_persistence() is not None) or (self.get_r_type_display() is not None) or (self.get_cr_shape_display() is not None) or (self.get_crown_diameter() is not None) or (self.get_trunk_alignment() is not None) or (self.get_bark_texture_display() is not None) or (self.get_fr_type_display() is not None) or (self.fl_color_details is not None and len(self.fl_color_details) > 0)
+        return (self.get_height() is not None) or (self.get_dbh() is not None) or (self.get_fl_color_display() is not None) or (self.get_growth_rate() is not None) or (self.gr_comments is not None and len(self.gr_comments) > 0) or (self.get_foliage_persistence() is not None) or (self.get_r_type_display() is not None) or (self.get_cr_shape_display() is not None) or (self.get_crown_diameter() is not None) or (self.get_trunk_alignment() is not None) or (self.get_bark_texture_display() is not None) or (self.get_fr_class_display() is not None) or (self.get_fr_type_display() is not None) or (self.fl_color_details is not None and len(self.fl_color_details) > 0)
 
     def has_care_data( self ):
         return (self.get_pruning() is not None) or (self.pests_and_diseases() is not None) or (self.get_thorns_or_spines() is not None) or (self.get_toxic_or_allergenic() is not None) or self.wetland or self.dry
