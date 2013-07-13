@@ -51,8 +51,8 @@ COLORS = (
 FRUIT_CLASSES = (
     ( u'D', _(u'Dry dehiscent') ),
     ( u'I', _(u'Dry indehiscent') ),
-    ( u'W', _(u'Fleshy indehiscent') ),
-    ( u'I', _(u'Infructescence') ),
+    ( u'F', _(u'Fleshy indehiscent') ),
+    ( u'N', _(u'Infructescence') ),
     ( u'M', _(u'Multiple') ),
     ( u'P', _(u'Pseudofruit') ),
 )
@@ -750,6 +750,16 @@ class Taxon( models.Model ):
         self._ensure_both('seed_gmin_time', 'seed_gmax_time')
         # Germination rate
         self._ensure_both('seed_gmin_rate', 'seed_gmax_rate')
+        # Fruit classification
+        if self.fr_class and self.fr_type:
+            if self.fr_class == 'D' and self.fr_type not in ('F', 'L', 'S', 'C', 'O', 'X'):
+                raise ValidationError(_(u'Fruit type incompatible with fruit class!'))
+            elif self.fr_class == 'I' and self.fr_type not in ('A', 'M', 'Y', 'G'):
+                raise ValidationError(_(u'Fruit type incompatible with fruit class!'))
+            elif self.fr_class == 'F' and self.fr_type not in ('D', 'B', 'H', 'P'):
+                raise ValidationError(_(u'Fruit type incompatible with fruit class!'))
+            elif self.fr_class == 'N' and self.fr_type not in ('N'):
+                raise ValidationError(_(u'Fruit type incompatible with fruit class!'))
 
     def _ensure_both(self, attr1, attr2):
         v1 = getattr(self, attr1)
