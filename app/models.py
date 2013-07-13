@@ -105,16 +105,6 @@ SEED_TYPES = (
     ( u'U', _(u'Unclassified') ),
 )
 
-PREGERMINATION_TREATMENTS = (
-    ( u'N', _(u'No need for treatment') ),
-    ( u'L', _(u'Thermal treatment') ),
-    ( u'C', _(u'Chemical treatment') ),
-    ( u'I', _(u'Immersion in water') ),
-    ( u'M', _(u'Mechanical scarification') ),
-    ( u'T', _(u'Combined treatments') ),
-    ( u'O', _(u'Other') ),
-)
-
 #SOIL_TYPES = (
 #    ( u'F', _(u'wetland (frequent floods)') ),
 #    ( u'U', _(u'wetland (unfrequent floods)') ),
@@ -472,7 +462,6 @@ class Taxon( models.Model ):
     seed_soil = models.BooleanField( _(u'Collect fruits from soil') )
     seed_collection = models.TextField( _(u'Details'), null=True, blank=True )
     seed_type = models.CharField( _(u'Type'), null=True, blank=True, choices=SEED_TYPES, max_length=1 )
-    pg_treatment = models.CharField( _(u'Treatment'), null=True, blank=True, choices=PREGERMINATION_TREATMENTS, max_length=1 )
     pg_no_need    = models.BooleanField( _(u'No need for treatment') )
     pg_thermal    = models.BooleanField( _(u'Thermal treatment') )
     pg_chemical   = models.BooleanField( _(u'Chemical treatment') )
