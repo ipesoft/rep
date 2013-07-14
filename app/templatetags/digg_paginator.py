@@ -54,11 +54,23 @@ def digg_paginator(context):
         del(params['page'])
     get_params = params.urlencode()
 
+    # Add try/catch blocks for compatibility with django 1.5
+    previous_page = None
+    next_page = None
+    try:
+        previous_page = page_obj.previous_page_number()
+    except:
+        pass
+    try:
+        next_page = page_obj.next_page_number()
+    except:
+        pass
+
     return {
         'pages': pages,
         'page': page,
-        'previous': page_obj.previous_page_number(),
-        'next': page_obj.next_page_number(),
+        'previous': previous_page,
+        'next': next_page,
         'has_previous': page_obj.has_previous(),
         'has_next': page_obj.has_next(),
         'page_range': page_range,

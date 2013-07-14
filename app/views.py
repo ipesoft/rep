@@ -167,7 +167,7 @@ def _json_raw_encode(data):
     """
     import types
     from django.core import serializers
-    from django.utils.simplejson.encoder import JSONEncoder
+    from json.encoder import JSONEncoder
     if type(data) is types.InstanceType: # assuming a Django object
         json_serializer = serializers.get_serializer("json")()
         return json_serializer.serialize(data, ensure_ascii=False)
