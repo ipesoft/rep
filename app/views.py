@@ -409,10 +409,7 @@ def _pdf_for_species_page( taxon, refs, citations ):
 # View methods
 def index(request):
     'Index page'
-    _handle_language( request )
-    c = RequestContext(request, {'base_template':settings.BASE_TEMPLATE})
-    possible_templates = ['my_index.html', 'index.html']
-    return render_to_response( possible_templates, c )
+    return show_page(request, 'main')
 
 def show_help(request, content_id):
     'Generic method to retrieve help content stored in the database'
