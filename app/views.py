@@ -432,7 +432,7 @@ def show_page(request, page_code):
         raise Http404
     try:
         p = pages.get(lang=request.LANGUAGE_CODE)
-    except Page.DoesNotExist:
+    except StaticContent.DoesNotExist:
         # Get first
         p = pages[0]
     c = RequestContext(request, {'page': p,
