@@ -295,6 +295,7 @@ class UsesInline(admin.TabularInline):
     extra = 0
     verbose_name = _('documented use')
     verbose_name_plural = _('documented uses')
+    template = 'admin/edit_inline/tabular-django-1-4-2.html'
     show_in_the_end = 0 # Custom attribute to show this in the end of the page
 
 class UseRefForm(RefForm):
@@ -343,6 +344,7 @@ class NamesInline(admin.TabularInline):
     model = TaxonName
     extra = 0
     exclude = ('ntype',)
+    template = 'admin/edit_inline/tabular-django-1-4-2.html'
 
     def queryset(self, request):
         """
