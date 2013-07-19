@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-19 04:08-0500\n"
+"POT-Creation-Date: 2013-07-19 04:19-0500\n"
 "PO-Revision-Date: 2012-03-07 21:05-0300\n"
 "Last-Translator: Renato De Giovanni <renato@cria . org . br>\n"
 "Language-Team: pt_BR <LL@li.org>\n"
@@ -1317,6 +1317,21 @@ msgstr "possui informações etnobotânicas"
 #: templates/search_species.html:22
 msgid "No species found"
 msgstr "Nenhuma espécie encontrada"
+
+#: templates/species_page.html:38 templates/species_page.html.py:241
+msgid "help"
+msgstr "ajuda"
+
+#: templates/species_page.html:80 templates/species_page.html.py:81
+msgid "collapse"
+msgstr "ocultar"
+
+#: templates/species_page.html:86 templates/species_page.html.py:87
+#: templates/species_page.html:258 templates/species_page.html.py:277
+#: templates/species_page.html:295 templates/species_page.html.py:305
+#: templates/species_page.html:319 templates/species_page.html.py:335
+msgid "expand"
+msgstr "abrir"
 
 #: templates/species_page.html:146
 msgid "Physical map"
