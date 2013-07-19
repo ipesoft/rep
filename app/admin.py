@@ -287,6 +287,7 @@ class ConservationStatusInline(admin.TabularInline):
     extra = 0
     verbose_name = _('conservation status')
     verbose_name_plural = _('conservation statuses')
+    template = 'admin/edit_inline/tabular-django-1-4-2.html'
     show_in_the_end = 1 # Custom attribute to show this in the end of the page
 
 class UsesInline(admin.TabularInline):
