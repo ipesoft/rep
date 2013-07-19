@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-13 09:03-0500\n"
+"POT-Creation-Date: 2013-07-19 04:08-0500\n"
 "PO-Revision-Date: 2012-03-07 21:05-0300\n"
 "Last-Translator: Renato De Giovanni <renato@cria . org . br>\n"
 "Language-Team: pt_BR <LL@li.org>\n"
@@ -1270,6 +1270,10 @@ msgstr "Próxima"
 msgid "List of interviews"
 msgstr "Lista de entrevistas"
 
+#: templates/hist_results.html:8
+msgid "with audio"
+msgstr "com áudio"
+
 #: templates/hist_results.html:10
 msgid "Referenced species"
 msgstr "Espécies mencionadas"
@@ -1367,7 +1371,7 @@ msgid "Add"
 msgstr "Adicionar"
 
 #: templates/admin/taxon_change_form.html:32
-#: templates/admin/edit_inline/mytabular.html:29
+#: templates/admin/edit_inline/mytabular.html:31
 msgid "View on site"
 msgstr "Visualizar no site"
 
@@ -1377,16 +1381,16 @@ msgid_plural "Please correct the errors below."
 msgstr[0] "Favor corrigir o erro abaixo"
 msgstr[1] "Favor corrigir os erros abaixo"
 
-#: templates/admin/edit_inline/mytabular.html:15
+#: templates/admin/edit_inline/mytabular.html:17
 msgid "Delete?"
 msgstr "Apagar?"
 
-#: templates/admin/edit_inline/mytabular.html:115
+#: templates/admin/edit_inline/mytabular.html:117
 #, python-format
 msgid "Add %(verbose_name)s"
 msgstr "Adicionar %(verbose_name)s"
 
-#: templates/admin/edit_inline/mytabular.html:118
+#: templates/admin/edit_inline/mytabular.html:120
 msgid "Remove"
 msgstr "Remover"
 
