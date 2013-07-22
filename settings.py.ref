@@ -175,7 +175,7 @@ LOGGING = {
 # Custom settings
 BASE_TEMPLATE = 'base.html'
 
-CONTACT_EMAIL = 'public_contact_email'
+CONTACT_LINK = 'mailto:contact_email'
 
 PDF_ROOT = 'app_absolute_path/docs'
 
