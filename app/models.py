@@ -578,27 +578,25 @@ class Taxon( models.Model ):
         return None
 
     def get_germination_time_lapse(self):
-        val = ''
+        val = None
         if self.seed_gmin_time is not None:
-            val = str(self.seed_gmin_time)
             if self.seed_gmax_time is not None and self.seed_gmax_time != self.seed_gmin_time:
-                val = string_concat(val, ' ', _(u'to'), ' ', str(self.seed_gmax_time), ' ', _(u'days'))
+                val = string_concat(str(self.seed_gmin_time), ' ', _(u'to'), ' ', str(self.seed_gmax_time), ' ', _(u'days'))
+            else:
+                val = string_concat(str(self.seed_gmin_time), ' ', _(u'days'))
         elif self.seed_gmax_time is not None:
             val = string_concat(str(self.seed_gmax_time), ' ', _(u'days'))
-        else:
-            val = None
         return val
 
     def get_germination_rate(self):
-        val = ''
+        val = None
         if self.seed_gmin_rate is not None:
-            val = str(self.seed_gmin_rate)
             if self.seed_gmax_rate is not None and self.seed_gmax_rate != self.seed_gmin_rate:
-                val = string_concat(val, ' ', _(u'to'), ' ', str(self.seed_gmax_rate), '%')
+                val = string_concat(str(self.seed_gmin_rate), ' ', _(u'to'), ' ', str(self.seed_gmax_rate), '%')
+            else:
+                val = string_concat(str(self.seed_gmin_rate), '%')
         elif self.seed_gmax_rate is not None:
             val = string_concat(str(self.seed_gmax_rate), '%')
-        else:
-            val = None
         return val
 
     def get_special_features(self):
