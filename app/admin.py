@@ -563,7 +563,7 @@ class TaxonAdmin(admin.ModelAdmin):
     ]
 
 class ReferenceAdmin(admin.ModelAdmin):
-    list_max_show_all = 300
+    list_max_show_all = 500
 
 admin.site.register(StaticContent)
 admin.site.register(Taxon, TaxonAdmin)
