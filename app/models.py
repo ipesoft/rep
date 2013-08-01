@@ -9,9 +9,10 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 from django.utils.translation import ugettext
 from django.utils import translation
+from treebeard.mp_tree import MP_Node
 
-from taggit_autocomplete_modified.managers import TaggableManagerAutocomplete as TaggableManager
-#from taggit.managers import TaggableManager
+#from taggit_autocomplete_modified.managers import TaggableManagerAutocomplete as TaggableManager
+from taggit.managers import TaggableManager
 
 import httplib2, datetime, re, string
 from xml.etree.ElementTree import fromstring
@@ -185,17 +186,21 @@ class Reference( models.Model ):
     def __unicode__(self):
         return unicode(self.citation)
 
-class TypeOfUse( models.Model ):
+class TypeOfUse( MP_Node ):
     "Types of use of a taxon"
     label = models.TextField( _(u'Label'), unique=True )
+    node_order_by = [u'label']
 
     class Meta:
         verbose_name = _(u'type of use')
         verbose_name_plural = _(u'types of use')
-        ordering = [u'label']
+        ordering = [u'path']
 
     def __unicode__(self):
-        return unicode(self.label)
+        if self.depth > 1:
+            return u'-'*(self.depth-1)+unicode(self.label)
+        else:
+            return unicode(self.label)
 
 class Interview( models.Model ):
     "Interview"

@@ -4,6 +4,7 @@ from app.models import StaticContent, Taxon, TaxonName, Reference, TaxonDataRefe
 from django.contrib import admin
 from django.forms.models import ModelForm
 from django.utils.translation import ugettext_lazy as _
+from treebeard.admin import TreeAdmin
 
 class RefForm(ModelForm):
     """
@@ -565,10 +566,20 @@ class TaxonAdmin(admin.ModelAdmin):
 class ReferenceAdmin(admin.ModelAdmin):
     list_max_show_all = 500
 
+class TypeOfUseAdmin(TreeAdmin):
+    fields = ['label',] # Hide tree-related fields
+    def save_model(self, request, obj, form, change):
+        if change:
+            # Just save
+            obj.save()
+        else:
+            # Add new record as a root node
+            TypeOfUse.add_root(label=obj.label)
+
 admin.site.register(StaticContent)
 admin.site.register(Taxon, TaxonAdmin)
 admin.site.register(Reference, ReferenceAdmin)
-admin.site.register(TypeOfUse)
+admin.site.register(TypeOfUse, TypeOfUseAdmin)
 admin.site.register(ConservationAssessmentSource)
 admin.site.register(Interview)
 
