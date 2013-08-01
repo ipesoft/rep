@@ -11,8 +11,8 @@ from django.utils.translation import ugettext
 from django.utils import translation
 from treebeard.mp_tree import MP_Node
 
-#from taggit_autocomplete_modified.managers import TaggableManagerAutocomplete as TaggableManager
-from taggit.managers import TaggableManager
+from taggit_autocomplete_modified.managers import TaggableManagerAutocomplete as TaggableManager
+#from taggit.managers import TaggableManager
 
 import httplib2, datetime, re, string
 from xml.etree.ElementTree import fromstring
