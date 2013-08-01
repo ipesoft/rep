@@ -385,139 +385,135 @@ class TaxonAdmin(admin.ModelAdmin):
             #'classes': ('collapse',),
             'fields': (('restoration', 'urban_use', 'silviculture'),),
         }),
-        (None, {                                   #5
-            #'classes': ('collapse',),
-            'fields': (('tags'),),
-        }),
-        (_('Abundance'), {                         #6
+        (_('Abundance'), {                         #5
             #'classes': ('collapse',),
             'fields': (('rare', 'max_density'),),
         }),
-        (_('Endemism'), {                          #7
+        (_('Endemism'), {                          #6
             #'classes': ('collapse',),
             'fields': ('endemic',),
         }),
-        (_('Special features'), {                  #8
+        (_('Special features'), {                  #7
             #'classes': ('collapse',),
             'fields': (('h_flowers', 'h_leaves', 'h_fruits', 'h_crown', 'h_bark', 'h_seeds', 'h_wood', 'h_roots'),),
         }),
-        (_('Successional group'), {                #9
+        (_('Successional group'), {                #8
             #'classes': ('collapse',),
             'fields': (('sg_pioneer', 'sg_early_secondary', 'sg_late_secondary', 'sg_climax'),),
         }),
-        (_('Growth rate'), {                       #10
+        (_('Growth rate'), {                       #9
             #'classes': ('collapse',),
             'fields': (('gr_slow', 'gr_moderate', 'gr_fast'), 'gr_comments',),
         }),
-        (_('Pruning'), {                           #11
+        (_('Pruning'), {                           #10
             #'classes': ('collapse',),
             'fields': ('pruning',),
         }),
-        (_('Flowering period'), {                  #12
+        (_('Flowering period'), {                  #11
             #'classes': ('collapse',),
             'fields': (('fl_start', 'fl_end'),'fl_details',),
         }),
-        (_('Flowering color'), {                   #13
+        (_('Flowering color'), {                   #12
             #'classes': ('collapse',),
             'fields': ('fl_color','fl_color_details',),
         }),
-        (_('Pollination'), {                       #14
+        (_('Pollination'), {                       #13
             #'classes': ('collapse',),
             'fields': ('pollinators',),
         }),
-        (_('Seed dispersal'), {                    #15
+        (_('Seed dispersal'), {                    #14
             #'classes': ('collapse',),
             'fields': (('dt_anemochorous', 'dt_autochorous', 'dt_barochorous', 'dt_hydrochorous', 'dt_zoochorous'),),
         }),
-        (_('Dispersion agents'), {                 #16
+        (_('Dispersion agents'), {                 #15
             #'classes': ('collapse',),
             'fields': ('dispersers',),
         }),
-        (_('Fruits'), {                            #17
+        (_('Fruits'), {                            #16
             #'classes': ('collapse',),
             'fields': (('fr_class','fr_type'),),
         }),
-        (_('Symbiotic association with roots'), {  #18
+        (_('Symbiotic association with roots'), {  #17
             #'classes': ('collapse',),
             'fields': ('symbiotic_assoc','symbiotic_details',),
         }),
-        (_('Roots'), {                             #19
+        (_('Roots'), {                             #18
             #'classes': ('collapse',),
             'fields': ('r_type',),
         }),
-        (_('Foliage persistence'), {               #20
+        (_('Foliage persistence'), {               #19
             #'classes': ('collapse',),
             'fields': (('fo_evergreen', 'fo_semideciduous', 'fo_deciduous'),),
         }),
-        (_('Crown diameter'), {                    #21
+        (_('Crown diameter'), {                    #20
             #'classes': ('collapse',),
             'fields': (('cr_min_diameter', 'cr_max_diameter'),),
         }),
-        (_('Crown shape'), {                       #22
+        (_('Crown shape'), {                       #21
             #'classes': ('collapse',),
             'fields': ('cr_shape',),
         }),
-        (_('Bark texture'), {                      #23
+        (_('Bark texture'), {                      #22
             #'classes': ('collapse',),
             'fields': ('bark_texture',),
         }),
-        (_('Trunk alignment'), {                   #24
+        (_('Trunk alignment'), {                   #23
             #'classes': ('collapse',),
             'fields': (('tr_straight', 'tr_sl_inclined', 'tr_inclined', 'tr_sl_crooked', 'tr_crooked'),),
         }),
-        (_('Tree size'), {                         #25
+        (_('Tree size'), {                         #24
             #'classes': ('collapse',),
             'fields': (('min_height', 'max_height'),('min_dbh', 'max_dbh'),),
         }),
-        (_('Thorns or spines'), {                  #26
+        (_('Thorns or spines'), {                  #25
             #'classes': ('collapse',),
             'fields': ('thorns_or_spines',),
         }),
-        (_('Toxic or allergenic'), {               #27
+        (_('Toxic or allergenic'), {               #26
             #'classes': ('collapse',),
             'fields': ('toxic_or_allergenic',),
         }),
-        (_('Pests and diseases'), {                #28
+        (_('Pests and diseases'), {                #27
             #'classes': ('collapse',),
             'fields': ('pests_and_diseases',),
         }),
-        (_('Fruiting period'), {                   #29
+        (_('Fruiting period'), {                   #28
             #'classes': ('collapse',),
             'fields': (('fr_start', 'fr_end'),'fr_details',),
         }),
-        (_('Seed collection'), {                   #30
+        (_('Seed collection'), {                   #29
             #'classes': ('collapse',),
             'fields': (('seed_tree','seed_soil'), 'seed_collection',),
         }),
-        (_('Seed type'), {                         #31
+        (_('Seed type'), {                         #30
             #'classes': ('collapse',),
             'fields': ('seed_type',),
         }),
-        (_('Pre-germination treatment'), {         #32
+        (_('Pre-germination treatment'), {         #31
             #'classes': ('collapse',),
             'fields': (('pg_no_need', 'pg_thermal', 'pg_chemical', 'pg_water', 'pg_mechanical', 'pg_combined', 'pg_other'),('pg_details'),),
         }),
-        (_('Seedling production'), {               #33
+        (_('Seedling production'), {               #32
             #'classes': ('collapse',),
             'fields': (('sl_seedbed','sl_containers'), 'sl_details',),
         }),
-        (_('Germination time lapse'), {            #34
+        (_('Germination time lapse'), {            #33
             #'classes': ('collapse',),
             'fields': (('seed_gmin_time','seed_gmax_time'),),
         }),
-        (_('Germination rate'), {                  #35
+        (_('Germination rate'), {                  #34
             #'classes': ('collapse',),
             'fields': (('seed_gmin_rate','seed_gmax_rate'),),
         }),
-        (_('Seeds per weight'), {                  #36
+        (_('Seeds per weight'), {                  #35
             #'classes': ('collapse',),
             'fields': (('seeds_per_weight'),),
         }),
-        (_('Light requirements'), {                #37
+        (_('Light requirements'), {                #36
             #'classes': ('collapse',),
             'fields': ('light','light_details',),
         }),
-        (_('Terrain drainage'), {                  #38
+        (_('Terrain drainage'), {                  #37
             #'classes': ('collapse',),
             'fields': (('wetland', 'dry'),'terrain_details',),
         }),
