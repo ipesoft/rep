@@ -40,3 +40,8 @@ urlpatterns = patterns('',
     url(r'^taggit_autocomplete_modified/', include('taggit_autocomplete_modified.urls')),
 )
 
+try:
+    import my_urls
+    urlpatterns += patterns('', url(r'^', include('my_urls')), )
+except:
+    pass
