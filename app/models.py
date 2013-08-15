@@ -10,9 +10,7 @@ from django.utils.translation import string_concat
 from django.utils.translation import ugettext
 from django.utils import translation
 from treebeard.mp_tree import MP_Node
-
-from taggit_autocomplete_modified.managers import TaggableManagerAutocomplete as TaggableManager
-#from taggit.managers import TaggableManager
+from tinymce.models import HTMLField
 
 import httplib2, datetime, re, string
 from xml.etree.ElementTree import fromstring
@@ -162,7 +160,7 @@ class StaticContent( models.Model ):
     lang = models.CharField( _(u'Language'), choices=settings.LANGUAGES, max_length=12 )
     description = models.TextField( _(u'Description') )
     title = models.TextField( _(u'Title'), null=True, blank=True )
-    content = models.TextField( _(u'Content') )
+    content = HTMLField( _(u'Content') )
 
     class Meta:
         verbose_name = _(u'static content')
@@ -490,7 +488,6 @@ class Taxon( models.Model ):
     light = models.CharField( _(u'Classification'), null=True, blank=True, choices=LIGHT_REQUIREMENTS, max_length=1 )
     light_details = models.TextField( _(u'Details'), null=True, blank=True )
     has_pictures = models.BooleanField( _(u'Has pictures') )
-    tags = TaggableManager( _(u'TaxonTags'), blank=True )
     created = models.DateTimeField( u'Date created', auto_now_add = True )
     modified = models.DateTimeField( u'Date modified', null=True )
 
