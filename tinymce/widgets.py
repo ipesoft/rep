@@ -6,11 +6,20 @@ This TinyMCE widget was copied and extended from this code by John D'Agostino:
 http://code.djangoproject.com/wiki/CustomWidgetsTinyMCE
 """
 
+import tinymce.settings
 from django import forms
 from django.conf import settings
 from django.contrib.admin import widgets as admin_widgets
 from django.core.urlresolvers import reverse
 from django.forms.widgets import flatatt
+from django.utils.html import escape
+from django.utils.datastructures import SortedDict
+from django.utils.safestring import mark_safe
+from django.utils.translation import get_language, ugettext as _
+try:
+    import json
+except ImportError:
+    from django.utils import simplejson as json
 try:
     from django.utils.encoding import smart_text as smart_unicode
 except ImportError:
@@ -18,31 +27,25 @@ except ImportError:
         from django.utils.encoding import smart_unicode
     except ImportError:
         from django.forms.util import smart_unicode
-from django.utils.html import escape
-from django.utils import simplejson
-from django.utils.datastructures import SortedDict
-from django.utils.safestring import mark_safe
-from django.utils.translation import get_language, ugettext as _
-import tinymce.settings
 
 
 class TinyMCE(forms.Textarea):
     """
-    TinyMCE widget. Set settings.TINYMCE_JS_URL to set the location of the
-    javascript file. Default is "MEDIA_URL + 'js/tiny_mce/tiny_mce.js'".
-    You can customize the configuration with the mce_attrs argument to the
-    constructor.
+TinyMCE widget. Set settings.TINYMCE_JS_URL to set the location of the
+javascript file. Default is "MEDIA_URL + 'js/tiny_mce/tiny_mce.js'".
+You can customize the configuration with the mce_attrs argument to the
+constructor.
 
-    In addition to the standard configuration you can set the
-    'content_language' parameter. It takes the value of the 'language'
-    parameter by default.
+In addition to the standard configuration you can set the
+'content_language' parameter. It takes the value of the 'language'
+parameter by default.
 
-    In addition to the default settings from settings.TINYMCE_DEFAULT_CONFIG,
-    this widget sets the 'language', 'directionality' and
-    'spellchecker_languages' parameters by default. The first is derived from
-    the current Django language, the others from the 'content_language'
-    parameter.
-    """
+In addition to the default settings from settings.TINYMCE_DEFAULT_CONFIG,
+this widget sets the 'language', 'directionality' and
+'spellchecker_languages' parameters by default. The first is derived from
+the current Django language, the others from the 'content_language'
+parameter.
+"""
 
     def __init__(self, content_language=None, attrs=None, mce_attrs=None):
         super(TinyMCE, self).__init__(attrs)
@@ -77,7 +80,7 @@ class TinyMCE(forms.Textarea):
             if k in mce_config:
                js_functions[k] = mce_config[k]
                del mce_config[k]
-        mce_json = simplejson.dumps(mce_config)
+        mce_json = json.dumps(mce_config)
 
         pos = final_attrs['id'].find('__prefix__')
         if pos != -1:
@@ -97,27 +100,24 @@ class TinyMCE(forms.Textarea):
                 'diskcache': True,
                 'debug': False,
             }
-            compressor_json = simplejson.dumps(compressor_config)
+            compressor_json = json.dumps(compressor_config)
             html.append(u'<script type="text/javascript">tinyMCE_GZ.init(%s)</script>' % compressor_json)
-
+            
         if pos != -1:
             html.append(u'''<script type="text/javascript">
 setTimeout(function () {
-    var id = '%s';
-    
-    if (typeof(window._tinymce_inited) == 'undefined') {
-        window._tinymce_inited = [];
-    }
-    
-    if (typeof(window._tinymce_inited[id]) == 'undefined') {
-        window._tinymce_inited[id] = true;
-    } else {
-        var elements = id.replace(/__prefix__/, parseInt(document.getElementById('%sTOTAL_FORMS').value) - 1);
-        console.log(elements);
-        if (document.getElementById(elements)) {
-            tinymce.init(%s);
-        }
-    }
+var id = '%s';
+if (typeof(window._tinymce_inited) == 'undefined') {
+window._tinymce_inited = [];
+}
+if (typeof(window._tinymce_inited[id]) == 'undefined') {
+window._tinymce_inited[id] = true;
+} else {
+var elements = id.replace(/__prefix__/, parseInt(document.getElementById('%sTOTAL_FORMS').value) - 1);
+if (document.getElementById(elements)) {
+tinymce.init(%s);
+}
+}
 }, 0);
 </script>''' % (final_attrs['id'], final_attrs['id'][0:pos], mce_json))
         else:

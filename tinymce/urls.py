@@ -1,8 +1,11 @@
 # Copyright (c) 2008 Joost Cassee
 # Licensed under the terms of the MIT License (see LICENSE.txt)
 
-from django.conf.urls.defaults import *
-
+try:
+    from django.conf.urls import url, patterns
+except:
+    from django.conf.urls.defaults import url, patterns
+    
 urlpatterns = patterns('tinymce.views',
     url(r'^js/textareas/(?P<name>.+)/$', 'textareas_js', name='tinymce-js'),
     url(r'^js/textareas/(?P<name>.+)/(?P<lang>.*)$', 'textareas_js', name='tinymce-js-lang'),
