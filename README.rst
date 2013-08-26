@@ -24,6 +24,7 @@ Features
 - Species, ethnobotany and history are all interlinked, for instance allowing users reading an interview to click on a species mentioned in the text to access more details about it, including ethnobotany information and images.
 - Administrative interface to manage data.
 - Customizable public interface to search and browse existing content.
+- Internationalized system, with English and Portuguese languages ready to use.
 
 Installation
 ============
