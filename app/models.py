@@ -549,8 +549,33 @@ class Taxon( models.Model ):
         return self._get_boolean_concat(['restoration', 'urban_use', 'silviculture'])
 
     def get_specific_uses(self):
-        uses = self.uses.all().order_by('label').values_list('label', flat=True)
-        return string.join(uses, ', ')
+        # Original simple comma separated list
+        #uses = self.uses.all().order_by('label').values_list('label', flat=True)
+        #return string.join(uses, ', ')
+        #
+        # List of root nodes indicating subnodes inside parenthesis
+        uses = self.uses.all().order_by('path')
+        roots = {} # root id => [root label, [descendant labels]]
+        for use in uses:
+            if use.is_root():
+                roots[use.id] = [use.label, []]
+            else:
+                root = use.get_root()
+                if roots.has_key(root.id):
+                    roots[root.id][1].append( use.label )
+                else:
+                    roots[root.id] = [root.label, [use.label]]
+        is_first = True
+        uses_str = ''
+        for rid, rdata in roots.iteritems():
+            if is_first:
+                is_first = False
+                uses_str = rdata[0]
+            else:
+                uses_str += ', ' + rdata[0]
+            if len( rdata[1] ) > 0:
+                uses_str += ' (' + ', '.join(rdata[1]) + ')'
+        return uses_str
 
     def get_successional_group(self):
         return self._get_boolean_concat(['sg_pioneer', 'sg_early_secondary', 'sg_late_secondary', 'sg_climax'])
