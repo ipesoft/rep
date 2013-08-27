@@ -17,59 +17,6 @@
 
 <script type="text/javascript">
 
-function csrfSafeMethod(method) {
-    // these HTTP methods do not require CSRF protection
-    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-}
-$.ajaxSetup({
-    crossDomain: false,
-    beforeSend: function(xhr, settings) {
-        if (!csrfSafeMethod(settings.type)) {
-            xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
-        }
-    }
-});
-
-$(document).ready(function() {
-  // Initialize help dialog
-  $("#help_dialog").dialog({
-    autoOpen: false,
-    modal: true,
-    title: "{% trans "help" %}",
-    width: 600,
-    height: 300,
-    close: function() {
-
-      $("#help_img").css("display", "none");
-      $("#help_content").html('');
-    },
-  });
-});
-
-function show_help(content_id) {
-
-  $("#help_dialog").dialog('open');
-  $("#help_img").css("display", "block");
-
-  var req = $.ajax({
-    url: "/help/"+content_id,
-    type: "GET",
-    dataType: "html",
-  });
-
-  req.done( function(data) {
-
-    $("#help_img").css("display", "none");
-    $("#help_content").html(data);
-  });
-
-  req.fail( function(jqXHR, textStatus) {
-
-    alert("Falha na busca da informação!");
-    $("#help_dialog").dialog( "close" );
-  });
-}
-
 function collapse(region_id, button_id) {
 
   obj = document.getElementById(region_id);
@@ -238,7 +185,7 @@ function setmap() {
     <p><label>{% trans "Family" %}:</label>&nbsp;{{ taxon.family|default:"-" }}</p>
     {% if synonyms %}<p><label>{% trans "Synonyms" %}:&nbsp;</label>{% for syn in synonyms %}{{syn.name}}{% if forloop.last %}{% else %}, {% endif %}{% endfor %}</p>{% endif %}
     {% endwith %}
-    <p><label>{% trans "Endemic" %}:</label>&nbsp;{{ taxon.get_endemic|default:"-" }}&nbsp;<sup>{{ refs.END }}</sup>{% if "HELP-END" in help_entries %}<img class="help" src="/static/images/help.png" alt="?" title="{% trans "help" %}" onclick="show_help('HELP-END');return false;"/>{% endif %}{% comment %}&nbsp;&nbsp;&nbsp;<label>{% trans "Rare" %}:</label>&nbsp;{{ taxon.get_rare|default:"-" }}{% if taxon.max_density %}&nbsp;({{ taxon.max_density }}&nbsp;{% trans "individuals per hectare" %}){% endif %}<sup>{{ refs.RAR }}</sup>{% endcomment %}</p>
+    <p><label>{% trans "Endemic" %}:</label>&nbsp;{{ taxon.get_endemic|default:"-" }}&nbsp;<sup>{{ refs.END }}</sup>{% comment %}&nbsp;&nbsp;&nbsp;<label>{% trans "Rare" %}:</label>&nbsp;{{ taxon.get_rare|default:"-" }}{% if taxon.max_density %}&nbsp;({{ taxon.max_density }}&nbsp;{% trans "individuals per hectare" %}){% endif %}<sup>{{ refs.RAR }}</sup>{% endcomment %}</p>
     {% with conservation_recs=taxon.conservationstatus_set.all %}
     {% if conservation_recs|length > 0 %}
     <p><label>{% trans "conservation status" %}:&nbsp;</label>{% for rec in conservation_recs %}{{ rec.status }}&nbsp;({{ rec.source.acronym }}){% endfor %}
@@ -344,10 +291,5 @@ function setmap() {
 {% endif %}
 
 {% endautoescape %}
-
-<div id="help_dialog" style="display: none;">
-<div id="help_img" style="height: 250px; background: #ffffff url(/static/images/ajax-loader-circle.gif) no-repeat; background-position: center center;"></div>
-<div id="help_content" style="text-align: justify;"></div>
-</div>
 
 {% endblock content %}
