@@ -1,0 +1,55 @@
+{% extends "search_species.html" %}
+{% load i18n %}
+{% block header %}
+<script type="text/javascript">
+function collapse(region_id, button_id) {
+  obj = document.getElementById(region_id);
+  button = document.getElementById(button_id);
+  if (obj.style.display == "none") {
+    obj.style.display = "block";
+    button.src = "/static/images/collapse.gif"
+    button.title = "collapse"
+    button.alt = "collapse"
+  }
+  else {
+    obj.style.display = "none";
+    button.src = "/static/images/expand.gif"
+    button.title = "expand"
+    button.alt = "expand"
+  }
+}
+function load()
+{
+{% if performed_query %}
+collapse('options', 'c_button');
+{% endif %}
+}
+</script>
+{% endblock header %}
+
+{% block body_params %}onload="load()"{% endblock body_params %}
+
+{% block search_options %}
+<h1>{% trans "Advanced search for silviculture" %}{% if performed_query %}&nbsp;&nbsp;&nbsp;<a href="#" onclick="collapse('options', 'c_button');return false;"><img id="c_button" src="/static/images/collapse.gif" alt="collapse" title="collapse"/></a>{% endif %}</h1>
+<fieldset id="options">
+<form action="/sp/" method="GET">{% csrf_token %}
+<input type="hidden" name="adv" value="1"/>
+<input type="hidden" name="silv" value="1"/>
+<table width="100%">
+<tr><td width="20%" valign="top">{{ form.uses.label_tag }}:</td><td width="80%">{{ form.uses }}</td></tr>
+<tr><td><label for="id_group">{% trans "Successional group" %}:</label></td><td>{{ form.sg_pioneer }}{{ form.sg_pioneer.label }}&nbsp;{{ form.sg_early_secondary }}{{ form.sg_early_secondary.label }}&nbsp;{{ form.sg_late_secondary }}{{ form.sg_late_secondary.label }}&nbsp;{{ form.sg_climax }}{{ form.sg_climax.label }}</td></tr>
+<tr><td>{{ form.light.label_tag }}:</td><td>{{ form.light }}</td></tr>
+<tr><td>{{ form.pruning.label_tag }}:</td><td>{{ form.pruning }}</td></tr>
+<tr><td><label for="id_dbh">{% trans "DBH" %}</label>:</td><td>{{ form.min_dbh }}&nbsp;{% trans "to" %}&nbsp;{{ form.max_dbh }}cm</td></tr>
+<tr><td><label for="id_height">{% trans "height"|capfirst %}</label>:</td><td>{{ form.min_height }}&nbsp;{% trans "to" %}&nbsp;{{ form.max_height }}m</td></tr>
+<tr><td>{{ form.diseases.label_tag }}:</td><td>{{ form.diseases }}</td></tr>
+<tr><td><label for="id_foliage">{% trans "Foliage persistence" %}:</label></td><td>{{ form.fo_evergreen }}{{ form.fo_evergreen.label }}&nbsp;{{ form.fo_semideciduous }}{{ form.fo_semideciduous.label }}&nbsp;{{ form.fo_deciduous }}{{ form.fo_deciduous.label }}</td></tr>
+<tr><td>{{ form.pollinators.label_tag }}:</td><td>{{ form.pollinators }}</td></tr>
+<tr><td><label for="id_dispersion">{% trans "Seed dispersal" %}:</label></td><td>{{ form.dt_anemochorous }}{{ form.dt_anemochorous.label }}&nbsp;{{ form.dt_autochorous }}{{ form.dt_autochorous.label }}&nbsp;{{ form.dt_barochorous }}{{ form.dt_barochorous.label }}&nbsp;{{ form.dt_hydrochorous }}{{ form.dt_hydrochorous.label }}&nbsp;{{ form.dt_zoochorous }}{{ form.dt_zoochorous.label }}</td></tr>
+<tr><td><label for="id_terrain">{% trans "Terrain drainage" %}:</label></td><td>{{ form.wetland }}{{ form.wetland.label }}&nbsp;{{ form.dry }}{{ form.dry.label }}</td></tr>
+</table>
+<center><input type="submit" class="button" name="search" value="{% trans "search" %}"/></center>
+</form>
+</fieldset>
+
+{% endblock search_options %}

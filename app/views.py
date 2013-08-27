@@ -1,6 +1,6 @@
 # coding=UTF-8
 
-from app.models import StaticContent, Taxon, TaxonName, TaxonDataReference, COLORS, MONTHS, ROOT_SYSTEMS, CROWN_SHAPES, ConservationStatus, Interview, TypeOfUse, TaxonUse
+from app.models import StaticContent, Taxon, TaxonName, TaxonDataReference, COLORS, MONTHS, ROOT_SYSTEMS, CROWN_SHAPES, LIGHT_REQUIREMENTS, ConservationStatus, Interview, TypeOfUse, TaxonUse
 from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
@@ -68,8 +68,11 @@ class UrbanForestrySearchForm(CommonSearchForm):
     tr_crooked     = forms.BooleanField(label=_(u'Crooked'))
 
 class RestorationSearchForm(CommonSearchForm):
-    use_choices = TypeOfUse.objects.all().order_by('label').values_list('id', 'label')
-    uses = forms.MultipleChoiceField(label=_(u'Specific use'), choices=use_choices)
+    use_choices = TypeOfUse.objects.all().order_by('path')
+    my_use_choices = []
+    for choice in use_choices:
+        my_use_choices.append([choice.id, unicode(choice)])
+    uses = forms.MultipleChoiceField(label=_(u'Specific use'), choices=my_use_choices)
     symb_assoc = forms.ChoiceField(label=_(u'Symbiotic association with roots'), initial=-1, choices=null_boolean_choices)
     # Successional group
     sg_pioneer         = forms.BooleanField(label=_(u'Pioneer'))
@@ -82,6 +85,37 @@ class RestorationSearchForm(CommonSearchForm):
     dt_barochorous  = forms.BooleanField(label=_(u'Barochorous'))
     dt_hydrochorous = forms.BooleanField(label=_(u'Hydrochorous'))
     dt_zoochorous   = forms.BooleanField(label=_(u'Zoochorous'))
+
+class SilvicultureSearchForm(CommonSearchForm):
+    use_choices = TypeOfUse.objects.all().order_by('path')
+    my_use_choices = []
+    for choice in use_choices:
+        my_use_choices.append([choice.id, unicode(choice)])
+    uses = forms.MultipleChoiceField(label=_(u'Specific use'), choices=my_use_choices)
+    # Successional group
+    sg_pioneer         = forms.BooleanField(label=_(u'Pioneer'))
+    sg_early_secondary = forms.BooleanField(label=_(u'Early secondary'))
+    sg_late_secondary  = forms.BooleanField(label=_(u'Late secondary'))
+    sg_climax          = forms.BooleanField(label=_(u'Climax'))
+    # Light requirement
+    light_requirement_choices = [('NULL', no_matter_str)] + list(LIGHT_REQUIREMENTS)
+    light = forms.ChoiceField(label=_(u'Light requirements'), initial='NULL', choices=light_requirement_choices)
+    # DBH
+    min_dbh   = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}))
+    max_dbh   = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}))
+    # Type of dispersion
+    dt_anemochorous = forms.BooleanField(label=_(u'Anemochorous'))
+    dt_autochorous  = forms.BooleanField(label=_(u'Autochorous'))
+    dt_barochorous  = forms.BooleanField(label=_(u'Barochorous'))
+    dt_hydrochorous = forms.BooleanField(label=_(u'Hydrochorous'))
+    dt_zoochorous   = forms.BooleanField(label=_(u'Zoochorous'))
+    # Terrain drainage
+    wetland = forms.BooleanField(label=_(u'Wetland'))
+    dry     = forms.BooleanField(label=_(u'Well-drained'))
+    # Diseases
+    diseases = forms.ChoiceField(label=_(u'Pests and diseases'), initial=-1, choices=null_boolean_choices)
+    # Pollination
+    pollinators = forms.ChoiceField(label=_(u'Pollinators'), initial=-1, choices=null_boolean_choices)
 
 # Internal methods
 def _handle_language(request):
@@ -526,6 +560,12 @@ def search_species(request):
                 form = UrbanForestrySearchForm(request.GET)
             else:
                 form = UrbanForestrySearchForm()
+        elif request.GET.has_key('silv'):
+            possible_templates = ['my_adv_search_species_silviculture.html', 'adv_search_species_silviculture.html']
+            if request.GET.has_key('search'):
+                form = SilvicultureSearchForm(request.GET)
+            else:
+                form = SilvicultureSearchForm()
         else:
             possible_templates = ['my_adv_search_species_restoration.html', 'adv_search_species_restoration.html']
             if request.GET.has_key('search'):
@@ -590,6 +630,8 @@ def search_species(request):
         qs = _add_or_conditions(request, qs, ['fo_evergreen', 'fo_semideciduous', 'fo_deciduous'])
         # Height
         qs = _add_interval_condition(request, qs, 'min_height', 'max_height')
+        # DBH
+        qs = _add_interval_condition(request, qs, 'min_dbh', 'max_dbh')
         # Crown diameter
         qs = _add_interval_condition(request, qs, 'cr_min_diameter', 'cr_max_diameter')
         # Crown shape
@@ -601,6 +643,9 @@ def search_species(request):
         # Root system
         if request.GET.has_key('r_type') and request.GET['r_type'] != 'NULL':
             qs = qs.filter(r_type=request.GET['r_type'])
+        # Light requirements
+        if request.GET.has_key('light') and request.GET['light'] != 'NULL':
+            qs = qs.filter(r_type=request.GET['light'])
         # Flowering period
         if request.GET.has_key('fl_month'):
             qs = _add_month_condition(request, qs, 'fl_month', 'fl_start', 'fl_end')
@@ -613,6 +658,18 @@ def search_species(request):
                 qs = qs.filter(pruning=True)
             elif request.GET['pruning'] in ('0', 0):
                 qs = qs.filter(pruning=False)
+        # Pollinators
+        if request.GET.has_key('pollinators'):
+            if request.GET['pollinators'] in ('1', 1):
+                qs = qs.filter(pollinators__isnull=False).exclude(pollinators='')
+            elif request.GET['pollinators'] in ('0', 0):
+                qs = qs.filter(Q(pollinators__isnull=True) | Q(pollinators=''))
+        # Diseases
+        if request.GET.has_key('diseases'):
+            if request.GET['diseases'] in ('1', 1):
+                qs = qs.filter(pests_and_diseases__isnull=False).exclude(pests_and_diseases='')
+            elif request.GET['diseases'] in ('0', 0):
+                qs = qs.filter(Q(pests_and_diseases__isnull=True) | Q(pests_and_diseases=''))
         # Thorns
         if request.GET.has_key('thorns'):
             if request.GET['thorns'] in ('1', 1):
@@ -629,6 +686,8 @@ def search_species(request):
         qs = _add_or_conditions(request, qs, ['sg_pioneer', 'sg_early_secondary', 'sg_late_secondary', 'sg_climax'])
         # Use OR condition for seed dispersal
         qs = _add_or_conditions(request, qs, ['dt_anemochorous', 'dt_autochorous', 'dt_barochorous', 'dt_hydrochorous', 'dt_zoochorous'])
+        # Use OR condition for terrain drainage
+        qs = _add_or_conditions(request, qs, ['wetland', 'dry'])
         # Symbiotic association
         if request.GET.has_key('symb_assoc'):
             if request.GET['symb_assoc'] in ('1', 1):
@@ -637,7 +696,16 @@ def search_species(request):
                 qs = qs.filter(symbiotic_assoc=False)
         # Specific uses
         if request.GET.has_key('uses'):
-            taxa_ids = TaxonUse.objects.filter(use__in=request.GET.getlist('uses')).values_list('taxon__id', flat=True).distinct('taxon__id')
+            my_uses = []
+            for use_id in request.GET.getlist('uses'):
+                try:
+                    use = TypeOfUse.objects.get(pk=use_id)
+                    my_uses.append( use_id )
+                    for use_desc_id in use.get_descendants().values_list('id', flat=True):
+                        my_uses.append(use_desc_id)
+                except TypeOfUse.DoesNotExist:
+                    pass
+            taxa_ids = TaxonUse.objects.filter(use__in=my_uses).values_list('taxon__id', flat=True).distinct('taxon__id')
             qs = qs.filter(id__in=taxa_ids)
         # Limit the number of fields to be returned
         qs = qs.order_by('genus', 'species').only('id', 'genus', 'species')
