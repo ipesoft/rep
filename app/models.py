@@ -154,10 +154,15 @@ TAXON_DATA = (
     ( u'USE', _(u'Use') ),
 )
 
+# Translate languages, since this is not possible in the settings file
+translated_languages = []
+for lang_code, lang_name in settings.LANGUAGES:
+    translated_languages.append( (lang_code, ugettext(lang_name)) )
+
 class StaticContent( models.Model ):
     "Static content"
     code = models.SlugField( _(u'Code'), help_text=_(u'Unique code'), db_index=True )
-    lang = models.CharField( _(u'Language'), choices=settings.LANGUAGES, max_length=12 )
+    lang = models.CharField( _(u'Language'), choices=translated_languages, max_length=12 )
     description = models.TextField( _(u'Description') )
     title = models.TextField( _(u'Title'), null=True, blank=True )
     content = HTMLField( _(u'Content') )
