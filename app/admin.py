@@ -572,7 +572,10 @@ class TypeOfUseAdmin(TreeAdmin):
             # Add new record as a root node
             TypeOfUse.add_root(label=obj.label)
 
-admin.site.register(StaticContent)
+class StaticContentAdmin(admin.ModelAdmin):
+    list_display = ('description', 'lang')
+
+admin.site.register(StaticContent, StaticContentAdmin)
 admin.site.register(Taxon, TaxonAdmin)
 admin.site.register(Reference, ReferenceAdmin)
 admin.site.register(TypeOfUse, TypeOfUseAdmin)
