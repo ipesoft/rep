@@ -498,6 +498,9 @@ def hist_results(request):
     c = RequestContext(request, template_params)
     return render_to_response( possible_templates, c )
 
+def faq(request):
+    return show_page(request, 'faq')
+
 def show_species(request, species_id):
     'Display data about a species'
     _handle_language( request )

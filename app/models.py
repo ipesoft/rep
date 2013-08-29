@@ -553,7 +553,7 @@ class Taxon( models.Model ):
         #uses = self.uses.all().order_by('label').values_list('label', flat=True)
         #return string.join(uses, ', ')
         #
-        # List of root nodes indicating subnodes inside parenthesis
+        # List of root nodes indicating subnodes inside parentheses
         uses = self.uses.all().order_by('path')
         roots = {} # root id => [root label, [descendant labels]]
         for use in uses:
