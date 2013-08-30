@@ -1350,14 +1350,6 @@ msgstr ""
 msgid "No content"
 msgstr "Sem conteúdo"
 
-#: app/templates/my_base.html:151
-msgid "Education"
-msgstr "Educação"
-
-#: app/templates/my_base.html:151
-msgid "activity"
-msgstr "atividade"
-
 #: app/templates/search_species.html:6
 msgid "result"
 msgstr "resultado"
