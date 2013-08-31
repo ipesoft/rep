@@ -441,6 +441,18 @@ def _pdf_for_species_page( taxon, refs, citations ):
     return response
 
 # View methods
+def handler404( request ):
+    "404 page"
+    c = RequestContext(request, {'base_template':settings.BASE_TEMPLATE} )
+    possible_templates = ['my_404.html', '404.html']
+    return render_to_response( possible_templates, c )
+
+def handler500( request ):
+    "500 page"
+    c = RequestContext(request, {} )
+    possible_templates = ['my_500.html', '500.html']
+    return render_to_response( possible_templates, c )
+
 def index(request):
     'Index page'
     return show_page(request, 'main')

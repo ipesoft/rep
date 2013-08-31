@@ -5,6 +5,9 @@ from django.conf import settings
 from django.contrib import admin
 admin.autodiscover()
 
+handler404 = 'app.views.handler404'
+handler500 = 'app.views.handler500'
+
 urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'rep.views.home', name='home'),
