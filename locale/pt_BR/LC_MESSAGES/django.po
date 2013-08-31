@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-30 10:54-0300\n"
+"POT-Creation-Date: 2013-08-31 11:17-0300\n"
 "PO-Revision-Date: 2012-03-07 21:05-0300\n"
 "Last-Translator: Renato De Giovanni <renato@cria . org . br>\n"
 "Language-Team: pt_BR <LL@li.org>\n"
@@ -18,11 +18,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
-#: settings.py:43
+#: settings.py:45
 msgid "English"
 msgstr "Inglês"
 
-#: settings.py:43
+#: settings.py:45
 msgid "Brazilian Portuguese"
 msgstr "Português"
 
@@ -716,16 +716,14 @@ msgid "Family"
 msgstr "Família"
 
 #: app/models.py:404 app/templates/base.html:45 app/templates/base.html.py:53
-#: app/templates/my_base.html:151
 msgid "Restoration"
 msgstr "Restauração"
 
 #: app/models.py:405 app/templates/base.html:46 app/templates/base.html.py:54
-#: app/templates/my_base.html:151
 msgid "Urban forestry"
 msgstr "Arborização urbana"
 
-#: app/models.py:406 app/templates/base.html:47 app/templates/my_base.html:151
+#: app/models.py:406 app/templates/base.html:47
 msgid "Silviculture"
 msgstr "Silvicultura"
 
@@ -1159,7 +1157,7 @@ msgstr "Resultados da busca"
 msgid "Synonyms"
 msgstr "Sinônimos"
 
-#: app/views.py:367 app/templates/base.html:31 app/templates/my_base.html:151
+#: app/views.py:367 app/templates/base.html:31
 msgid "Ethnobotany"
 msgstr "Etnobotânica"
 
@@ -1167,7 +1165,7 @@ msgstr "Etnobotânica"
 msgid "and"
 msgstr "e"
 
-#: app/views.py:367 app/templates/base.html:36 app/templates/my_base.html:151
+#: app/views.py:367 app/templates/base.html:36
 #: app/templates/admin/taxon_change_form.html:31
 msgid "History"
 msgstr "Histórico"
@@ -1214,6 +1212,14 @@ msgstr "Número de sementes por peso"
 msgid "Bibliography"
 msgstr "Bibliografia"
 
+#: app/templates/404.html:3
+msgid "Not found"
+msgstr "Página não encontrada"
+
+#: app/templates/404.html:5
+msgid "Sorry, could not find that page"
+msgstr "Desculpe, não foi possível encontrar a página"
+
 #: app/templates/adv_search_species_restoration.html:33
 msgid "Advanced search for restoration"
 msgstr "Busca avançada para restauração"
@@ -1240,45 +1246,44 @@ msgstr "Flora Regional"
 msgid "Regional<span>Flora</span>"
 msgstr "Flora<span>Regional</span>"
 
-#: app/templates/base.html:22 app/templates/my_base.html:138
+#: app/templates/base.html:22
 msgid "Search species"
 msgstr "Busca por espécie"
 
-#: app/templates/base.html:29 app/templates/my_base.html:151
+#: app/templates/base.html:29
 msgid "About"
 msgstr "Sobre"
 
-#: app/templates/base.html:30 app/templates/my_base.html:151
+#: app/templates/base.html:30
 msgid "Methods"
 msgstr "Métodos"
 
 #: app/templates/base.html:33 app/templates/base.html.py:38
-#: app/templates/my_base.html:151
 msgid "overview"
 msgstr "descrição"
 
 #: app/templates/base.html:34 app/templates/base.html.py:39
-#: app/templates/my_base.html:151 app/templates/search_species.html:6
+#: app/templates/search_species.html:6
 msgid "results"
 msgstr "resultados"
 
-#: app/templates/base.html:41 app/templates/my_base.html:151
+#: app/templates/base.html:41
 msgid "List of species"
 msgstr "Lista de espécies"
 
-#: app/templates/base.html:44 app/templates/my_base.html:151
+#: app/templates/base.html:44
 msgid "all"
 msgstr "todas"
 
-#: app/templates/base.html:50 app/templates/my_base.html:151
+#: app/templates/base.html:50
 msgid "Advanced search"
 msgstr "Busca avançada"
 
-#: app/templates/base.html:57 app/templates/my_base.html:151
+#: app/templates/base.html:57
 msgid "Help"
 msgstr "Ajuda"
 
-#: app/templates/base.html:59 app/templates/my_base.html:151
+#: app/templates/base.html:59
 msgid "Common questions"
 msgstr "Dúvidas"
 
