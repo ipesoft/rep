@@ -29,7 +29,48 @@ Features
 Installation
 ============
 
-Besides a web server, you'll need Python, Django and a relational database compatible with Django. The application was developed with Apache 2.2, PostgreSQL 8.4 and Django 1.4.2. After installing the basic software, create a new database, copy settings.py.ref to settings.py and edit the configuration. If you want to learn more about Django settings you can look at: https://docs.djangoproject.com/en/1.4/topics/settings/
+Besides a web server, you'll need Python, Django and a relational database compatible with Django. The application was developed with Apache 2.2, PostgreSQL 8.4 and Django 1.5.1. After installing the basic software, create a new database, copy settings.py.ref to settings.py and edit the configuration. If you want to learn more about Django settings you can look at: https://docs.djangoproject.com/en/1.5/topics/settings/
+
+In particular, you need to pay attention to the following parts:
+
+::
+
+ADMINS --> include your name and e-mail.
+
+DATABASES --> include all necessary database settings.
+
+ALLOWED_HOSTS --> specify one or more domains for your system.
+
+TIME_ZONE --> time zone for your django installation (based on your server locale).
+
+LANGUAGE_CODE --> default language for your system.
+
+LOCALE_PATHS --> replace with the absolute path to your django app + /locale
+                 add more paths if you have other locale files
+
+STATIC_ROOT --> you may want to set this the absolute path to your django app + /static
+
+STATICFILES_DIRS --> you may need to include the contrib/admin/static dir of your django
+                     installation to get the administrative interface working properly.
+
+SECRET_KEY --> replace with a new value of your own
+
+TEMPLATE_DIRS --> specify the two template directories:
+                  absolute path to your django app + /templates
+                  absolute path to your django app + /treebeard/templates
+
+BASE_TEMPLATE --> replace with your own template, if necessary.
+
+CONTACT_LINK --> contact e-mail to be displayed on the standard menu.
+
+PDF_ROOT --> absolute path to your django app + /docs
+
+FLICKR_API_KEY --> your flickr api key (register at flicker and get the key)
+
+The following entries must also be completed for sharing data with EoL:
+GUID_FORMAT, SPECIES_URL_FORMAT, HABITAT_DESCRIPTION, CREATOR_NAME, 
+CREATOR_HOMEPAGE, CREATOR_LOGO_URL, COMPILERS
+::
 
 When you finihsed editing the file, run the following command to create the tables:
 
