@@ -35,42 +35,41 @@ In particular, you need to pay attention to the following parts:
 
 ::
 
-ADMINS --> include your name and e-mail.
+  ADMINS --> include your name and e-mail.
 
-DATABASES --> include all necessary database settings.
+  DATABASES --> include all necessary database settings.
 
-ALLOWED_HOSTS --> specify one or more domains for your system.
+  ALLOWED_HOSTS --> specify one or more domains for your system.
 
-TIME_ZONE --> time zone for your django installation (based on your server locale).
+  TIME_ZONE --> time zone for your django installation (based on your server locale).
 
-LANGUAGE_CODE --> default language for your system.
+  LANGUAGE_CODE --> default language for your system.
 
-LOCALE_PATHS --> replace with the absolute path to your django app + /locale
-                 add more paths if you have other locale files
+  LOCALE_PATHS --> replace with the absolute path to your django app + /locale
+                   add more paths if you have other locale files
 
-STATIC_ROOT --> you may want to set this the absolute path to your django app + /static
+  STATIC_ROOT --> you may want to set this the absolute path to your django app + /static
 
-STATICFILES_DIRS --> you may need to include the contrib/admin/static dir of your django
-                     installation to get the administrative interface working properly.
+  STATICFILES_DIRS --> you may need to include the contrib/admin/static dir of your django
+                       installation to get the administrative interface working properly.
 
-SECRET_KEY --> replace with a new value of your own
+  SECRET_KEY --> replace with a new value of your own
 
-TEMPLATE_DIRS --> specify the two template directories:
-                  absolute path to your django app + /templates
-                  absolute path to your django app + /treebeard/templates
+  TEMPLATE_DIRS --> specify the two template directories:
+                    absolute path to your django app + /templates
+                    absolute path to your django app + /treebeard/templates
 
-BASE_TEMPLATE --> replace with your own template, if necessary.
+  BASE_TEMPLATE --> replace with your own template, if necessary.
 
-CONTACT_LINK --> contact e-mail to be displayed on the standard menu.
+  CONTACT_LINK --> contact e-mail to be displayed on the standard menu.
 
-PDF_ROOT --> absolute path to your django app + /docs
+  PDF_ROOT --> absolute path to your django app + /docs
 
-FLICKR_API_KEY --> your flickr api key (register at flicker and get the key)
+  FLICKR_API_KEY --> your flickr api key (register at flicker and get the key)
 
-The following entries must also be completed for sharing data with EoL:
-GUID_FORMAT, SPECIES_URL_FORMAT, HABITAT_DESCRIPTION, CREATOR_NAME, 
-CREATOR_HOMEPAGE, CREATOR_LOGO_URL, COMPILERS
-::
+  The following entries must also be completed for sharing data with EoL:
+  GUID_FORMAT, SPECIES_URL_FORMAT, HABITAT_DESCRIPTION, CREATOR_NAME, 
+  CREATOR_HOMEPAGE, CREATOR_LOGO_URL, COMPILERS
 
 When you finihsed editing the file, run the following command to create the tables:
 
