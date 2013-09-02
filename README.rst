@@ -48,7 +48,7 @@ In particular, you need to pay attention to the following parts:
   LOCALE_PATHS --> replace with the absolute path to your django app + /locale
                    add more paths if you have other locale files
 
-  STATIC_ROOT --> you may want to set this the absolute path to your django app + /static
+  STATIC_ROOT --> you may want to set this to the absolute path of your django app + /static
 
   STATICFILES_DIRS --> you may need to include the contrib/admin/static dir of your django
                        installation to get the administrative interface working properly.
@@ -90,11 +90,31 @@ Then try the public interface to search and visualize your data: http://127.0.0.
 Species data
 ============
 
-Registering data
+**Registering data**
 
-Sharing with the Encyclopedia of Life
+Use the administrative interface to include all data for each species. You may first add as many users/groups as necessary with the corresponding permissions. Note that users should be marked as being part of the "staff" to be able to access the admin interface.
 
-Displaying images
+**Sharing with the Encyclopedia of Life**
+
+The following program can be manually run from you django project directory to produce a zipped XML compatible with one of the EoL data standards:
+
+::
+
+  ./manage.py export_data app
+
+The file will be called eol.zip and you will find it under your EOL_FILE_LOCATION. To generate that file periodically, you can put the same command in your crontab.
+
+To start sharing data, first create an account in eol.org and then create a new content partner associated with it. You will need to specify a URL from where EoL can periodically fetch the file.
+
+**Displaying images**
+
+To display Flickr images, you have to create an account on Flickr and then get an API key that you must include in your settings file as FLICKR_API_KEY. There is a command line program that you need to run periodically (for instance using crontab) to check if there are images on Flickr. You can manually run it from your django project directory using:
+
+::
+
+  ./manage.py check_flickr app
+
+Please note that only images that were shared with the EoL Flickr group are searched and displayed. Check the EoL documentation about how to share images with EoL using Flickr.
 
 Interviews
 ==========
