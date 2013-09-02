@@ -32,7 +32,12 @@ class Command( BaseCommand ):
             last_created = Taxon.objects.filter(modified__isnull=True).order_by('-created').values_list('created', flat=True)[0]
         except:
             pass
-        last_ref = max( last_modified, last_created )
+        if last_modified is not None:
+            last_ref = last_modified
+            if last_created is not None:
+                last_ref = max( last_modified, last_created )
+        else:
+            last_ref = last_created
         print 'Last modification',last_ref
         if last_ref is not None:
             if os.path.exists( final_file ):
