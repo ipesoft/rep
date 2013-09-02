@@ -2,7 +2,9 @@
 
 import codecs, string
 from xml.sax.saxutils import escape
+import os.path, datetime
 from optparse import make_option
+import zipfile
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.utils import translation
@@ -20,9 +22,46 @@ class Command( BaseCommand ):
 
     def handle( self, app=None, file_path=None, **options ):
         if file_path is None:
-            print 'You must specify a file path'
-            exit(1)
-        f = codecs.open( file_path, 'wb', 'utf8' )
+            file_path = settings.EOL_FILE_LOCATION
+        final_file = file_path + 'eol.zip'
+        temp_file = file_path + 'eol.xml'
+        last_modified = None
+        last_created = None
+        try: 
+            last_modified = Taxon.objects.filter(modified__isnull=False).order_by('-modified').values_list('modified', flat=True)[0]
+            last_created = Taxon.objects.filter(modified__isnull=True).order_by('-created').values_list('created', flat=True)[0]
+        except:
+            pass
+        last_ref = max( last_modified, last_created )
+        print 'Last modification',last_ref
+        if last_ref is not None:
+            if os.path.exists( final_file ):
+                file_changed = datetime.datetime.fromtimestamp( os.path.getmtime(final_file) )
+                print 'Last export      ', file_changed
+                if file_changed >= last_ref:
+                    print 'No changes since last export. Exiting.'
+                    exit(0)
+        print 'Exporting data ...'
+        if os.path.exists( temp_file ):
+            os.remove( temp_file )
+        self._generate_xml( temp_file )
+        if os.path.exists( final_file ):
+            os.remove( final_file )
+        try:
+            import zlib
+            compression = zipfile.ZIP_DEFLATED
+        except:
+            compression = zipfile.ZIP_STORED
+        zf = zipfile.ZipFile( final_file, mode='w' )
+        try:
+            zf.write( temp_file, os.path.basename(temp_file), compress_type=compression )
+        finally:
+            zf.close()
+        os.remove( temp_file )
+        print 'Finished'
+
+    def _generate_xml( self, file ):
+        f = codecs.open( file, 'wb', 'utf8' )
         f.write(u"<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n")
         f.write(u'<response xmlns="http://www.eol.org/transfer/content/0.3" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:dwc="http://rs.tdwg.org/dwc/dwcore/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.eol.org/transfer/content/0.3 http://services.eol.org/schema/content_0_3.xsd">')
         lang = settings.LANGUAGE_CODE
@@ -56,14 +95,14 @@ class Command( BaseCommand ):
             desc = ''
             desc_ref = ['-']
             fol = taxon.get_foliage_persistence()
-            if fol != '-':
+            if fol is not None:
                 desc = string_concat( desc, _(u'Foliage persistence'), ': ', fol, '. ' )
                 desc_ref.append('FOL')
             if taxon.fl_color is not None:
                 desc = string_concat( desc, _(u'Flowering color'), ': ', taxon.get_fl_color_display(), '. ' )
                 repro_ref.append('FLC')
             flp = taxon.get_flowering_period()
-            if flp != '-':
+            if flp is not None:
                 desc = string_concat( desc, _(u'Flowering period'), ': ', flp, '. ' )
                 desc_ref.append('FLP')
             if taxon.r_type is not None:
@@ -73,7 +112,7 @@ class Command( BaseCommand ):
                 desc = string_concat( desc, _(u'Crown shape'), ': ', taxon.get_cr_shape_display(), '. ' )
                 repro_ref.append('CRS')
             tra = taxon.get_trunk_alignment()
-            if tra != '-':
+            if tra is not None:
                 desc = string_concat( desc, _(u'Trunk alignment'), ': ', tra, '. ' )
                 desc_ref.append('TRA')
             if taxon.bark_texture is not None:
@@ -85,16 +124,16 @@ class Command( BaseCommand ):
             size = ''
             size_ref = ['SIZ']
             h = taxon.get_height()
-            if h != '-':
+            if h is not None:
                 size = string_concat( _(u'height'), ': ', h, '. ' )
             dbh = taxon.get_dbh()
-            if dbh != '-':
+            if dbh is not None:
                 size = string_concat( size, _(u'DBH'), ': ', dbh, '. ' )
             crd = taxon.get_crown_diameter()
-            if crd != '-':
+            if crd is not None:
                 size = string_concat( size, _(u'Crown diameter'), ': ', crd, '. ' )
                 size_ref.append('CRD')
-            if size != '':
+            if size is not None:
                 self._add_data_object( f, taxon, u'Size', size_ref, size, lang)
             ## Distribution
             distrib = settings.HABITAT_DESCRIPTION
@@ -105,7 +144,7 @@ class Command( BaseCommand ):
             self._add_data_object( f, taxon, u'Distribution', distrib_ref, distrib, lang)
             ## Growth
             growth_rate = taxon.get_growth_rate()
-            if growth_rate != '-':
+            if growth_rate is not None:
                 self._add_data_object( f, taxon, u'Growth', ['GRO'], string_concat( _(u'Growth rate'), ': ', growth_rate), lang)
             ## Associations
             assoc = ''
@@ -120,7 +159,7 @@ class Command( BaseCommand ):
             ## Dispersal
             dispersal = ''
             d_types = taxon.get_dispersal_types()
-            if d_types != '-':
+            if d_types is not None:
                 dispersal = string_concat(_(u'Seed dispersal'),': ', d_types)
             if taxon.dispersers:
                 if len(dispersal):
@@ -146,11 +185,11 @@ class Command( BaseCommand ):
             repro = ''
             repro_ref = ['-']
             fp = taxon.get_fruiting_period()
-            if fp != '-':
+            if fp is not None:
                 repro = string_concat( _(u'Fruiting period'), ': ', fp, '. ' )
                 repro_ref.append('FRP')
             seed_g = taxon.get_seed_gathering()
-            if seed_g != '-':
+            if seed_g is not None:
                 repro = string_concat( repro, seed_g, '. ' )
                 repro_ref.append('SEC')
             if taxon.seed_type is not None:
@@ -160,15 +199,15 @@ class Command( BaseCommand ):
                 repro = string_concat( repro, _(u'Pre-germination treatment'), ': ', taxon.get_pregermination_treatment(), '. ' )
                 repro_ref.append('PGT')
             seedbed = taxon.get_seedbed()
-            if seedbed != '-':
+            if seedbed is not None:
                 repro = string_concat( repro, _(u'Seedling production'), ': ', seedbed, '. ' )
                 repro_ref.append('SDL')
             g_time_lapse = taxon.get_germination_time_lapse()
-            if g_time_lapse != '-':
+            if g_time_lapse is not None:
                 repro = string_concat( repro, _(u'Germination time lapse'), ': ', g_time_lapse, '. ' )
                 repro_ref.append('GET')
             g_rate = taxon.get_germination_rate()
-            if g_rate != '-':
+            if g_rate is not None:
                 repro = string_concat( repro, _(u'Germination rate'), ': ', g_rate, '. ' )
                 repro_ref.append('GER')
             if taxon.light is not None:
