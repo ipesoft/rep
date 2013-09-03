@@ -215,9 +215,9 @@ More languages can be added by editing the settings.py file. After that, follow 
 
 ::
 
-  django-admin.py makemessages --locale=my_new_lang_code --ignore=app/templates/my_base.html
+  django-admin.py makemessages --locale=my_new_lang_code
 
-Then edit the new file locate under locale/LC_MESSAGES/my_new_lang_code/django.po to make all translations. After that, run the following command to compile the translations:
+Then edit the new file located under locale/my_new_lang_code/LC_MESSAGES/django.po to make all translations. After that, run the following command to compile the translations:
 
 ::
 
