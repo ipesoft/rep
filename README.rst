@@ -11,7 +11,9 @@ Regional Flora is a web application designed to store and share data about regio
 
 This work is part of a larger project funded by the JRS Biodiversity Foundation and coordinated by IPÊ (Instituto de Pesquisas Ecológicas) and originally created for the region of Nazaré Paulista, São Paulo, Brazil.
 
-The system was developed in Python using the Django Framework.
+The system was developed in Python using the Django Framework. You can find a working example here:
+
+http://flora.ipe.org.br
 
 Features
 ========
@@ -77,7 +79,16 @@ When you finihsed editing the file, run the following command to create the tabl
 
   python manage.py syncdb
 
-You'll also be prompted to create a superuser account. After that, you can start the Django server to test the system:
+You'll also be prompted to create a superuser account.
+
+To export all static content to its final destination, use:
+
+::
+
+  ./manage.py collectstatic
+
+
+After that, you can start the Django server to test the system:
 
 ::
 
@@ -128,7 +139,7 @@ Interviews can be included using the administrative interface. Their content mus
 
 Paragraphs are separated by line breaks. Any initial word with less than 30 characters followed by ': ' is interpreted as the name of a person and is formatted accordingly.
 
-Highlights and links must be manually typed. Highlights are delimited by two lines 
+Highlights and links must be manually typed. Highlights start with a particular HTML anchor belonging to the "part" class and end with an HTML horizontal line of the same class:
 
 ::
 
@@ -136,7 +147,7 @@ Highlights and links must be manually typed. Highlights are delimited by two lin
   <a class="part" id="1">Interesting part</a>
   Person1: In my childhood I used to visit a special tree in the forest. Some more text, followed or not by opther talks.<hr class="part"/>
 
-Such highlights are automatically detected, indexed and displayed when you save the interview. The same happens with species tags. There are three kinds of species tags:
+You need to pay attention to the highlight id. Each highlight needs its own unique identifier that is manually assigned. Such highlights are automatically detected, indexed and displayed when you save the interview. The same happens with species tags. There are three kinds of species tags:
 
 1) Link to a particular species in the system:
 
@@ -166,6 +177,12 @@ You may also want to capture species citations even if the species is not presen
 
   <a class="sp_citation">eucalipto</a>
 
+Before tagging all species citations, you may run the following program which tried to find in your interview all species names that are registered in your database:
+
+::
+
+  ./manage.py detect_citations app [-i --interview interview id]
+
 If you have an audio file for the interview, you can simply put it somewhere accessible on the web and then specify the URL when editing the interview. The system uses JPlayer to play audio, so make sure your file is in one of the supported formats: mp3 or mp4 (AAC/H.264) for both HTML5 or Flash websites, or ogg vorbis and wav for HTML5 websites.
 
 Static pages
@@ -188,7 +205,21 @@ Note that more than one page can be included with the same code - each for a dif
 Customizing the look & feel
 ===========================
 
-Templates
+The system comes with a generic built-in look & feel that can be customized. Most part of this work can be accomplished just by creating a my_base.html template inside your app/templates directory that, when present, replaces the base.html template. You can use anything in your new template, but make sure to include the following Django template blocks that are used by the other derived pages: header, body_params and content. Also start your template with {% load i18n %} to activate internationalization tags.
 
-Internationalization
+In the same way, you may create a my_page.html to replace the static content template, or a my_500.html to replace the Internal Server Error page.
+
+New URL patterns can be specified using a my_urls.py.
+
+More languages can be added by editing the settings.py file. After that, follow the standard Django procedure for dealing with translations. First run this command to generate the new translation file:
+
+::
+
+  django-admin.py makemessages --locale=my_new_lang_code --ignore=app/templates/my_base.html
+
+Then edit the new file locate under locale/LC_MESSAGES/my_new_lang_code/django.po to make all translations. After that, run the following command to compile the translations:
+
+::
+
+  django-admin.py compilemessages --locale=my_new_lang_code
 
