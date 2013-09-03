@@ -305,14 +305,14 @@ def _pdf_for_species_page( taxon, refs, citations ):
     def _appendSection( story, title ):
         story.append( Paragraph( '<font size="13"><u>'+title+'</u></font>', styles['Justify'] ) )
         story.append( spacer )
-    def _appendLabelAndContent( story, label, content, key ):
+    def _appendLabelAndContent( story, label, content, key, style='Left' ):
         p = '<b>'+ugettext(label)+':</b> '
         if not content:
             content = '-'
         p += force_text( content )
         if refs.has_key( key ):
             p += '<sup>' + refs[key] + '</sup>'
-        Story.append( Paragraph( p, styles['Left'] ) )
+        Story.append( Paragraph( p, styles[style] ) )
         Story.append( spacer )
     def _appendDetails( story, content ):
         if content:
@@ -396,7 +396,7 @@ def _pdf_for_species_page( taxon, refs, citations ):
     #########################################################
     _appendSection( Story, ugettext(u'Care') )
     _appendLabelAndContent( Story, ugettext(u'Pruning')            , taxon.get_pruning()            , 'PRU' )
-    _appendLabelAndContent( Story, ugettext(u'Pests and diseases') , taxon.pests_and_diseases       , 'PAD' )
+    _appendLabelAndContent( Story, ugettext(u'Pests and diseases') , taxon.pests_and_diseases       , 'PAD', 'Justify' )
     _appendLabelAndContent( Story, ugettext(u'Thorns or spines')   , taxon.get_thorns_or_spines()   , 'TOS' )
     _appendLabelAndContent( Story, ugettext(u'Toxic or allergenic'), taxon.get_toxic_or_allergenic(), 'TOA' )
     _appendLabelAndContent( Story, ugettext(u'Terrain drainage')   , taxon.get_terrain_drainage()   , 'TER' )
