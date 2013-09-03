@@ -119,20 +119,71 @@ Please note that only images that were shared with the EoL Flickr group are sear
 Interviews
 ==========
 
-Text Format
+Interviews can be included using the administrative interface. Their content must be in plain text following this format:
 
-Tagging
+::
+
+  Person1: Hello, this is an example.
+  Person2: OK.
+
+Paragraphs are separated by line breaks. Any initial word with less than 30 characters followed by ': ' is interpreted as the name of a person and is formatted accordingly.
+
+Highlights and links must be manually typed. Highlights are delimited by two lines 
+
+::
+
+  Someone: Some previous conversation.
+  <a class="part" id="1">Interesting part</a>
+  Person1: In my childhood I used to visit a special tree in the forest. Some more text, followed or not by opther talks.<hr class="part"/>
+
+Such highlights are automatically detected, indexed and displayed when you save the interview. The same happens with species tags. There are three kinds of species tags:
+
+1) Link to a particular species in the system:
+
+In this case, first you need to find out the species identifier in the system and then add an HTML link like this:
+
+::
+
+  <a href="/sp/28" class="sp_citation">cedro</a>
+
+To find out the species identifier you can navigate the system and click on the species page. You'll notice that the page address follows exactly the pattern above, showing the identifier after 'sp/'.
+
+2) Link to any species with a given vernacular name:
+
+This is a common situation, when somene refers to a species using a vernacular name that can actually correspond to different species. In this case, change the link pattern to:
+
+::
+
+  <a href="/sp/?name=jacarandá" class="sp_citation">Jacarandá</a>
+
+This will tell the system to search for all species with that particular name when someone clicks on the link.
+
+3) Link to a species that is not registered in the system:
+
+You may also want to capture species citations even if the species is not present in your database. Use the following pattern in such cases:
+
+::
+
+  <a class="sp_citation">eucalipto</a>
+
+If you have an audio file for the interview, you can simply put it somewhere accessible on the web and then specify the URL when editing the interview. The system uses JPlayer to play audio, so make sure your file is in one of the supported formats: mp3 or mp4 (AAC/H.264) for both HTML5 or Flash websites, or ogg vorbis and wav for HTML5 websites.
 
 Static pages
 ============
 
-Content for static pages can be included in the Django administrative interface (Page class). The default website menu requires pages with the following codes to be registered:
+Content for static pages can be included in the Django administrative interface (Static content class). The default website menu requires pages with the following codes to be registered:
 
+- main: Main page.
 - about: Content about the website/project.
 - methods: Content about the methods used.
 - ethno_overview: Overview about the ethnobotany work.
 - ethno_results: Results for the ethnobotany work.
 - hist_overview: Overview about history work.
+- faq: Frequently asked questions page.
+
+If you click on one of the menu links and the corresponding page is not registered in the database, an HTTP 404 error is raised.
+
+Note that more than one page can be included with the same code - each for a different language. To add more language options you need to edit your settings.py file.
 
 Customizing the look & feel
 ===========================
