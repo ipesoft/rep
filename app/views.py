@@ -274,7 +274,7 @@ def _pdf_for_species_page( taxon, refs, citations ):
     """
     Generate a PDF for the species page.
     """
-    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+    from reportlab.platypus import SimpleDocTemplate, Paragraph
     from reportlab.lib.units import inch
     from reportlab.lib.enums import TA_LEFT, TA_JUSTIFY
     from reportlab.rl_config import defaultPageSize
@@ -283,8 +283,8 @@ def _pdf_for_species_page( taxon, refs, citations ):
     PAGE_HEIGHT=defaultPageSize[1]
     PAGE_WIDTH=defaultPageSize[0]
     styles = getSampleStyleSheet()
-    styles.add( ParagraphStyle(name='Left', alignment=TA_LEFT) )
-    styles.add( ParagraphStyle(name='Justify', alignment=TA_JUSTIFY) )
+    styles.add( ParagraphStyle(name='Left', alignment=TA_LEFT, spaceAfter = 20) )
+    styles.add( ParagraphStyle(name='Justify', alignment=TA_JUSTIFY, spaceAfter = 20) )
     
     response = HttpResponse( content_type='application/pdf' )
     response['Content-Disposition'] = 'attachment; filename="'+taxon.genus+'_'+taxon.species+'.pdf"'
@@ -295,7 +295,6 @@ def _pdf_for_species_page( taxon, refs, citations ):
     style = styles['Left']
     px = 7.0
     py = 0.75
-    spacer = Spacer(1,0.2*inch)
 
     def myPage( canvas, doc ):
         canvas.saveState()
@@ -304,7 +303,6 @@ def _pdf_for_species_page( taxon, refs, citations ):
         canvas.restoreState()
     def _appendSection( story, title ):
         story.append( Paragraph( '<font size="13"><u>'+title+'</u></font>', styles['Justify'] ) )
-        story.append( spacer )
     def _appendLabelAndContent( story, label, content, key, style='Left' ):
         p = '<b>'+ugettext(label)+':</b> '
         if not content:
@@ -313,11 +311,9 @@ def _pdf_for_species_page( taxon, refs, citations ):
         if refs.has_key( key ):
             p += '<sup>' + refs[key] + '</sup>'
         Story.append( Paragraph( p, styles[style] ) )
-        Story.append( spacer )
     def _appendDetails( story, content ):
         if content:
             Story.append( Paragraph( content, styles['Justify'] ) )
-            Story.append( spacer )
 
     # Add content
     myp = '<font size="14"><i>' + taxon.genus + ' ' + taxon.species + '</i> ' + taxon.author + '</font>'
@@ -327,12 +323,10 @@ def _pdf_for_species_page( taxon, refs, citations ):
         myp += '<br/><br/><font size="11">('+ sep.join(popnames) +')</font>'
     p = Paragraph( myp, style )
     Story.append( p )
-    Story.append( spacer )
     _appendLabelAndContent( Story, ugettext(u'Family'), taxon.family, '' )
     synonyms = taxon.get_synonyms().values_list('name', flat=True)
     if len(synonyms) > 0:
         Story.append( Paragraph( '<font size="10"><b>' + ugettext(u'Synonyms') + ':</b> ' + sep.join(synonyms) + '</font>', style ) )
-        Story.append( spacer )
     t = '<b>'+ugettext(u'Endemic')+':</b> '
     c = force_text( taxon.get_endemic() )
     if c == 'None':
@@ -351,7 +345,6 @@ def _pdf_for_species_page( taxon, refs, citations ):
     #if refs.has_key( 'RAR' ):
     #    t += '<sup>' + refs['RAR'] + '</sup>'
     Story.append( Paragraph( t, styles['Left'] ) )
-    Story.append( spacer )
     conservation_recs = taxon.conservationstatus_set.all()
     if len( conservation_recs ) > 0:
         cs = ''
@@ -434,7 +427,6 @@ def _pdf_for_species_page( taxon, refs, citations ):
     _appendSection( Story, ugettext(u'Bibliography') )
     for citation in citations:
         Story.append( Paragraph( '<font size="8"><sup>'+citation[0]+'</sup> '+citation[1]+'</font>', styles['Left'] ) )
-        Story.append( spacer )
 
     doc.build( Story, onFirstPage=myPage, onLaterPages=myPage )
     
