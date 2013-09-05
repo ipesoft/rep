@@ -101,7 +101,7 @@ msgstr "Características de destaque"
 #: app/templates/adv_search_species_silviculture.html:40
 #: app/templates/species_page.html:254
 msgid "Successional group"
-msgstr "Grupo sucessional"
+msgstr "Categoria sucessional"
 
 #: app/admin.py:404 app/models.py:125 app/models.py:717 app/views.py:387
 #: app/management/commands/export_data.py:109
@@ -114,7 +114,7 @@ msgstr "Velocidade de desenvolvimento"
 #: app/admin.py:408 app/models.py:126 app/models.py:718 app/views.py:398
 #: app/templates/species_page.html:244
 msgid "Pruning"
-msgstr "Poda de condução e galhos"
+msgstr "Poda de condução e de galhos"
 
 #: app/admin.py:412 app/models.py:127 app/models.py:719 app/views.py:408
 #: app/management/commands/export_data.py:67
