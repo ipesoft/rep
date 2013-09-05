@@ -221,7 +221,7 @@ def _pdf_for_species_list( qs ):
     PAGE_HEIGHT=defaultPageSize[1]
     PAGE_WIDTH=defaultPageSize[0]
     styles = getSampleStyleSheet()
-    styles.add( ParagraphStyle(name='Left', alignment=TA_LEFT) )
+    styles.add( ParagraphStyle(name='Left', alignment=TA_LEFT, spaceAfter=20) )
     
     response = HttpResponse( content_type='application/pdf' )
     response['Content-Disposition'] = 'attachment; filename="search_result.pdf"'
@@ -264,7 +264,6 @@ def _pdf_for_species_list( qs ):
             myp += '<br/><font size="8">' + ugettext(u'Synonyms') + ': ' + sep.join(synonyms) + '</font>'
         p = Paragraph( myp, style )
         Story.append( p )
-        Story.append( Spacer(1, 0.2*inch) )
     
     doc.build( Story, onFirstPage=myFirstPage, onLaterPages=myLaterPages )
     
@@ -283,8 +282,8 @@ def _pdf_for_species_page( taxon, refs, citations ):
     PAGE_HEIGHT=defaultPageSize[1]
     PAGE_WIDTH=defaultPageSize[0]
     styles = getSampleStyleSheet()
-    styles.add( ParagraphStyle(name='Left', alignment=TA_LEFT, spaceAfter = 20) )
-    styles.add( ParagraphStyle(name='Justify', alignment=TA_JUSTIFY, spaceAfter = 20) )
+    styles.add( ParagraphStyle(name='Left', alignment=TA_LEFT, spaceAfter=20) )
+    styles.add( ParagraphStyle(name='Justify', alignment=TA_JUSTIFY, spaceAfter=20) )
     
     response = HttpResponse( content_type='application/pdf' )
     response['Content-Disposition'] = 'attachment; filename="'+taxon.genus+'_'+taxon.species+'.pdf"'
