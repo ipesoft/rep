@@ -36,11 +36,13 @@ collapse('options', 'c_button');
 <input type="hidden" name="adv" value="1"/>
 <input type="hidden" name="urban" value="1"/>
 <table width="100%">
+{% comment %}
 <tr><td width="20%">{{ form.family.label_tag }}:</td><td width="80%">{{ form.family }}</td></tr>
 <tr><td>{{ form.endemic.label_tag }}:</td><td width="80%">{{ form.endemic }}</td></tr>
-{% comment %}<tr><td>{{ form.rare.label_tag }}:</td><td>{{ form.rare }}</td></tr>{% endcomment %}
-{% comment %}<tr><td><label for="id_features">{% trans "Special features" %}</label>:</td><td>&nbsp;{{ form.h_flowers.label }}{{ form.h_flowers }}&nbsp;{{ form.h_leaves.label }}{{ form.h_leaves }}&nbsp;{{ form.h_fruits.label }}{{ form.h_fruits }}&nbsp;{{ form.h_crown.label }}{{ form.h_crown }}&nbsp;{{ form.h_bark.label }}{{ form.h_bark }}&nbsp;{{ form.h_seeds.label }}{{ form.h_seeds }}&nbsp;{{ form.h_wood.label }}{{ form.h_wood }}&nbsp;{{ form.h_roots.label }}{{ form.h_roots }}</td></tr>{% endcomment %}
-<tr><td><label for="id_height">{% trans "height"|capfirst %}</label>:</td><td>{{ form.min_height }}&nbsp;{% trans "to" %}&nbsp;{{ form.max_height }}m</td></tr>
+<tr><td>{{ form.rare.label_tag }}:</td><td>{{ form.rare }}</td></tr>
+<tr><td><label for="id_features">{% trans "Special features" %}</label>:</td><td>&nbsp;{{ form.h_flowers.label }}{{ form.h_flowers }}&nbsp;{{ form.h_leaves.label }}{{ form.h_leaves }}&nbsp;{{ form.h_fruits.label }}{{ form.h_fruits }}&nbsp;{{ form.h_crown.label }}{{ form.h_crown }}&nbsp;{{ form.h_bark.label }}{{ form.h_bark }}&nbsp;{{ form.h_seeds.label }}{{ form.h_seeds }}&nbsp;{{ form.h_wood.label }}{{ form.h_wood }}&nbsp;{{ form.h_roots.label }}{{ form.h_roots }}</td></tr>
+{% endcomment %}
+<tr><td width="20%"><label for="id_height">{% trans "height"|capfirst %}</label>:</td><td>{{ form.min_height }}&nbsp;{% trans "to" %}&nbsp;{{ form.max_height }}m</td></tr>
 <tr><td><label for="id_diameter">{% trans "Crown diameter" %}</label>:</td><td>{{ form.cr_min_diameter }}&nbsp;{% trans "to" %}&nbsp;{{ form.cr_max_diameter }}m</td></tr>
 <tr><td><label for="id_growth">{% trans "Growth rate" %}</label>:</td><td>&nbsp;{{ form.gr_slow.label }}{{ form.gr_slow }}&nbsp;{{ form.gr_moderate.label }}{{ form.gr_moderate }}&nbsp;{{ form.gr_fast.label }}{{ form.gr_fast }}</td></tr>
 <tr><td>{{ form.cr_shape.label_tag }}:</td><td>{{ form.cr_shape }}</td></tr>
@@ -49,13 +51,18 @@ collapse('options', 'c_button');
 <tr><td>{{ form.fl_month.label_tag }}:</td><td>{{ form.fl_month }}</td></tr>
 <tr><td>{{ form.r_type.label_tag }}:</td><td>{{ form.r_type }}</td></tr>
 <tr><td><label for="id_foliage">{% trans "Foliage persistence" %}:</label></td><td>&nbsp;{{ form.fo_evergreen.label }}{{ form.fo_evergreen }}&nbsp;{{ form.fo_semideciduous.label }}{{ form.fo_semideciduous }}&nbsp;{{ form.fo_deciduous.label }}{{ form.fo_deciduous }}</td></tr>
-<tr><td>{{ form.fr_month.label_tag }}:</td><td>{{ form.fr_month }}</td></tr>
+<tr><td>{{ form.light.label_tag }}:</td><td>{{ form.light }}</td></tr>
+{% comment %}<tr><td>{{ form.fr_month.label_tag }}:</td><td>{{ form.fr_month }}</td></tr>{% endcomment %}
+<tr><td>{{ form.pollinators.label_tag }}:</td><td>{{ form.pollinators }}</td></tr>
+<tr><td><label for="id_dispersion">{% trans "Seed dispersal" %}:</label></td><td>{{ form.dt_anemochorous }}{{ form.dt_anemochorous.label }}&nbsp;{{ form.dt_autochorous }}{{ form.dt_autochorous.label }}&nbsp;{{ form.dt_barochorous }}{{ form.dt_barochorous.label }}&nbsp;{{ form.dt_hydrochorous }}{{ form.dt_hydrochorous.label }}&nbsp;{{ form.dt_zoochorous }}{{ form.dt_zoochorous.label }}</td></tr>
+<tr><td><label for="id_terrain">{% trans "Terrain drainage" %}:</label></td><td>{{ form.wetland }}{{ form.wetland.label }}&nbsp;{{ form.dry }}{{ form.dry.label }}</td></tr>
 <tr><td>{{ form.pruning.label_tag }}:</td><td>{{ form.pruning }}</td></tr>
 <tr><td>{{ form.thorns.label_tag }}:</td><td>{{ form.thorns }}</td></tr>
 <tr><td>{{ form.toxic.label_tag }}:</td><td>{{ form.toxic }}</td></tr>
 {% if form.status_choices|length > 0 %}
 <tr><td>{{ form.status.label_tag }}:</td><td>{{ form.status }}</td></tr>
 {% endif %}
+<tr><td valign="top">{{ form.uses.label_tag }}:</td><td>{{ form.uses }}</td></tr>
 </table>
 <center><input type="submit" class="button" name="search" value="{% trans "search" %}"/></center>
 </form>

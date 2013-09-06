@@ -1,6 +1,6 @@
 # coding=UTF-8
 
-from app.models import StaticContent, Taxon, TaxonName, TaxonDataReference, COLORS, MONTHS, ROOT_SYSTEMS, CROWN_SHAPES, LIGHT_REQUIREMENTS, ConservationStatus, Interview, TypeOfUse, TaxonUse
+from app.models import StaticContent, Taxon, TaxonName, TaxonDataReference, COLORS, MONTHS, ROOT_SYSTEMS, CROWN_SHAPES, LIGHT_REQUIREMENTS, SEED_TYPES, ConservationStatus, Interview, TypeOfUse, TaxonUse
 from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
@@ -19,30 +19,53 @@ null_boolean_choices = (( -1, no_matter_str ),( 1 , _(u'yes') ),( 0 , _(u'no') )
 
 # Form classes
 class CommonSearchForm(forms.Form):
-    family_choices = [('NULL', no_matter_str)] + list( Taxon.objects.filter(family__gte=u'a').distinct('family').order_by('family').values_list('family', 'family') )
     month_choices = [(0, no_matter_str)] + list(MONTHS)
-    root_system_choices = [('NULL', no_matter_str)] + list(ROOT_SYSTEMS)
-    status_choices = [('NULL', no_matter_str)] + [(c['status'], c['status']) for c in ConservationStatus.objects.values('status').order_by('status').distinct()]
-    family      = forms.ChoiceField(label=_(u'Family'), initial='NULL', choices=family_choices)
-    rare        = forms.BooleanField(label=_(u'Rare'))
-    endemic     = forms.BooleanField(label=_(u'Endemic'))
+    #family_choices = [('NULL', no_matter_str)] + list( Taxon.objects.filter(family__gte=u'a').distinct('family').order_by('family').values_list('family', 'family') )
+    #family      = forms.ChoiceField(label=_(u'Family'), initial='NULL', choices=family_choices)
+    # uses
+    use_choices = TypeOfUse.objects.all().order_by('path')
+    my_use_choices = []
+    for choice in use_choices:
+        my_use_choices.append([choice.id, unicode(choice)])
+    uses = forms.MultipleChoiceField(label=_(u'Specific use'), choices=my_use_choices)
+    # Rarity
+    rare = forms.BooleanField(label=_(u'Rare'))
+    # Endemism
+    endemic = forms.BooleanField(label=_(u'Endemic'))
     # Growth rate
     gr_slow     = forms.BooleanField(label=_(u'Slow'))
     gr_moderate = forms.BooleanField(label=_(u'Moderate'))
     gr_fast     = forms.BooleanField(label=_(u'Fast'))
-    pruning     = forms.ChoiceField(label=_(u'Requires pruning'), initial=-1, choices=null_boolean_choices)
-    fl_month    = forms.ChoiceField(label=_(u'With flower in month'), initial=0, choices=month_choices)
-    fr_month    = forms.ChoiceField(label=_(u'With fruits in month'), initial=0, choices=month_choices)
-    r_type      = forms.ChoiceField(label=_(u'Root system'), initial='NULL', choices=root_system_choices)
+    # Pruning
+    pruning = forms.ChoiceField(label=_(u'Requires pruning'), initial=-1, choices=null_boolean_choices)
+    # Flowering month
+    fl_month = forms.ChoiceField(label=_(u'With flower in month'), initial=0, choices=month_choices)
+    fr_month = forms.ChoiceField(label=_(u'With fruits in month'), initial=0, choices=month_choices)
+    # Root system
+    root_system_choices = [('NULL', no_matter_str)] + list(ROOT_SYSTEMS)
+    r_type = forms.ChoiceField(label=_(u'Root system'), initial='NULL', choices=root_system_choices)
     # Foliage persistence
     fo_evergreen     = forms.BooleanField(label=_(u'Evergreen'))
     fo_semideciduous = forms.BooleanField(label=_(u'Semi-deciduous'))
     fo_deciduous     = forms.BooleanField(label=_(u'Deciduous'))
-    min_height   = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}))
-    max_height   = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}))
+    # Light requirement
+    light_requirement_choices = [('NULL', no_matter_str)] + list(LIGHT_REQUIREMENTS)
+    light = forms.ChoiceField(label=_(u'Light requirements'), initial='NULL', choices=light_requirement_choices)
+    # Height
+    min_height = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}))
+    max_height = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}))
+    # Crown diameter
     cr_min_diameter = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}))
     cr_max_diameter = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}))
-    status         = forms.ChoiceField(label=_(u'Conservation status'), initial='NULL', choices=status_choices)
+    # Terrain drainage
+    wetland = forms.BooleanField(label=_(u'Wetland'))
+    dry     = forms.BooleanField(label=_(u'Well-drained'))
+    # Type of dispersion
+    dt_anemochorous = forms.BooleanField(label=_(u'Anemochorous'))
+    dt_autochorous  = forms.BooleanField(label=_(u'Autochorous'))
+    dt_barochorous  = forms.BooleanField(label=_(u'Barochorous'))
+    dt_hydrochorous = forms.BooleanField(label=_(u'Hydrochorous'))
+    dt_zoochorous   = forms.BooleanField(label=_(u'Zoochorous'))
 
 class UrbanForestrySearchForm(CommonSearchForm):
     color_choices = [(0, no_matter_str)] + list(COLORS)
@@ -66,52 +89,47 @@ class UrbanForestrySearchForm(CommonSearchForm):
     tr_inclined    = forms.BooleanField(label=_(u'Inclined'))
     tr_sl_crooked  = forms.BooleanField(label=_(u'Slightly crooked'))
     tr_crooked     = forms.BooleanField(label=_(u'Crooked'))
+    # Conservation status
+    status_choices = [('NULL', no_matter_str)] + [(c['status'], c['status']) for c in ConservationStatus.objects.values('status').order_by('status').distinct()]
+    status = forms.ChoiceField(label=_(u'Conservation status'), initial='NULL', choices=status_choices)
+    # Pollination
+    pollinators = forms.ChoiceField(label=_(u'Pollinators'), initial=-1, choices=null_boolean_choices)
 
 class RestorationSearchForm(CommonSearchForm):
-    use_choices = TypeOfUse.objects.all().order_by('path')
-    my_use_choices = []
-    for choice in use_choices:
-        my_use_choices.append([choice.id, unicode(choice)])
-    uses = forms.MultipleChoiceField(label=_(u'Specific use'), choices=my_use_choices)
+    toxic = forms.ChoiceField(label=_(u'Toxic or allergenic'), initial=-1, choices=null_boolean_choices)
     symb_assoc = forms.ChoiceField(label=_(u'Symbiotic association with roots'), initial=-1, choices=null_boolean_choices)
     # Successional group
     sg_pioneer         = forms.BooleanField(label=_(u'Pioneer'))
     sg_early_secondary = forms.BooleanField(label=_(u'Early secondary'))
     sg_late_secondary  = forms.BooleanField(label=_(u'Late secondary'))
     sg_climax          = forms.BooleanField(label=_(u'Climax'))
-    # Type of dispersion
-    dt_anemochorous = forms.BooleanField(label=_(u'Anemochorous'))
-    dt_autochorous  = forms.BooleanField(label=_(u'Autochorous'))
-    dt_barochorous  = forms.BooleanField(label=_(u'Barochorous'))
-    dt_hydrochorous = forms.BooleanField(label=_(u'Hydrochorous'))
-    dt_zoochorous   = forms.BooleanField(label=_(u'Zoochorous'))
+    # Conservation status
+    status_choices = [('NULL', no_matter_str)] + [(c['status'], c['status']) for c in ConservationStatus.objects.values('status').order_by('status').distinct()]
+    status = forms.ChoiceField(label=_(u'Conservation status'), initial='NULL', choices=status_choices)
+    # Pre-germination treatment
+    pg_no_need    = forms.BooleanField(label=_(u'No need for treatment'))
+    pg_thermal    = forms.BooleanField(label=_(u'Thermal treatment'))
+    pg_chemical   = forms.BooleanField(label=_(u'Chemical treatment'))
+    pg_water      = forms.BooleanField(label=_(u'Immersion in water'))
+    pg_mechanical = forms.BooleanField(label=_(u'Mechanical scarification'))
+    pg_combined   = forms.BooleanField(label=_(u'Combined treatments'))
+    pg_other      = forms.BooleanField(label=_(u'Other'))
+    # Seed type
+    seed_type_choices = [('NULL', no_matter_str)] + list(SEED_TYPES)
+    s_type = forms.ChoiceField(label=_(u'Seed type'), initial='NULL', choices=seed_type_choices)
+    # Germination rate
+    seed_gmin_rate = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}))
+    seed_gmax_rate = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}))
 
 class SilvicultureSearchForm(CommonSearchForm):
-    use_choices = TypeOfUse.objects.all().order_by('path')
-    my_use_choices = []
-    for choice in use_choices:
-        my_use_choices.append([choice.id, unicode(choice)])
-    uses = forms.MultipleChoiceField(label=_(u'Specific use'), choices=my_use_choices)
     # Successional group
     sg_pioneer         = forms.BooleanField(label=_(u'Pioneer'))
     sg_early_secondary = forms.BooleanField(label=_(u'Early secondary'))
     sg_late_secondary  = forms.BooleanField(label=_(u'Late secondary'))
     sg_climax          = forms.BooleanField(label=_(u'Climax'))
-    # Light requirement
-    light_requirement_choices = [('NULL', no_matter_str)] + list(LIGHT_REQUIREMENTS)
-    light = forms.ChoiceField(label=_(u'Light requirements'), initial='NULL', choices=light_requirement_choices)
     # DBH
     min_dbh   = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}))
     max_dbh   = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}))
-    # Type of dispersion
-    dt_anemochorous = forms.BooleanField(label=_(u'Anemochorous'))
-    dt_autochorous  = forms.BooleanField(label=_(u'Autochorous'))
-    dt_barochorous  = forms.BooleanField(label=_(u'Barochorous'))
-    dt_hydrochorous = forms.BooleanField(label=_(u'Hydrochorous'))
-    dt_zoochorous   = forms.BooleanField(label=_(u'Zoochorous'))
-    # Terrain drainage
-    wetland = forms.BooleanField(label=_(u'Wetland'))
-    dry     = forms.BooleanField(label=_(u'Well-drained'))
     # Diseases
     diseases = forms.ChoiceField(label=_(u'Pests and diseases'), initial=-1, choices=null_boolean_choices)
     # Pollination
@@ -640,6 +658,8 @@ def search_species(request):
         qs = _add_interval_condition(request, qs, 'min_dbh', 'max_dbh')
         # Crown diameter
         qs = _add_interval_condition(request, qs, 'cr_min_diameter', 'cr_max_diameter')
+        # Germination rate
+        qs = _add_interval_condition(request, qs, 'seed_gmin_rate', 'seed_gmax_rate')
         # Crown shape
         if request.GET.has_key('cr_shape') and request.GET['cr_shape'] != 'NULL':
             qs = qs.filter(cr_shape=request.GET['cr_shape'])
@@ -649,6 +669,9 @@ def search_species(request):
         # Root system
         if request.GET.has_key('r_type') and request.GET['r_type'] != 'NULL':
             qs = qs.filter(r_type=request.GET['r_type'])
+        # Seed type
+        if request.GET.has_key('s_type') and request.GET['s_type'] != 'NULL':
+            qs = qs.filter(seed_type=request.GET['s_type'])
         # Light requirements
         if request.GET.has_key('light') and request.GET['light'] != 'NULL':
             qs = qs.filter(r_type=request.GET['light'])
@@ -694,6 +717,8 @@ def search_species(request):
         qs = _add_or_conditions(request, qs, ['dt_anemochorous', 'dt_autochorous', 'dt_barochorous', 'dt_hydrochorous', 'dt_zoochorous'])
         # Use OR condition for terrain drainage
         qs = _add_or_conditions(request, qs, ['wetland', 'dry'])
+        # Use OR condition for pre-germination treatment
+        qs = _add_or_conditions(request, qs, ['pg_no_need', 'pg_thermal', 'pg_chemical', 'pg_water', 'pg_mechanical', 'pg_combined', 'pg_other'])
         # Symbiotic association
         if request.GET.has_key('symb_assoc'):
             if request.GET['symb_assoc'] in ('1', 1):
