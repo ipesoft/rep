@@ -376,7 +376,7 @@ def _pdf_for_species_page( taxon, refs, citations ):
     #########################################################
     _appendSection( Story, ugettext(u'Ethnobotany')+' '+ugettext(u'and')+' '+ugettext(u'History') )
     _appendDetails( Story, taxon.ethno_notes )
-    _appendLabelAndContent( Story, ugettext(u'Specific uses'), taxon.get_specific_uses(), '' )
+    _appendLabelAndContent( Story, ugettext(u'Specific uses'), taxon.get_specific_uses(), 'USE' )
     #########################################################
     _appendSection( Story, ugettext(u'General features') )
     height = taxon.get_height()

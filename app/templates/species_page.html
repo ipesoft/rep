@@ -194,7 +194,7 @@ function setmap() {
     {% comment %}<p><label>{% trans "Special features" %}:</label>&nbsp;{{ taxon.get_special_features|default:"-" }}&nbsp;<sup>{{ refs.SPE }}</sup></p>{% endcomment %}
     <p><label>{% trans "Uses" %}:</label>&nbsp;{{ taxon.get_use|default:"-" }}</p>
     {% if taxon.description %}<p style="text-align: justify;">{{ taxon.description }}</p>{% endif %}
-    <p><label>{% trans "Specific uses" %}:</label>&nbsp;{{ taxon.get_specific_uses|default:"-" }}</p>
+    <p><label>{% trans "Specific uses" %}:</label>&nbsp;{{ taxon.get_specific_uses|default:"-" }}&nbsp;<sup>{{ refs.USE }}</sup></p>
    </div>
    </td>
   </tr>
