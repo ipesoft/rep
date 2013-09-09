@@ -279,7 +279,7 @@ def _pdf_for_species_list( qs ):
             myp += ' <img src="'+ settings.STATIC_ROOT + 'images/hand.png" width="10" height="10"/>'
         synonyms = sp.get_synonyms().values_list('name', flat=True)
         if len(synonyms) > 0:
-            myp += '<br/><font size="8">' + ugettext(u'Synonyms') + ': ' + sep.join(synonyms) + '</font>'
+            myp += '<br/><font size="8">' + ugettext(u'Synonyms') + ': <i>' + sep.join(synonyms) + '</i></font>'
         p = Paragraph( myp, style )
         Story.append( p )
     

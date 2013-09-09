@@ -183,7 +183,7 @@ function setmap() {
     {% with synonyms=taxon.get_synonyms popnames=taxon.get_popular_names %}
     {% if popnames %}<h2>{% for pop in popnames %}{{pop.name}}{% if forloop.last %}{% else %}, {% endif %}{% endfor %}</h2>{% endif %}
     <p><label>{% trans "Family" %}:</label>&nbsp;{{ taxon.family|default:"-" }}</p>
-    {% if synonyms %}<p><label>{% trans "Synonyms" %}:&nbsp;</label>{% for syn in synonyms %}{{syn.name}}{% if forloop.last %}{% else %}, {% endif %}{% endfor %}</p>{% endif %}
+    {% if synonyms %}<p><label>{% trans "Synonyms" %}:&nbsp;</label>{% for syn in synonyms %}<i>{{syn.name}}</i>{% if forloop.last %}{% else %}, {% endif %}{% endfor %}</p>{% endif %}
     {% endwith %}
     <p><label>{% trans "Endemic" %}:</label>&nbsp;{{ taxon.get_endemic|default:"-" }}&nbsp;<sup>{{ refs.END }}</sup>{% comment %}&nbsp;&nbsp;&nbsp;<label>{% trans "Rare" %}:</label>&nbsp;{{ taxon.get_rare|default:"-" }}{% if taxon.max_density %}&nbsp;({{ taxon.max_density }}&nbsp;{% trans "individuals per hectare" %}){% endif %}<sup>{{ refs.RAR }}</sup>{% endcomment %}</p>
     {% with conservation_recs=taxon.conservationstatus_set.all %}
