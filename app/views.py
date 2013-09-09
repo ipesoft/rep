@@ -343,7 +343,7 @@ def _pdf_for_species_page( taxon, refs, citations ):
     _appendLabelAndContent( Story, ugettext(u'Family'), taxon.family, '' )
     synonyms = taxon.get_synonyms().values_list('name', flat=True)
     if len(synonyms) > 0:
-        Story.append( Paragraph( '<font size="10"><b>' + ugettext(u'Synonyms') + ':</b> ' + sep.join(synonyms) + '</font>', style ) )
+        Story.append( Paragraph( '<font size="10"><b>' + ugettext(u'Synonyms') + ':</b> <i>' + sep.join(synonyms) + '</i></font>', style ) )
     t = '<b>'+ugettext(u'Endemic')+':</b> '
     c = force_text( taxon.get_endemic() )
     if c == 'None':
