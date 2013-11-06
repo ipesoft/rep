@@ -674,7 +674,7 @@ def search_species(request):
             qs = qs.filter(seed_type=request.GET['s_type'])
         # Light requirements
         if request.GET.has_key('light') and request.GET['light'] != 'NULL':
-            qs = qs.filter(r_type=request.GET['light'])
+            qs = qs.filter(light=request.GET['light'])
         # Flowering period
         if request.GET.has_key('fl_month'):
             qs = _add_month_condition(request, qs, 'fl_month', 'fl_start', 'fl_end')
