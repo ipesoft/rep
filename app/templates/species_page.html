@@ -4,10 +4,6 @@
 
 {% block header %}
 
-<script type="text/javascript" src="/static/js/jquery/jquery-1.7.2.min.js"></script>
-<link rel="stylesheet" href="/static/css/jquery-ui/jquery-ui-1.8.22.custom.css" type="text/css" media="all" />
-<script type="text/javascript" src="/static/js/jquery/jquery-ui-1.8.22.custom.min.js"></script>
-
 {% if taxon.has_points %}
 <link rel="stylesheet" href="/static/js/openlayers/theme/default/style.css" type="text/css">
 <script type="text/javascript" src="/static/js/openlayers/OpenLayers.js"></script>
@@ -45,7 +41,7 @@ function expand_content() {
   }
 }
 
-function highlight(ref_id) {
+function fr_highlight(ref_id) {
 
   bib_panel = document.getElementById("s6");
   if (bib_panel != null && bib_panel.style.display == "none") {
@@ -55,7 +51,11 @@ function highlight(ref_id) {
   }
 
   // highlight text
-  $("#ref-text-"+ref_id).effect( "highlight", {color:"#E3EF62"}, 3000 );
+
+  var element = document.getElementById("ref-text-"+ref_id);
+  var orig_color = element.style.backgroundColor;
+  element.style.backgroundColor = "#E3EF62";
+  setTimeout( function() { element.style.backgroundColor = orig_color;}, 2500 );
 }
 
 {% if taxon.has_points %}
