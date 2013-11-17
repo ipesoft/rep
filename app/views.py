@@ -736,8 +736,18 @@ def search_species(request):
                         my_uses.append(use_desc_id)
                 except TypeOfUse.DoesNotExist:
                     pass
-            taxa_ids = TaxonUse.objects.filter(use__in=my_uses).values_list('taxon__id', flat=True).distinct('taxon__id')
-            qs = qs.filter(id__in=taxa_ids)
+            if len(my_uses) > 0:
+                taxa_ids = TaxonUse.objects.filter(use__in=my_uses).values_list('taxon__id', flat=True).distinct('taxon__id')
+                qs = qs.filter(id__in=taxa_ids)
+        # Conservation status
+        if request.GET.has_key('status'):
+            taxa_in_status = []
+            try:
+                for taxon_in_status in ConservationStatus.objects.filter(status=request.GET['status']).values_list('taxon__id', flat=True):
+                    taxa_in_status.append(taxon_in_status)
+                qs = qs.filter(id__in=taxa_in_status)
+            except ConservationStatus.DoesNotExist:
+                pass
         # Limit the number of fields to be returned
         qs = qs.order_by('genus', 'species').only('id', 'genus', 'species')
         if request.GET.has_key('pdf'):
