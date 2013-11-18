@@ -12,9 +12,14 @@
 <!-- script type="text/javascript" src="/static/js/jplayer/jquery.jplayer.inspector.js"></script -->
 <script type="text/javascript">
 
-$(document).ready(function(){
+var mylib = {
+  jQuery: $.noConflict()
+}
+
+jQuery( document ).ready(function( $ ) {
 
   $("#jquery_jplayer_1").jPlayer({
+    noConflict: 'mylib.jQuery',
     ready: function (event) {
       $(this).jPlayer("setMedia", { mp3:"{{ interview.audio_url }}" });
     },
