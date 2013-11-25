@@ -740,7 +740,7 @@ def search_species(request):
                 taxa_ids = TaxonUse.objects.filter(use__in=my_uses).values_list('taxon__id', flat=True).distinct('taxon__id')
                 qs = qs.filter(id__in=taxa_ids)
         # Conservation status
-        if request.GET.has_key('status'):
+        if request.GET.has_key('status') and request.GET['status'] != u'NULL':
             taxa_in_status = []
             try:
                 for taxon_in_status in ConservationStatus.objects.filter(status=request.GET['status']).values_list('taxon__id', flat=True):
