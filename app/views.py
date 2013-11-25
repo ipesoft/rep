@@ -745,7 +745,8 @@ def search_species(request):
             try:
                 for taxon_in_status in ConservationStatus.objects.filter(status=request.GET['status']).values_list('taxon__id', flat=True):
                     taxa_in_status.append(taxon_in_status)
-                qs = qs.filter(id__in=taxa_in_status)
+                if len(taxa_in_status) > 0:
+                    qs = qs.filter(id__in=taxa_in_status)
             except ConservationStatus.DoesNotExist:
                 pass
         # Limit the number of fields to be returned
