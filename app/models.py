@@ -3,7 +3,7 @@
 from django.db import models
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.db.models.signals import pre_save, post_save
+from django.db.models.signals import pre_save, post_save, post_delete
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
@@ -152,6 +152,12 @@ TAXON_DATA = (
     ( u'LIG', _(u'Light requirements') ),
     ( u'TER', _(u'Terrain drainage') ),
     ( u'USE', _(u'Use') ),
+    ( u'HAB', _(u'Habitat') ),
+)
+
+HABITAT_TYPES = (
+    ( u'B', _(u'Biome') ),
+    ( u'F', _(u'Fitofisionomy') ),
 )
 
 # Translate languages, since this is not possible in the settings file
@@ -204,6 +210,24 @@ class TypeOfUse( MP_Node ):
             return u'-'*(self.depth-1)+unicode(self.label)
         else:
             return unicode(self.label)
+
+class Habitat( MP_Node ):
+    "Habitat"
+    name = models.TextField( _(u'Name') )
+    htype = models.CharField( _(u'Type'), choices=HABITAT_TYPES, max_length=1 )
+    node_order_by = [u'name']
+
+    class Meta:
+        verbose_name = _(u'habitat')
+        verbose_name_plural = _(u'habitats')
+        unique_together = ((u'name', u'htype'),)
+        ordering = [u'path']
+
+    def __unicode__(self):
+        if self.depth > 1:
+            return u'-'*(self.depth-1)+unicode(self.name)
+        else:
+            return unicode(self.name)
 
 class Interview( models.Model ):
     "Interview"
@@ -950,6 +974,17 @@ class TaxonUse( models.Model ):
     def __unicode__(self):
         return unicode(self.taxon) + u' ' + unicode(self.use)
 
+class TaxonHabitat( models.Model ):
+    "Taxon habitat"
+    taxon = models.ForeignKey(Taxon)
+    habitat = models.ForeignKey(Habitat, verbose_name=_(u'habitat'))
+
+    class Meta:
+        unique_together = ((u'taxon', u'habitat'),)
+
+    def __unicode__(self):
+        return unicode(self.taxon) + u' ' + unicode(self.habitat)
+
 class TaxonOccurrence( models.Model ):
     "Taxon occurrence"
     taxon     = models.ForeignKey(Taxon)
@@ -1042,3 +1077,23 @@ def post_save_interview( sender, instance, created, raw, using, **kwargs ):
     # Update citations
     instance.update_references()
     instance.generate_pdf()
+
+@receiver(post_save, sender=TaxonHabitat, dispatch_uid='post_save_taxonhabitat')
+def post_save_taxonhabitat( sender, instance, created, raw, using, **kwargs ):
+    # Include all parents, if they are not included yet
+    if created:
+        parent_habitat = instance.habitat.get_parent()
+        if parent_habitat is not None:
+            try:
+                obj = TaxonHabitat.objects.get(taxon=instance.taxon, habitat=parent_habitat)
+            except TaxonHabitat.DoesNotExist:
+                obj = TaxonHabitat(taxon=instance.taxon, habitat=parent_habitat)
+                obj.save() # this will trigger this same method!
+
+# The following code is not working, so cascading deletion should be manual in the admin interface.
+# Therefore, it's important not to delete a higher node without also deleting its descendants, otherwise
+# this may affect searches based on higher nodes.
+#@receiver(post_delete, sender=TaxonHabitat, dispatch_uid='post_delete_taxonhabitat')
+#def post_delete_taxonhabitat( sender, instance, using, **kwargs ):
+    # Delete descendants
+    #TaxonHabitat.objects.filter(taxon=instance.taxon, habitat__in=instance.habitat.get_children()).delete()

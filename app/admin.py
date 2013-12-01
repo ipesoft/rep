@@ -1,6 +1,6 @@
 # coding=UTF-8
 
-from app.models import StaticContent, Taxon, TaxonName, Reference, TaxonDataReference, ConservationAssessmentSource, ConservationStatus, TypeOfUse, TaxonUse, Interview
+from app.models import StaticContent, Taxon, TaxonName, Reference, TaxonDataReference, ConservationAssessmentSource, ConservationStatus, TypeOfUse, TaxonUse, Interview, Habitat, TaxonHabitat
 from django.contrib import admin
 from django.forms.models import ModelForm
 from django.utils.translation import ugettext_lazy as _
@@ -306,6 +306,21 @@ class UseRefInline(RefInline):
     #verbose_name = _('documented use reference')
     #verbose_name_plural = _('documented use references')
 
+class HabitatsInline(admin.TabularInline):
+    model = TaxonHabitat
+    extra = 0
+    verbose_name = _('habitat')
+    verbose_name_plural = _('habitats')
+    template = 'admin/edit_inline/tabular-django-1-4-2.html'
+    show_in_the_end = 0 # Custom attribute to show this in the end of the page
+
+class HabitatRefForm(RefForm):
+    taxondata = 'HAB'
+class HabitatRefInline(RefInline):
+    form = HabitatRefForm
+    #verbose_name = _('habitat')
+    #verbose_name_plural = _('habitats')
+
 class NameForm(ModelForm):
     """
     Custom form to handle taxon names.
@@ -523,40 +538,42 @@ class TaxonAdmin(admin.ModelAdmin):
         CommonNamesInline,            #1
         UsesInline,                   #2
         UseRefInline,                 #3
-        RarityRefInline,              #4
-        EndemicRefInline,             #5
-        SpecialFeaturesRefInline,     #6
-        SuccessionalGroupRefInline,   #7
-        GrowthRateRefInline,          #8
-        RequiresPruningRefInline,     #9
-        FloweringPeriodRefInline,     #10
-        FloweringColorRefInline,      #11
-        PollinatorsRefInline,         #12
-        DispersalRefInline,           #13
-        DispersersRefInline,          #14
-        FruitTypeRefInline,           #15
-        SymbioticRefInline,           #16
-        RootSystemRefInline,          #17
-        FoliagePersitenceRefInline,   #18
-        CrownDiameterRefInline,       #19
-        CrownShapeRefInline,          #20
-        BarkTextureRefInline,         #21
-        TrunkAlignmentRefInline,      #22
-        SizeRefInline,                #23
-        ThornsOrSpinesRefInline,      #24
-        ToxicOrAllegenicRefInline,    #25
-        PestsAndDiseasesRefInline,    #26
-        FruitingPeriodRefInline,      #27
-        SeedCollectionRefInline,      #28
-        SeedTypeRefInline,            #29
-        PgTreatmentRefInline,         #30
-        SeedlingProductionRefInline,  #31
-        GerminationTimeRefInline,     #32
-        GerminationRateRefInline,     #33
-        SeedsPerWeightRefInline,      #34
-        LightRefInline,               #35
-        TerrainRefInline,             #36
-        ConservationStatusInline,     #37
+        HabitatsInline,               #4
+        HabitatRefInline,             #5
+        RarityRefInline,              #6
+        EndemicRefInline,             #7
+        SpecialFeaturesRefInline,     #8
+        SuccessionalGroupRefInline,   #9
+        GrowthRateRefInline,          #10
+        RequiresPruningRefInline,     #11
+        FloweringPeriodRefInline,     #12
+        FloweringColorRefInline,      #13
+        PollinatorsRefInline,         #14
+        DispersalRefInline,           #15
+        DispersersRefInline,          #16
+        FruitTypeRefInline,           #17
+        SymbioticRefInline,           #18
+        RootSystemRefInline,          #19
+        FoliagePersitenceRefInline,   #20
+        CrownDiameterRefInline,       #21
+        CrownShapeRefInline,          #22
+        BarkTextureRefInline,         #23
+        TrunkAlignmentRefInline,      #24
+        SizeRefInline,                #25
+        ThornsOrSpinesRefInline,      #26
+        ToxicOrAllegenicRefInline,    #27
+        PestsAndDiseasesRefInline,    #28
+        FruitingPeriodRefInline,      #29
+        SeedCollectionRefInline,      #30
+        SeedTypeRefInline,            #31
+        PgTreatmentRefInline,         #32
+        SeedlingProductionRefInline,  #33
+        GerminationTimeRefInline,     #34
+        GerminationRateRefInline,     #35
+        SeedsPerWeightRefInline,      #36
+        LightRefInline,               #37
+        TerrainRefInline,             #38
+        ConservationStatusInline,     #39
     ]
 
 class ReferenceAdmin(admin.ModelAdmin):
@@ -575,10 +592,21 @@ class TypeOfUseAdmin(TreeAdmin):
 class StaticContentAdmin(admin.ModelAdmin):
     list_display = ('description', 'lang')
 
+class HabitatAdmin(TreeAdmin):
+    fields = ['name','htype'] # Hide tree-related fields
+    def save_model(self, request, obj, form, change):
+        if change:
+            # Just save
+            obj.save()
+        else:
+            # Add new record as a root node
+            Habitat.add_root(name=obj.name)
+
 admin.site.register(StaticContent, StaticContentAdmin)
 admin.site.register(Taxon, TaxonAdmin)
 admin.site.register(Reference, ReferenceAdmin)
 admin.site.register(TypeOfUse, TypeOfUseAdmin)
 admin.site.register(ConservationAssessmentSource)
 admin.site.register(Interview)
+admin.site.register(Habitat, HabitatAdmin)
 
