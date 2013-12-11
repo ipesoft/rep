@@ -321,6 +321,11 @@ class HabitatRefInline(RefInline):
     #verbose_name = _('habitat')
     #verbose_name_plural = _('habitats')
 
+class WoodRefForm(RefForm):
+    taxondata = 'WOO'
+class WoodRefInline(RefInline):
+    form = WoodRefForm
+
 class NameForm(ModelForm):
     """
     Custom form to handle taxon names.
@@ -532,6 +537,10 @@ class TaxonAdmin(admin.ModelAdmin):
             #'classes': ('collapse',),
             'fields': (('wetland', 'dry'),'terrain_details',),
         }),
+        (_('Wood information'), {                  #38
+            #'classes': ('collapse',),
+            'fields': ('wood_general_info','wood_density',('wood_has_mai_curve','wood_has_cai_curve', 'wood_has_biomass_equation')),
+        }),
     )
     inlines = [
         SynonymsInline,               #0
@@ -573,7 +582,8 @@ class TaxonAdmin(admin.ModelAdmin):
         SeedsPerWeightRefInline,      #36
         LightRefInline,               #37
         TerrainRefInline,             #38
-        ConservationStatusInline,     #39
+        WoodRefInline,                #39
+        ConservationStatusInline,     #40
     ]
 
 class ReferenceAdmin(admin.ModelAdmin):

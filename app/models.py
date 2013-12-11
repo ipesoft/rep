@@ -153,6 +153,7 @@ TAXON_DATA = (
     ( u'TER', _(u'Terrain drainage') ),
     ( u'USE', _(u'Use') ),
     ( u'HAB', _(u'Habitat') ),
+    ( u'WOO', _(u'Wood') ),
 )
 
 HABITAT_TYPES = (
@@ -517,6 +518,13 @@ class Taxon( models.Model ):
     terrain_details = models.TextField( _(u'Details'), null=True, blank=True )
     light = models.CharField( _(u'Classification'), null=True, blank=True, choices=LIGHT_REQUIREMENTS, max_length=1 )
     light_details = models.TextField( _(u'Details'), null=True, blank=True )
+    # Wood data
+    wood_general_info = models.TextField( _(u'General information'), null=True, blank=True )
+    wood_density = models.FloatField( _(u'Density'), help_text=_(u'g/cm3'), null=True, blank=True )
+    wood_has_mai_curve = models.NullBooleanField( _(u'Has mean annual increment curve'), null=True, blank=True )
+    wood_has_cai_curve = models.NullBooleanField( _(u'Has current annual increment curve'), null=True, blank=True )
+    wood_has_biomass_equation = models.NullBooleanField( _(u'Has biomass equation'), null=True, blank=True )
+    # other fields
     has_pictures = models.BooleanField( _(u'Has pictures') )
     created = models.DateTimeField( u'Date created', auto_now_add = True )
     modified = models.DateTimeField( u'Date modified', null=True )

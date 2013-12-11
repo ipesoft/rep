@@ -64,8 +64,8 @@ The following code is a hack to embed inlines between certain fieldsets.
     {% comment %}PICK THE CORRESPONDING REFERENCE INLINE AFTER THE NEXT FIELDSETS{% endcomment %}
     {% comment %}i.e. for each fieldset n greater than 4, include inline n (count starts at 1!){% endcomment %}
     {% for inline_admin_formset in inline_admin_formsets %}{% if forloop.counter == fset_cnt|add:2 %}{% include inline_admin_formset.opts.template %}{% endif %}{% endfor %}
-  {% elif fset_cnt == 37 %}
-    {% with inline_admin_formset=inline_admin_formsets.38 %}
+  {% elif fset_cnt == 38 %}
+    {% with inline_admin_formset=inline_admin_formsets.39 %}
     {% include inline_admin_formset.opts.template %}
     {% endwith %}
   {% endif %}
