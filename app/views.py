@@ -1,6 +1,6 @@
 # coding=UTF-8
 
-from app.models import StaticContent, Taxon, TaxonName, TaxonDataReference, COLORS, MONTHS, ROOT_SYSTEMS, CROWN_SHAPES, LIGHT_REQUIREMENTS, SEED_TYPES, ConservationStatus, Interview, TypeOfUse, TaxonUse
+from app.models import StaticContent, Taxon, TaxonName, TaxonDataReference, COLORS, MONTHS, ROOT_SYSTEMS, CROWN_SHAPES, LIGHT_REQUIREMENTS, SEED_TYPES, ConservationStatus, Interview, TypeOfUse, TaxonUse, Habitat, TaxonHabitat
 from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
@@ -134,6 +134,12 @@ class SilvicultureSearchForm(CommonSearchForm):
     diseases = forms.ChoiceField(label=_(u'Pests and diseases'), initial=-1, choices=null_boolean_choices)
     # Pollination
     pollinators = forms.ChoiceField(label=_(u'Pollinators'), initial=-1, choices=null_boolean_choices)
+    # Habitats
+    habitat_choices = Habitat.objects.all().order_by('path')
+    my_habitat_choices = []
+    for choice in habitat_choices:
+        my_habitat_choices.append([choice.id, unicode(choice)])
+    habitats = forms.MultipleChoiceField(label=ugettext(u'Biome')+'/'+ugettext(u'Fitofisionomy'), choices=my_habitat_choices)
 
 # Internal methods
 def _handle_language(request):
@@ -740,6 +746,20 @@ def search_species(request):
             if len(my_uses) > 0:
                 taxa_ids = TaxonUse.objects.filter(use__in=my_uses).values_list('taxon__id', flat=True).distinct('taxon__id')
                 qs = qs.filter(id__in=taxa_ids)
+        # Habitat
+        if request.GET.has_key('habitats'):
+            my_habitats = []
+            for habitat_id in request.GET.getlist('habitats'):
+                try:
+                    habitat = Habitat.objects.get(pk=habitat_id)
+                    my_habitats.append( habitat_id )
+                    for habitat_desc_id in habitat.get_descendants().values_list('id', flat=True):
+                        my_habitats.append(habitat_desc_id)
+                except Habitat.DoesNotExist:
+                    pass
+            if len(my_habitats) > 0:
+                htaxa_ids = TaxonHabitat.objects.filter(habitat__in=my_habitats).values_list('taxon__id', flat=True).distinct('taxon__id')
+                qs = qs.filter(id__in=htaxa_ids)
         # Conservation status
         if request.GET.has_key('status') and request.GET['status'] != u'NULL':
             taxa_in_status = []

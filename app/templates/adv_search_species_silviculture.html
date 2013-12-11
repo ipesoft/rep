@@ -47,7 +47,9 @@ collapse('options', 'c_button');
 <tr><td>{{ form.pollinators.label_tag }}:</td><td>{{ form.pollinators }}</td></tr>
 <tr><td><label for="id_dispersion">{% trans "Seed dispersal" %}:</label></td><td>{{ form.dt_anemochorous }}{{ form.dt_anemochorous.label }}&nbsp;{{ form.dt_autochorous }}{{ form.dt_autochorous.label }}&nbsp;{{ form.dt_barochorous }}{{ form.dt_barochorous.label }}&nbsp;{{ form.dt_hydrochorous }}{{ form.dt_hydrochorous.label }}&nbsp;{{ form.dt_zoochorous }}{{ form.dt_zoochorous.label }}</td></tr>
 <tr><td><label for="id_terrain">{% trans "Terrain drainage" %}:</label></td><td>{{ form.wetland }}{{ form.wetland.label }}&nbsp;{{ form.dry }}{{ form.dry.label }}</td></tr>
+<tr><td valign="top">{{ form.habitats.label_tag }}:</td><td>{{ form.habitats }}</td></tr>
 </table>
+<br/>
 <center><input type="submit" class="button" name="search" value="{% trans "search" %}"/></center>
 </form>
 </fieldset>
