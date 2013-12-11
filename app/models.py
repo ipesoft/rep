@@ -429,6 +429,7 @@ class Taxon( models.Model ):
     urban_use    = models.BooleanField( _(u'Urban forestry') )
     silviculture = models.BooleanField( _(u'Silviculture') )
     uses      = models.ManyToManyField( TypeOfUse, through='TaxonUse' )
+    habitats  = models.ManyToManyField( Habitat, through='TaxonHabitat' )
     # Special features
     h_flowers = models.BooleanField( _(u'Flowers') )
     h_leaves  = models.BooleanField( _(u'Leaves') )
@@ -605,6 +606,31 @@ class Taxon( models.Model ):
             if len( rdata[1] ) > 0:
                 uses_str += ' (' + ', '.join(rdata[1]) + ')'
         return uses_str
+
+    def get_habitats(self):
+        # List of root nodes indicating subnodes inside parentheses
+        habitats = self.habitats.all().order_by('path')
+        roots = {} # root id => [root label, [descendant labels]]
+        for habitat in habitats:
+            if habitat.is_root():
+                roots[habitat.id] = [habitat.name, []]
+            else:
+                root = habitat.get_root()
+                if roots.has_key(root.id):
+                    roots[root.id][1].append( habitat.name )
+                else:
+                    roots[root.id] = [root.label, [habitat.name]]
+        is_first = True
+        habitats_str = ''
+        for rid, rdata in roots.iteritems():
+            if is_first:
+                is_first = False
+                habitats_str = rdata[0]
+            else:
+                habitats_str += ', ' + rdata[0]
+            if len( rdata[1] ) > 0:
+                habitats_str += ' (' + ', '.join(rdata[1]) + ')'
+        return habitats_str
 
     def get_successional_group(self):
         return self._get_boolean_concat(['sg_pioneer', 'sg_early_secondary', 'sg_late_secondary', 'sg_climax'])
