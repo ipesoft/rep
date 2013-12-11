@@ -362,6 +362,7 @@ def _pdf_for_species_page( taxon, refs, citations ):
     #if refs.has_key( 'RAR' ):
     #    t += '<sup>' + refs['RAR'] + '</sup>'
     Story.append( Paragraph( t, styles['Left'] ) )
+    _appendLabelAndContent( Story, ugettext(u'Biome')+'/'+ugettext(u'Fitofisionomy'), taxon.get_habitats(), 'HAB' )
     conservation_recs = taxon.conservationstatus_set.all()
     if len( conservation_recs ) > 0:
         cs = ''
