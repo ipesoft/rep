@@ -194,8 +194,6 @@ EOL_FILE_LOCATION = PDF_ROOT
 
 GUID_FORMAT = 'urn:your_domain:%s'
 SPECIES_URL_FORMAT = 'http://your_domain/sp/%s/'
-# Short description of the habitat for species in the region (e.g. Atlantic Forest)
-HABITAT_DESCRIPTION = u''
 # Name of the organization or person responsible for running the system
 CREATOR_NAME = u''
 # URL of the organization or person running the system

@@ -141,12 +141,10 @@ class Command( BaseCommand ):
             if size is not None:
                 self._add_data_object( f, taxon, u'Size', size_ref, size, lang)
             ## Distribution
-            distrib = settings.HABITAT_DESCRIPTION
-            distrib_ref = ['-']
-            if taxon.endemic:
-                distrib = distrib + ' (' + taxon._get_field_label('endemic')  + ')'
-                distrib_ref = ['END']
-            self._add_data_object( f, taxon, u'Distribution', distrib_ref, distrib, lang)
+            distrib = taxon.get_habitats()
+            distrib_ref = ['HAB']
+            if len(distrib) > 0:
+                self._add_data_object( f, taxon, u'Distribution', distrib_ref, distrib, lang)
             ## Growth
             growth_rate = taxon.get_growth_rate()
             if growth_rate is not None:

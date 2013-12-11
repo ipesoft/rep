@@ -70,7 +70,7 @@ In particular, you need to pay attention to the following parts:
   FLICKR_API_KEY --> your flickr api key (register at flicker and get the key)
 
   The following entries must also be completed for sharing data with EoL:
-  GUID_FORMAT, SPECIES_URL_FORMAT, HABITAT_DESCRIPTION, CREATOR_NAME, 
+  GUID_FORMAT, SPECIES_URL_FORMAT, CREATOR_NAME, 
   CREATOR_HOMEPAGE, CREATOR_LOGO_URL, COMPILERS
 
 When you finihsed editing the file, run the following command to create the tables:
