@@ -22,6 +22,7 @@
         {% if inline_admin_form.form.non_field_errors %}
         <tr><td colspan="{{ inline_admin_form|cell_count }}">{{ inline_admin_form.form.non_field_errors }}</td></tr>
         {% endif %}
+        {% comment %}Enable this to help debug reference relation:<tr><td colspan="{{ inline_admin_form|cell_count }}">{{ inline_admin_form.form.ref_code }}</td></tr>{% endcomment %}
         <tr class="{% cycle "row1" "row2" %} {% if not inline_admin_form.form.hide_orig %}{% if inline_admin_form.original or inline_admin_form.show_url %}has_original{% endif %}{% endif %}{% if forloop.last %} empty-form{% endif %}"
              id="{{ inline_admin_formset.formset.prefix }}-{% if not forloop.last %}{{ forloop.counter0 }}{% else %}empty{% endif %}">
         <td class="original">

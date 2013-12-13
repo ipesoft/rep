@@ -31,6 +31,12 @@ class RefForm(ModelForm):
         """
         return True
 
+    def ref_code(self):
+        """
+        Method created just to help debugging reference relation.
+        """
+        return self.taxondata
+
 class RefInline(admin.TabularInline):
     """
     Generic inline for bibliographic references. It needs to be subclassed

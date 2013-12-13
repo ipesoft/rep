@@ -32,7 +32,7 @@ The following code is a hack to embed inlines between certain fieldsets.
 
 {% endcomment %}
 {% with fset_cnt=forloop.counter %}
-  {% comment %}INSERT AFTER THE FIRST FIELDSET{% endcomment %}
+  {% comment %}INSERT AFTER THE FIRST FIELDSET (TAXONOMIC DATA){% endcomment %}
   {% if fset_cnt == 1 %}
     {% comment %}FIRST INLINE (SYNONYMS){% endcomment %}
     {% with inline_admin_formset=inline_admin_formsets.0 %}
@@ -42,9 +42,9 @@ The following code is a hack to embed inlines between certain fieldsets.
     {% with inline_admin_formset=inline_admin_formsets.1 %}
     {% include inline_admin_formset.opts.template %}
     {% endwith %}
-  {% comment %}INSERT AFTER THE FOURTH FIELDSET{% endcomment %}
+  {% comment %}INSERT AFTER THE FOURTH FIELDSET (USES){% endcomment %}
   {% elif fset_cnt == 4 %}
-    {% comment %}THIRD INLINE (USES){% endcomment %}
+    {% comment %}THIRD INLINE (SPECIFIC USES){% endcomment %}
     {% with inline_admin_formset=inline_admin_formsets.2 %}
     {% include inline_admin_formset.opts.template %}
     {% endwith %}
@@ -61,13 +61,10 @@ The following code is a hack to embed inlines between certain fieldsets.
     {% include inline_admin_formset.opts.template %}
     {% endwith %}
   {% elif fset_cnt > 4 %}
-    {% comment %}PICK THE CORRESPONDING REFERENCE INLINE AFTER THE NEXT FIELDSETS{% endcomment %}
-    {% comment %}i.e. for each fieldset n greater than 4, include inline n (count starts at 1!){% endcomment %}
+    {% comment %}SHOW THE CORRESPONDING REFERENCE INLINE AFTER THE FIELDSET{% endcomment %}
+    {% comment %}i.e. for each fieldset n greater than 4, include inline n+2 (for counter starts at 1!){% endcomment %}
     {% for inline_admin_formset in inline_admin_formsets %}{% if forloop.counter == fset_cnt|add:2 %}{% include inline_admin_formset.opts.template %}{% endif %}{% endfor %}
-  {% elif fset_cnt == 38 %}
-    {% with inline_admin_formset=inline_admin_formsets.39 %}
-    {% include inline_admin_formset.opts.template %}
-    {% endwith %}
   {% endif %}
+  {% comment %}NO NEED TO SHOW LAST EXTRA INLINES - SEE CUSTOM CONDITION show_in_the_end IN taxon_change_form.html{% endcomment %}
 {% endwith %}
 </fieldset>
