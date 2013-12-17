@@ -593,7 +593,7 @@ class TaxonAdmin(admin.ModelAdmin):
     ]
 
 class ReferenceAdmin(admin.ModelAdmin):
-    list_max_show_all = 500
+    list_max_show_all = 1000
 
 class TypeOfUseAdmin(TreeAdmin):
     fields = ['label',] # Hide tree-related fields
