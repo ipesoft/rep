@@ -281,7 +281,7 @@ function setmap() {
 {% if taxon.silviculture %}
 <div class="section" onclick="collapse('s6', 'i6');return false;"><table width="100%"><tr><td width="90%"{% if taxon.has_seedling_production_data %} style="font-weight: bold;"{% endif %}>{% trans "Wood information" %}</td><td style="text-align: right;"><img id="i6" src="/static/images/expand.gif" alt="{% trans "expand" %}" title="{% trans "expand" %}"/></td></tr></table></div>
 <div id="s6" style="display: none;">
-{% if taxon.wood_general_info != None %}<p>{{ taxon.wood_general_info }}&nbsp;<sup>{{ refs.WOO }}</sup></p>{% endif %}
+{% if taxon.wood_general_info != None and taxon.wood_general_info != "" %}<p>{{ taxon.wood_general_info }}&nbsp;<sup>{{ refs.WOO }}</sup></p>{% endif %}
 <p><label>{% trans "Density" %}:</label>&nbsp;{{ taxon.wood_density|default:"-" }}{% if taxon.wood_density != None %}&nbsp;kg/m<sup>3</sup>&nbsp;<sup>{{ refs.WOO }}</sup>{% endif %}</p>
 <p><label>{% trans "Has mean annual increment curve" %}:</label>&nbsp;{{ taxon.get_has_mai_curve|default:"-" }}{% if taxon.wood_has_mai_curve != None %}&nbsp;<sup>{{ refs.WOO }}</sup>{% endif %}</p>
 <p><label>{% trans "Has current annual increment curve" %}:</label>&nbsp;{{ taxon.get_has_cai_curve|default:"-" }}{% if taxon.wood_has_cai_curve != None %}&nbsp;<sup>{{ refs.WOO }}</sup>{% endif %}</p>
