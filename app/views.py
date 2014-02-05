@@ -485,7 +485,7 @@ def _pdf_for_species_page( taxon, refs, citations ):
         _appendDetails( Story, taxon.wood_general_info )
         d = taxon.wood_density
         if d:
-            d = str(d) + 'kg/m<sup>3</sup>'
+            d = str(d) + 'kg/m<sup>3</sup> '
             _appendLabelAndContent( Story, ugettext(u'Density'), d, 'WOO' )
         _appendLabelAndContent( Story, ugettext(u'Has mean annual increment curve'), taxon.get_has_mai_curve(), 'WOO' )
         _appendLabelAndContent( Story, ugettext(u'Has current annual increment curve'), taxon.get_has_cai_curve(), 'WOO' )
