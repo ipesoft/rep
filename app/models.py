@@ -221,7 +221,6 @@ class Habitat( MP_Node ):
     class Meta:
         verbose_name = _(u'habitat')
         verbose_name_plural = _(u'habitats')
-        unique_together = ((u'name', u'htype'),)
         ordering = [u'path']
 
     def __unicode__(self):
