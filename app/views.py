@@ -376,7 +376,7 @@ def _pdf_for_species_page( taxon, refs, citations ):
             if len( cs ) > 0:
                 cs += ', '
             cs += rec.status + ' (' + rec.source.acronym + ')'
-        _appendLabelAndContent( Story, ugettext(u'conservation status'), cs, '' )
+        _appendLabelAndContent( Story, ugettext(u'Conservation status'), cs, '' )
     #_appendLabelAndContent( Story, ugettext(u'Special features'), taxon.get_special_features(), 'SPE' )
     _appendLabelAndContent( Story, ugettext(u'Uses'), force_text(taxon.get_use()), '' )
     _appendDetails( Story, taxon.description )
