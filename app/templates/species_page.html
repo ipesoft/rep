@@ -189,7 +189,7 @@ function setmap() {
     <p><label>{% trans "Biome" %}/{% trans "Fitofisionomy" %}:</label>&nbsp;{{ taxon.get_habitats|default:"-" }}&nbsp;<sup>{{ refs.HAB }}</sup></p>
     {% with conservation_recs=taxon.conservationstatus_set.all %}
     {% if conservation_recs|length > 0 %}
-    <p><label>{% trans "conservation status" %}:&nbsp;</label>{% for rec in conservation_recs %}{{ rec.status }}&nbsp;({{ rec.source.acronym }}){% endfor %}
+    <p><label>{% trans "Conservation status" %}:&nbsp;</label>{% for rec in conservation_recs %}{{ rec.status }}&nbsp;({{ rec.source.acronym }}){% endfor %}
     {% endif %}
     {% endwith %}
     {% comment %}<p><label>{% trans "Special features" %}:</label>&nbsp;{{ taxon.get_special_features|default:"-" }}&nbsp;<sup>{{ refs.SPE }}</sup></p>{% endcomment %}
