@@ -757,6 +757,12 @@ class Taxon( models.Model ):
                 val = self.get_fr_type_display()
         return val
 
+    def get_has_mai_curve(self):
+        return self._get_yes_no(self.wood_has_mai_curve)
+
+    def get_has_cai_curve(self):
+        return self._get_yes_no(self.wood_has_cai_curve)
+
     def has_pregermination_treatment(self):
         return (self.pg_no_need or self.pg_thermal or self.pg_chemical or self.pg_water or self.pg_mechanical or self.pg_combined or self.pg_other)
 
@@ -925,6 +931,9 @@ class Taxon( models.Model ):
 
     def has_seedling_production_data( self ):
         return (self.get_seed_gathering() is not None) or (self.seed_collection) or (self.get_seed_type_display() is not None) or (self.get_pregermination_treatment() is not None) or (self.pg_details) or (self.get_seedbed() is not None) or (self.sl_details) or (self.get_germination_time_lapse() is not None) or (self.get_germination_rate() is not None) or (self.get_light_display() is not None) or (self.seeds_per_weight is not None) or (self.light_details is not None and len(self.light_details) > 0)
+
+    def has_wood_data( self ):
+        return (self.wood_general_info is not None) or (self.wood_density is not None) or (self.wood_has_mai_curve is not None) or (self.wood_has_cai_curve is not None) or (self.wood_has_biomass_equation is not None)
 
     def has_bibliography_data( self ):
         return (self.taxondatareference_set.all().count() > 0)

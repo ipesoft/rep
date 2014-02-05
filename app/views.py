@@ -140,6 +140,11 @@ class SilvicultureSearchForm(CommonSearchForm):
     for choice in habitat_choices:
         my_habitat_choices.append([choice.id, unicode(choice)])
     habitats = forms.MultipleChoiceField(label=ugettext(u'Biome')+'/'+ugettext(u'Fitofisionomy'), choices=my_habitat_choices)
+    # Density
+    min_density = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}))
+    max_density = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}))
+    # Has MAI curve
+    has_mai_curve = forms.ChoiceField(label=_(u'Has mean annual increment curve'), initial=-1, choices=null_boolean_choices)
 
 # Internal methods
 def _handle_language(request):
@@ -195,6 +200,33 @@ def _add_interval_condition(request, qs, min_field, max_field):
             ok_max = True
         if ok_max:
             kwargs = {'%s__lte' % (max_field): max_val}
+            qs = qs.filter(**kwargs)
+    return qs
+
+def _add_single_field_interval_condition(request, qs, field, min_param, max_param):
+    if ( request.GET.has_key(min_param)):
+        ok_min = False
+        min_val = request.GET.get(min_param)
+        if not isinstance( min_val, int ):
+            if min_val.isdigit():
+                min_val = int(min_val)
+                ok_min = True
+        else:
+            ok_min = True
+        if ok_min:
+            kwargs = {'%s__gte' % (field): min_val}
+            qs = qs.filter(**kwargs)
+    if ( request.GET.has_key(max_param)):
+        ok_max = False
+        max_val = request.GET.get(max_param)
+        if not isinstance( max_val, int ):
+            if max_val.isdigit():
+                max_val = int(max_val)
+                ok_max = True
+        else:
+            ok_max = True
+        if ok_max:
+            kwargs = {'%s__lte' % (field): max_val}
             qs = qs.filter(**kwargs)
     return qs
 
@@ -443,10 +475,20 @@ def _pdf_for_species_page( taxon, refs, citations ):
     _appendLabelAndContent( Story, ugettext(u'Germination rate')          , taxon.get_germination_rate()        , 'GER' )
     c = taxon.seeds_per_weight
     if c:
-        c = str(c) + '/Kg'
+        c = str(c) + '/kg'
     _appendLabelAndContent( Story, ugettext(u'Number of seeds per weight'), c                                   , 'SPW' )
     _appendLabelAndContent( Story, ugettext(u'Light requirements')        , taxon.get_light_display()           , 'LIG' )
     _appendDetails( Story, taxon.light_details )
+    #########################################################
+    if taxon.silviculture:
+        _appendSection( Story, ugettext(u'Wood information') )
+        _appendDetails( Story, taxon.wood_general_info )
+        d = taxon.wood_density
+        if d:
+            d = str(d) + 'kg/m<sup>3</sup>'
+            _appendLabelAndContent( Story, ugettext(u'Density'), d, 'WOO' )
+        _appendLabelAndContent( Story, ugettext(u'Has mean annual increment curve'), taxon.get_has_mai_curve(), 'WOO' )
+        _appendLabelAndContent( Story, ugettext(u'Has current annual increment curve'), taxon.get_has_cai_curve(), 'WOO' )
     #########################################################
     _appendSection( Story, ugettext(u'Bibliography') )
     for citation in citations:
@@ -760,6 +802,14 @@ def search_species(request):
             if len(my_habitats) > 0:
                 htaxa_ids = TaxonHabitat.objects.filter(habitat__in=my_habitats).values_list('taxon__id', flat=True).distinct('taxon__id')
                 qs = qs.filter(id__in=htaxa_ids)
+        # Density
+        qs = _add_single_field_interval_condition(request, qs, 'wood_density', 'min_density', 'max_density')
+        # Has MAI curve
+        if request.GET.has_key('has_mai_curve'):
+            if request.GET['has_mai_curve'] in ('1', 1):
+                qs = qs.filter(wood_has_mai_curve=True)
+            elif request.GET['has_mai_curve'] in ('0', 0):
+                qs = qs.filter(wood_has_mai_curve=False)
         # Conservation status
         if request.GET.has_key('status') and request.GET['status'] != u'NULL':
             taxa_in_status = []

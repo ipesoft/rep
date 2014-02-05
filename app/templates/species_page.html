@@ -278,16 +278,26 @@ function setmap() {
 {% if taxon.light_details %}<p>{{ taxon.light_details }}</p>{% endif %}
 </div>
 
-<div class="section" onclick="collapse('s6', 'i6');return false;"><table width="100%"><tr><td width="90%"{% if taxon.has_bibliography_data %} style="font-weight: bold;"{% endif %}>{% trans "Bibliography" %}</td><td style="text-align: right;"><img id="i6" src="/static/images/expand.gif" alt="{% trans "expand" %}" title="{% trans "expand" %}"/></td></tr></table></div>
+{% if taxon.silviculture %}
+<div class="section" onclick="collapse('s6', 'i6');return false;"><table width="100%"><tr><td width="90%"{% if taxon.has_seedling_production_data %} style="font-weight: bold;"{% endif %}>{% trans "Wood information" %}</td><td style="text-align: right;"><img id="i6" src="/static/images/expand.gif" alt="{% trans "expand" %}" title="{% trans "expand" %}"/></td></tr></table></div>
 <div id="s6" style="display: none;">
+{% if taxon.wood_general_info != None %}<p>{{ taxon.wood_general_info }}&nbsp;<sup>{{ refs.WOO }}</sup></p>{% endif %}
+<p><label>{% trans "Density" %}:</label>&nbsp;{{ taxon.wood_density|default:"-" }}{% if taxon.wood_density != None %}&nbsp;kg/m<sup>3</sup>&nbsp;<sup>{{ refs.WOO }}</sup>{% endif %}</p>
+<p><label>{% trans "Has mean annual increment curve" %}:</label>&nbsp;{{ taxon.get_has_mai_curve|default:"-" }}{% if taxon.wood_has_mai_curve != None %}&nbsp;<sup>{{ refs.WOO }}</sup>{% endif %}</p>
+<p><label>{% trans "Has current annual increment curve" %}:</label>&nbsp;{{ taxon.get_has_cai_curve|default:"-" }}{% if taxon.wood_has_cai_curve != None %}&nbsp;<sup>{{ refs.WOO }}</sup>{% endif %}</p>
+</div>
+{% endif %}
+
+<div class="section" onclick="collapse('s7', 'i7');return false;"><table width="100%"><tr><td width="90%"{% if taxon.has_bibliography_data %} style="font-weight: bold;"{% endif %}>{% trans "Bibliography" %}</td><td style="text-align: right;"><img id="i7" src="/static/images/expand.gif" alt="{% trans "expand" %}" title="{% trans "expand" %}"/></td></tr></table></div>
+<div id="s7" style="display: none;">
 {% for citation in citations %}
 <a id="ref-{{ citation.0 }}"></a><p id="ref-text-{{ citation.0 }}" class="bib"><sup>{{ citation.0 }}</sup>&nbsp;{% autoescape on %}{{ citation.1 }}{% endautoescape %}</p>
 {% endfor %}
 </div>
 
 {% if taxon.has_points %}
-<div class="section" onclick="collapse('s7', 'i7');setmap();return false;"><table width="100%"><tr><td width="90%" style="font-weight: bold;">{% trans "Occurrence locations" %}</td><td style="text-align: right;"><img id="i7" src="/static/images/expand.gif" alt="{% trans expand %}" title="{% trans expand %}"/></td></tr></table></div>
-<div id="s7" style="display: none; height: 320px;">
+<div class="section" onclick="collapse('s8', 'i8');setmap();return false;"><table width="100%"><tr><td width="90%" style="font-weight: bold;">{% trans "Occurrence locations" %}</td><td style="text-align: right;"><img id="i8" src="/static/images/expand.gif" alt="{% trans expand %}" title="{% trans expand %}"/></td></tr></table></div>
+<div id="s8" style="display: none; height: 320px;">
 </div>
 {% endif %}
 

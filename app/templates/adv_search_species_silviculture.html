@@ -47,6 +47,8 @@ collapse('options', 'c_button');
 <tr><td>{{ form.pollinators.label_tag }}:</td><td>{{ form.pollinators }}</td></tr>
 <tr><td><label for="id_dispersion">{% trans "Seed dispersal" %}:</label></td><td>{{ form.dt_anemochorous }}{{ form.dt_anemochorous.label }}&nbsp;{{ form.dt_autochorous }}{{ form.dt_autochorous.label }}&nbsp;{{ form.dt_barochorous }}{{ form.dt_barochorous.label }}&nbsp;{{ form.dt_hydrochorous }}{{ form.dt_hydrochorous.label }}&nbsp;{{ form.dt_zoochorous }}{{ form.dt_zoochorous.label }}</td></tr>
 <tr><td><label for="id_terrain">{% trans "Terrain drainage" %}:</label></td><td>{{ form.wetland }}{{ form.wetland.label }}&nbsp;{{ form.dry }}{{ form.dry.label }}</td></tr>
+<tr><td><label for="id_density">{% trans "Density" %}</label>:</td><td>{{ form.min_density }}&nbsp;{% trans "to" %}&nbsp;{{ form.max_density }}kg/m<sup>3</sup></td></tr>
+<tr><td>{{ form.has_mai_curve.label_tag }}:</td><td>{{ form.has_mai_curve }}</td></tr>
 <tr><td valign="top">{{ form.habitats.label_tag }}:</td><td>{{ form.habitats }}</td></tr>
 </table>
 <br/>
