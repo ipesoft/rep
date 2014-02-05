@@ -519,7 +519,7 @@ class Taxon( models.Model ):
     light_details = models.TextField( _(u'Details'), null=True, blank=True )
     # Wood data
     wood_general_info = models.TextField( _(u'General information'), null=True, blank=True )
-    wood_density = models.FloatField( _(u'Density'), help_text=_(u'Kg/cm3'), null=True, blank=True )
+    wood_density = models.FloatField( _(u'Density'), help_text=_(u'Kg/m3'), null=True, blank=True )
     wood_has_mai_curve = models.NullBooleanField( _(u'Has mean annual increment curve'), null=True, blank=True )
     wood_has_cai_curve = models.NullBooleanField( _(u'Has current annual increment curve'), null=True, blank=True )
     wood_has_biomass_equation = models.NullBooleanField( _(u'Has biomass equation'), null=True, blank=True )
