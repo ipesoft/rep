@@ -626,7 +626,7 @@ class Taxon( models.Model ):
                 if roots.has_key(root.id):
                     roots[root.id][1].append( habitat.name )
                 else:
-                    roots[root.id] = [root.label, [habitat.name]]
+                    roots[root.id] = [root.name, [habitat.name]]
         is_first = True
         habitats_str = ''
         for rid, rdata in roots.iteritems():
