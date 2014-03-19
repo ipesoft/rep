@@ -305,6 +305,8 @@ def _pdf_for_species_list( qs ):
     # Add content
     for sp in qs:
         myp = '<i>' + sp.genus + ' ' + sp.species + '</i>'
+        if sp.subspecies is not None and len(sp.subspecies) > 0:
+            myp += ' var. <i>' + sp.subspecies + '</i>'
         popnames = sp.get_popular_names().values_list('name', flat=True)
         sep = ', '
         if len(popnames) > 0:
@@ -342,7 +344,10 @@ def _pdf_for_species_page( taxon, refs, citations ):
     styles.add( ParagraphStyle(name='Justify', alignment=TA_JUSTIFY, spaceAfter=20) )
     
     response = HttpResponse( content_type='application/pdf' )
-    response['Content-Disposition'] = 'attachment; filename="'+taxon.genus+'_'+taxon.species+'.pdf"'
+    file_name = taxon.genus+'_'+taxon.species
+    if taxon.subspecies is not None and len(taxon.subspecies) > 0:
+        file_name += '_'+taxon.subspecies
+    response['Content-Disposition'] = 'attachment; filename="'+file_name+'.pdf"'
 
     # Create the PDF object, using the response object as its "file."
     doc = SimpleDocTemplate( response, topMargin=0.2*inch, showBoundary=0 )
@@ -371,7 +376,10 @@ def _pdf_for_species_page( taxon, refs, citations ):
             Story.append( Paragraph( content, styles['Justify'] ) )
 
     # Add content
-    myp = '<font size="14"><i>' + taxon.genus + ' ' + taxon.species + '</i> ' + taxon.author + '</font>'
+    subsp = ''
+    if taxon.subspecies is not None and len(taxon.subspecies) > 0:
+        subsp = 'var. <i>' + taxon.subspecies + '</i> '
+    myp = '<font size="14"><i>' + taxon.genus + ' ' + taxon.species + '</i> ' + subsp + taxon.author + '</font>'
     popnames = taxon.get_popular_names().values_list('name', flat=True)
     sep = ', '
     if len(popnames) > 0:
