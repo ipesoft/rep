@@ -14,7 +14,7 @@
 {% if taxa.paginator.num_pages > 1 %}
 <div class="pagination">
   <span class="step-links">
-&nbsp;{% for p in taxa.paginator.page_range %}{% if p == taxa.number %}<b>{{p}}</b>{% else %}<a href="?page={{ p }}{{ get_params }}">{{p}}</a>{% endif %}&nbsp;{% endfor %}
+&nbsp;{% for p in taxa.paginator.page_range %}{% if p == taxa.number %}<b>{{p}}</b>{% else %}<a href="?page={{ p }}&{{ get_params }}">{{p}}</a>{% endif %}&nbsp;{% endfor %}
   </span>
 </div>
 {% endif %}
