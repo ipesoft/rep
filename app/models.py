@@ -104,17 +104,57 @@ SEED_TYPES = (
     ( u'U', _(u'Unclassified') ),
 )
 
-#SOIL_TYPES = (
-#    ( u'F', _(u'wetland (frequent floods)') ),
-#    ( u'U', _(u'wetland (unfrequent floods)') ),
-#    ( u'M', _(u'marsh') ),
-#    ( u'D', _(u'dry and rocky') ),
-#    ( u'A', _(u'wet or dry') ),
-#)
+SOIL_TYPES = (
+    ( u'W', _(u'Wetland') ),
+    ( u'D', _(u'Well-drained') ),
+)
 
 LIGHT_REQUIREMENTS = (
     ( u'S', _(u'Shadow tolerant') ),
     ( u'U', _(u'Full sun') ),
+)
+
+GROWTH_RATE = (
+    ( u'S', _(u'Slow') ),
+    ( u'M', _(u'Moderate'), ),
+    ( u'F', _(u'Fast') )
+)
+
+FOLIAGE_PERSISTENCE = (
+    ( u'E', _(u'Evergreen') ),
+    ( u'S', _(u'Semi-deciduous'), ),
+    ( u'D', _(u'Deciduous') )
+)
+
+TRUNK_ALIGNMENT = (
+    ( 1, _(u'Straight') ),
+    ( 2, _(u'Slightly inclined'), ),
+    ( 3, _(u'Inclined') ),
+    ( 4, _(u'Slightly crooked') ),
+    ( 5, _(u'Crooked'), )
+)
+
+SEED_DISPERSAL_TYPE = (
+    ( 1, _(u'Anemochorous') ),
+    ( 2, _(u'Autochorous'), ),
+    ( 3, _(u'Barochorous') ),
+    ( 4, _(u'Hydrochorous') ),
+    ( 5, _(u'Zoochorous'), )
+)
+
+SEED_COLLECTION = (
+    ( u'T', _(u'Collect fruits from tree') ),
+    ( u'S', _(u'Collect fruits from soil'), )
+)
+
+PRE_GERMINATION_TREATMENT = (
+    ( u'N', _(u'No need for treatment') ),
+    ( u'T', _(u'Thermal treatment') ),
+    ( u'C', _(u'Chemical treatment') ),
+    ( u'I', _(u'Immersion in water') ),
+    ( u'M', _(u'Mechanical scarification') ),
+    ( u'X', _(u'Combined treatments') ),
+    ( u'O', _(u'Other') )
 )
 
 TAXON_DATA = (

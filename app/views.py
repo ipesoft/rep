@@ -1,8 +1,8 @@
 # coding=UTF-8
 
-from app.models import StaticContent, Taxon, TaxonName, TaxonDataReference, COLORS, MONTHS, ROOT_SYSTEMS, CROWN_SHAPES, LIGHT_REQUIREMENTS, SEED_TYPES, ConservationStatus, Interview, TypeOfUse, TaxonUse, Habitat, TaxonHabitat
+from app.models import StaticContent, Taxon, TaxonName, TaxonDataReference, COLORS, MONTHS, ROOT_SYSTEMS, CROWN_SHAPES, LIGHT_REQUIREMENTS, SEED_TYPES, FRUIT_TYPES, BARK_TEXTURES, GROWTH_RATE, FOLIAGE_PERSISTENCE, TRUNK_ALIGNMENT, SOIL_TYPES, SEED_DISPERSAL_TYPE, SEED_COLLECTION, PRE_GERMINATION_TREATMENT, ConservationStatus, Interview, TypeOfUse, TaxonUse, Habitat, TaxonHabitat
 from django.http import HttpResponse, Http404
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response, render, get_object_or_404
 from django.template import RequestContext
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -264,6 +264,11 @@ def _json_raw_encode(data):
     else:
         return JSONEncoder().encode(data)
 
+def _add_link(abs_uri, link, page_number, label, params):
+    sep = u', ' if len(link) > 0 else u''
+    params = params + u'&' if len(params) > 0 else u''
+    return u'%s%s<%s?%spage=%d>; rel="%s"' % (link, sep, unicode(abs_uri), params, page_number, label)
+
 def _pdf_for_species_list( qs ):
     """
     Generate a PDF for a species list retrieved by the provided query.
@@ -506,18 +511,28 @@ def _pdf_for_species_page( taxon, refs, citations ):
     
     return response
 
+def _to_dict(model_vocabulary):
+    my_dict = {}
+    for el in model_vocabulary:
+        my_dict[el[0]] = ugettext(el[1])
+    return my_dict
+
+def _add_references(request, obj, key, refs):
+    if request.GET.has_key('references') and refs.has_key(key) and len(refs[key]) > 0:
+        obj['references'] = refs[key].split(',')
+
 # View methods
 def handler404( request ):
     "404 page"
-    c = RequestContext(request, {'base_template':settings.BASE_TEMPLATE} )
+    c = RequestContext(request, {'base_template':settings.BASE_TEMPLATE})
     possible_templates = ['my_404.html', '404.html']
-    return render_to_response( possible_templates, c )
+    return render( request, possible_templates, context_instance=c, content_type='text/html; charset=utf-8', status=404 )
 
 def handler500( request ):
     "500 page"
-    c = RequestContext(request, {} )
+    c = RequestContext(request, {'base_template':settings.BASE_TEMPLATE} )
     possible_templates = ['my_500.html', '500.html']
-    return render_to_response( possible_templates, c )
+    return render( request, possible_templates, context_instance=c, content_type='text/html; charset=utf-8', status=500 )
 
 def index(request):
     'Index page'
@@ -579,7 +594,7 @@ def hist_results(request):
 def faq(request):
     return show_page(request, 'faq')
 
-def show_species(request, species_id):
+def show_species(request, species_id, ws=False):
     'Display data about a species'
     _handle_language( request )
     if not isinstance( species_id, int ):
@@ -604,7 +619,7 @@ def show_species(request, species_id):
             citations.append( (str(cnt), ref.reference.full) )
             cnt = cnt + 1
     for ref in refs:
-        if request.GET.has_key('pdf'):
+        if request.GET.has_key('pdf') or ws:
             if numbers.has_key(ref.data):
                 numbers[ref.data] = numbers[ref.data] + ',' + ctrl[ref.reference_id]
             else:
@@ -615,22 +630,407 @@ def show_species(request, species_id):
             else:
                 numbers[ref.data] = '<a href="#ref-'+ctrl[ref.reference_id]+'" onclick="fr_highlight(' + ctrl[ref.reference_id] + ');">' + ctrl[ref.reference_id] + '</a>'
     # Points
-    points = []
+    orig_points = []
     for occ in taxon.taxonoccurrence_set.all():
-        points.append({'x':occ.get_decimal_long(), 'y':occ.get_decimal_lat(), 'label':occ.label})
+        orig_points.append({'x':occ.get_decimal_long(), 'y':occ.get_decimal_lat(), 'label':occ.label})
     if request.GET.has_key('pdf'):
         return _pdf_for_species_page( taxon, numbers, citations )
-    points = _json_raw_encode( points )
+    points = _json_raw_encode( orig_points )
     # Help content
     help_entries = StaticContent.objects.filter(code__startswith='HELP-').values_list('code', flat=True)
-    # Page rendering
+    # Web service
+    if ws:
+        from json.encoder import JSONEncoder
+        data = {'fullname':taxon.label}
+        if taxon.family:
+            data['family'] = taxon.family
+        synonyms = taxon.get_synonyms().values_list('name', flat=True)
+        if len(synonyms) > 0:
+            synonyms_json = []
+            for synonym in synonyms:
+                synonyms_json.append(synonym)
+            data['synonyms'] = synonyms_json
+        popnames = taxon.get_popular_names().values_list('name', flat=True)
+        if len(popnames) > 0:
+            popnames_json = []
+            for popname in popnames:
+                popnames_json.append(popname)
+            data['common_names'] = popnames_json
+        if taxon.description:
+            data['description'] = taxon.description
+        if request.GET.has_key('points'):
+            data['points'] = orig_points
+        # General features
+        # ----------------
+        if request.GET.has_key('features'):
+            features = {}
+            # Tree size
+            if taxon.min_height or taxon.max_height or taxon.min_dbh or taxon.max_dbh:
+                size = {}
+                if taxon.min_height or taxon.max_height:
+                    height = {}
+                    if taxon.min_height:
+                        height['min'] = '%.1f' % taxon.min_height
+                    if taxon.max_height:
+                        height['max'] = '%.1f' % taxon.max_height
+                    size['height'] = height
+                if taxon.min_dbh or taxon.max_dbh:
+                    dbh = {}
+                    if taxon.min_dbh:
+                        dbh['min'] = '%.1f' % taxon.min_dbh
+                    if taxon.max_height:
+                        dbh['max'] = '%.1f' % taxon.max_dbh
+                    size['dbh'] = dbh
+                _add_references(request, size, 'SIZ', numbers)
+                features['size'] = size
+            # Flowering color
+            if taxon.fl_color is not None or taxon.fl_color_details:
+                fl_color = {}
+                if taxon.fl_color is not None:
+                    fl_color['color'] = taxon.fl_color
+                if taxon.fl_color_details:
+                    fl_color['details'] = taxon.fl_color_details
+                _add_references(request, fl_color, 'FLC', numbers)
+                features['flower'] = fl_color
+            # Growth rate
+            if taxon.gr_slow or taxon.gr_moderate or taxon.gr_fast or taxon.gr_comments:
+                growth = {}
+                if taxon.gr_slow or taxon.gr_moderate or taxon.gr_fast:
+                    growth['rate'] = []
+                    if taxon.gr_slow:
+                        growth['rate'].append('S')
+                    if taxon.gr_moderate:
+                        growth['rate'].append('M')
+                    if taxon.gr_fast:
+                        growth['rate'].append('F')
+                if taxon.gr_comments:
+                    growth['details'] = taxon.gr_comments
+                _add_references(request, growth, 'GRO', numbers)
+                features['growth'] = growth
+            # Foliage persistence
+            if taxon.fo_evergreen or taxon.fo_semideciduous or taxon.fo_deciduous:
+                fp = {}
+                fp['foliage_persistence'] = []
+                if taxon.fo_evergreen:
+                    fp['foliage_persistence'].append('E')
+                if taxon.fo_semideciduous:
+                    fp['foliage_persistence'].append('S')
+                if taxon.fo_deciduous:
+                    fp['foliage_persistence'].append('D')
+                _add_references(request, fp, 'FOL', numbers)
+                features['leaves'] = fp
+            # Root system
+            if taxon.r_type:
+                root = {}
+                root['type'] = taxon.r_type
+                _add_references(request, root, 'ROT', numbers)
+                features['root'] = root
+            # Crown shape & diameter
+            if taxon.cr_shape or taxon.cr_min_diameter or taxon.cr_max_diameter:
+                crown = {}
+                if taxon.cr_shape:
+                    shape = {}
+                    shape['classification'] = taxon.cr_shape
+                    _add_references(request, shape, 'CRS', numbers)
+                    crown['shape'] = shape
+                if taxon.cr_min_diameter or taxon.cr_max_diameter:
+                    diameter = {}
+                    if taxon.cr_min_diameter:
+                        diameter['min'] = taxon.cr_min_diameter
+                    if taxon.cr_max_diameter:
+                        diameter['max'] = taxon.cr_max_diameter
+                    _add_references(request, diameter, 'CRD', numbers)
+                    crown['diameter'] = diameter
+                features['crown'] = crown
+            # Trunk alignment
+            if taxon.tr_straight or taxon.tr_sl_inclined or taxon.tr_inclined or taxon.tr_sl_crooked or taxon.tr_crooked:
+                trunk = {}
+                trunk['alignment'] = []
+                if taxon.tr_straight:
+                    trunk['alignment'].append('1')
+                if taxon.tr_sl_inclined:
+                    trunk['alignment'].append('2')
+                if taxon.tr_inclined:
+                    trunk['alignment'].append('3')
+                if taxon.tr_sl_crooked:
+                    trunk['alignment'].append('4')
+                if taxon.tr_crooked:
+                    trunk['alignment'].append('5')
+                _add_references(request, trunk, 'TRA', numbers)
+                features['trunk'] = trunk
+            # Bark texture
+            if taxon.bark_texture:
+                bark = {}
+                bark['texture'] = taxon.bark_texture
+                _add_references(request, bark, 'BRT', numbers)
+                features['bark'] = bark
+            # Fruit type
+            if taxon.fr_type:
+                fruit = {}
+                fruit['type'] = taxon.fr_type
+                _add_references(request, fruit, 'FRT', numbers)
+                features['fruit'] = fruit
+             # Add data 
+            data['features'] = features
+        # Care
+        # ----
+        if request.GET.has_key('care'):
+            care = {}
+            # Pruning
+            if taxon.pruning is not None:
+                pruning = {}
+                pruning['indication'] = taxon.pruning
+                _add_references(request, pruning, 'PRU', numbers)
+                care['pruning'] = pruning
+            # Pests and diseases
+            if taxon.pests_and_diseases:
+                pests_and_diseases = {}
+                pests_and_diseases['information'] = taxon.pests_and_diseases
+                _add_references(request, pests_and_diseases, 'PAD', numbers)
+                care['pests_and_diseases'] = pests_and_diseases
+            # Thorns or spines
+            if taxon.thorns_or_spines is not None:
+                thorns_or_spines = {}
+                thorns_or_spines['presence'] = taxon.thorns_or_spines
+                _add_references(request, thorns_or_spines, 'TOS', numbers)
+                care['thorns_or_spines'] = thorns_or_spines
+            # Toxic or allergenic
+            if taxon.toxic_or_allergenic is not None:
+                toxic_or_allergenic = {}
+                toxic_or_allergenic['presence'] = taxon.toxic_or_allergenic
+                _add_references(request, toxic_or_allergenic, 'TOA', numbers)
+                care['toxic_or_allergenic'] = toxic_or_allergenic
+            # Terrain drainage
+            if taxon.wetland or taxon.dry or taxon.terrain_details:
+                terrain = {}
+                if taxon.wetland or taxon.dry:
+                    terrain['type'] = []
+                    if taxon.wetland       :
+                        terrain['type'].append('W')
+                    if taxon.dry:
+                        terrain['type'].append('D')
+                if taxon.terrain_details:
+                    terrain['details'] = taxon.terrain_details
+                _add_references(request, terrain, 'TER', numbers)
+                care['terrain'] = terrain
+            # Add data 
+            data['care'] = care
+        # Ecology & reproduction
+        # ----------------------
+        if request.GET.has_key('ecology'):
+            ecology = {}
+            # Successional group
+            if taxon.sg_pioneer or taxon.sg_early_secondary or taxon.sg_late_secondary or taxon.sg_climax:
+                successional_group = {}
+                successional_group['classification'] = []
+                if taxon.sg_pioneer:
+                    successional_group['classification'].append('1')
+                if taxon.sg_early_secondary:
+                    successional_group['classification'].append('2')
+                if taxon.sg_late_secondary:
+                    successional_group['classification'].append('3')
+                if taxon.sg_climax:
+                    successional_group['classification'].append('4')
+                _add_references(request, successional_group, 'SUG', numbers)
+                ecology['successional_group'] = successional_group
+            # Pollinators
+            if taxon.pollinators:
+                pollinators = {}
+                pollinators['information'] = taxon.pollinators
+                _add_references(request, pollinators, 'POL', numbers)
+                ecology['pollinators'] = pollinators
+            # Flowering period
+            if taxon.fl_start or taxon.fl_end or taxon.fl_details:
+                flowering = {}
+                if taxon.fl_start or taxon.fl_end:
+                    period = {}
+                    if taxon.fl_start:
+                        period['start'] = taxon.fl_start
+                    if taxon.fl_end:
+                        period['end'] = taxon.fl_end
+                    flowering['period'] = period
+                if taxon.fl_details:
+                    flowering['details'] = taxon.fl_details
+                _add_references(request, flowering, 'FLP', numbers)
+                ecology['flowering'] = flowering
+            # Seed dispersal
+            if taxon.dt_anemochorous or taxon.dt_autochorous or taxon.dt_barochorous or taxon.dt_hydrochorous or taxon.dt_zoochorous:
+                seed_dispersal = {}
+                seed_dispersal['classification'] = []
+                if taxon.dt_anemochorous:
+                    seed_dispersal['classification'].append('1')
+                if taxon.dt_autochorous:
+                    seed_dispersal['classification'].append('2')
+                if taxon.dt_barochorous:
+                    seed_dispersal['classification'].append('3')
+                if taxon.dt_hydrochorous:
+                    seed_dispersal['classification'].append('4')
+                if taxon.dt_zoochorous:
+                    seed_dispersal['classification'].append('5')
+                _add_references(request, successional_group, 'SED', numbers)
+                ecology['seed_dispersal'] = seed_dispersal
+            # Dispersion agents
+            if taxon.dispersers:
+                dispersers = {}
+                dispersers['information'] = taxon.dispersers
+                _add_references(request, dispersers, 'DIS', numbers)
+                ecology['dispersers'] = dispersers
+            # Fruiting period
+            if taxon.fr_start or taxon.fr_end or taxon.fr_details:
+                fruiting = {}
+                if taxon.fr_start or taxon.fr_end:
+                    period = {}
+                    if taxon.fr_start:
+                        period['start'] = taxon.fr_start
+                    if taxon.fr_end:
+                        period['end'] = taxon.fr_end
+                    fruiting['period'] = period
+                if taxon.fr_details:
+                    fruiting['details'] = taxon.fr_details
+                _add_references(request, fruiting, 'FRP', numbers)
+                ecology['fruiting'] = fruiting
+            # Symbiotic association with roots
+            if taxon.symbiotic_assoc is not None or taxon.symbiotic_details:
+                symbio = {}
+                if taxon.symbiotic_assoc is not None:
+                    symbio['presence'] = taxon.symbiotic_assoc
+                if taxon.symbiotic_details:
+                    symbio['details'] = taxon.symbiotic_details
+                _add_references(request, symbio, 'SYM', numbers)
+                ecology['symbiotic_association'] = symbio
+            # Add data 
+            data['ecology'] = ecology
+        # Seedling production
+        # -------------------
+        if request.GET.has_key('seedling'):
+            seedling = {}
+            # Seed collection
+            if taxon.wetland or taxon.dry or taxon.seed_collection:
+                seed_collection = {}
+                if taxon.wetland or taxon.dry:
+                    seed_collection['type'] = []
+                    if taxon.seed_tree       :
+                        seed_collection['type'].append('T')
+                    if taxon.seed_soil:
+                        seed_collection['type'].append('S')
+                if taxon.seed_collection:
+                    seed_collection['details'] = taxon.seed_collection
+                _add_references(request, seed_collection, 'SEC', numbers)
+                seedling['seed_collection'] = seed_collection
+            # Seed type
+            if taxon.seed_type:
+                seed = {}
+                seed['type'] = taxon.seed_type
+                _add_references(request, seed, 'SET', numbers)
+                seedling['seed_type'] = seed
+            # Pre-germination treatment
+            if taxon.pg_no_need or taxon.pg_thermal or taxon.pg_chemical or taxon.pg_water or taxon.pg_mechanical or taxon.pg_combined or taxon.pg_other or taxon.pg_details:
+                pg = {}
+                if taxon.pg_no_need or taxon.pg_thermal or taxon.pg_chemical or taxon.pg_water or taxon.pg_mechanical or taxon.pg_combined or taxon.pg_other:
+                    treatment = {}
+                    if taxon.pg_no_need:
+                        treatment.append('N')
+                    if taxon.pg_thermal:
+                        treatment.append('T')
+                    if taxon.pg_chemical:
+                        treatment.append('C')
+                    if taxon.pg_water:
+                        treatment.append('I')
+                    if taxon.pg_mechanical:
+                        treatment.append('M')
+                    if taxon.pg_combined:
+                        treatment.append('X')
+                    if taxon.pg_other:
+                        treatment.append('O')
+                    pg['treatment'] = treatment
+                if taxon.pg_details:
+                    pg['details'] = taxon.pg_details
+                _add_references(request, pg, 'PGT', numbers)
+                seedling['pre_germination_treatment'] = pg
+            # Seedling production
+            if taxon.sl_seedbed or taxon.sl_containers or taxon.sl_details:
+                sp = {}
+                if taxon.sl_seedbed:
+                    sp['seedbed'] = taxon.sl_seedbed
+                if taxon.sl_containers:
+                    sp['individual_containers'] = taxon.sl_containers
+                if taxon.sl_details:
+                    sp['details'] = taxon.sl_details
+                _add_references(request, sp, 'SDL', numbers)
+                seedling['seedling_production'] = sp
+            # Germination time lapse and rate
+            if taxon.seed_gmin_time or taxon.seed_gmax_time or taxon.seed_gmin_rate or taxon.seed_gmax_rate:
+                germination = {}
+                if taxon.seed_gmin_time or taxon.seed_gmax_time:
+                    time_lapse = {}
+                    if taxon.seed_gmin_time:
+                        time_lapse['min'] = taxon.seed_gmin_time
+                    if taxon.seed_gmax_time:
+                        time_lapse['max'] = taxon.seed_gmax_time
+                    _add_references(request, time_lapse, 'GET', numbers)
+                    germination['time_lapse'] = time_lapse
+                if taxon.seed_gmin_rate or taxon.seed_gmax_rate:
+                    rate = {}
+                    if taxon.seed_gmin_rate:
+                        rate['min'] = taxon.seed_gmin_rate
+                    if taxon.seed_gmax_rate:
+                        rate['max'] = taxon.seed_gmax_rate
+                    _add_references(request, rate, 'GER', numbers)
+                    germination['rate'] = rate
+                seedling['germination'] = germination
+            # Number of seeds per weight
+            if taxon.seeds_per_weight:
+                seeds_per_weight = {'value':taxon.seeds_per_weight}
+                _add_references(request, seeds_per_weight, 'SPW', numbers)
+                seedling['seeds_per_weight'] = seeds_per_weight
+            # Light requirements
+            if taxon.light or taxon.light_details:
+                light = {}
+                if taxon.light:
+                    light['requirements'] = taxon.light
+                if taxon.light_details:
+                    light['details'] = taxon.light_details
+                _add_references(request, light, 'LIG', numbers)
+                seedling['light'] = light
+            # Add data 
+            data['seedling_production'] = seedling
+        # Silviculture
+        # ------------
+        if request.GET.has_key('silviculture'):
+            silviculture = {}
+            if taxon.wood_general_info or taxon.wood_density is not None or taxon.wood_has_mai_curve is not None or taxon.wood_has_cai_curve is not None:
+                # General information
+                if taxon.wood_general_info:
+                    silviculture['wood_information'] = taxon.wood_general_info
+                # Density
+                if taxon.wood_density is not None:
+                    silviculture['wood_density'] = taxon.wood_density
+                # Mean annual increment curve
+                if taxon.wood_has_mai_curve is not None:
+                    silviculture['has_mai_curve'] = taxon.wood_has_mai_curve
+                # Current annual increment curve
+                if taxon.wood_has_cai_curve is not None:
+                    silviculture['has_cai_curve'] = taxon.wood_has_cai_curve
+                _add_references(request, silviculture, 'WOO', numbers)
+            # Add data 
+            data['silviculture'] = silviculture
+        # References
+        # ----------
+        if request.GET.has_key('references'):
+            if len(citations) > 0:
+                dict_citations = {}
+                for ref_num, ref_text in citations:
+                    dict_citations[int(ref_num)] = ref_text
+                data['references'] = dict_citations
+        return HttpResponse(JSONEncoder(sort_keys=True, indent=4).encode(data))
+    # Normal page rendering
     c = RequestContext(request, {'taxon': taxon, 'refs': numbers, 'citations': citations, 
                                  'points': points, 'base_template':settings.BASE_TEMPLATE,
                                  'full_path': request.get_full_path(), 'help_entries':help_entries})
     possible_templates = ['my_species_page.html', 'species_page.html']
     return render_to_response( possible_templates, c )
 
-def search_species(request):
+def search_species(request, ws=False):
     _handle_language( request )
     template_params = {'base_template':settings.BASE_TEMPLATE}
     perform_query = True
@@ -677,7 +1077,8 @@ def search_species(request):
                     ids = TaxonName.objects.filter(name__icontains=name).values_list('taxon_id')
                     num_results = len( ids )
             elif num_results == 1:
-                return show_species(request, ids[0][0])
+                if not ws:
+                    return show_species(request, ids[0][0])
             qs = Taxon.objects.filter(id__in=ids)
         else:
             qs = Taxon.objects.all()
@@ -692,7 +1093,9 @@ def search_species(request):
         for k, v in request.GET.items():
             if k in ('page', 'csrfmiddlewaretoken'):
                 continue
-            get_params = get_params + '&' + k + '=' + v
+            if len(get_params) > 0:
+                get_params += '&'
+            get_params += k + '=' + v
         template_params['get_params'] = get_params
         # Advanced search filters
         if request.GET.has_key('family') and request.GET['family'] != 'NULL':
@@ -700,7 +1103,7 @@ def search_species(request):
         if request.GET.has_key('endemic'):
             qs = qs.filter(endemic=True)
         if request.GET.has_key('rare'):
-            qs = qs.filter(endemic=True)
+            qs = qs.filter(rare=True)
         # Use AND conditions for special features
         qs = _add_and_conditions(request, qs, ['h_flowers', 'h_leaves', 'h_fruits', 'h_crown', 'h_bark', 'h_seeds', 'h_wood', 'h_roots'])
         # Use OR conditions for growth rate parameters
@@ -834,7 +1237,19 @@ def search_species(request):
             return _pdf_for_species_list( qs )
         template_params['performed_query'] = True
         # Pagination
-        paginator = Paginator(qs, 25) # Show 25 items per page
+        per_page = settings.DEFAULT_PER_PAGE
+        if request.GET.has_key('per_page'):
+            per_page = request.GET.get('per_page')
+            if not isinstance( per_page, int ):
+                if per_page.isdigit():
+                    per_page = int(per_page)
+                else:
+                    per_page = settings.DEFAULT_PER_PAGE
+            if per_page > settings.MAX_PER_PAGE:
+                per_page = settings.MAX_PER_PAGE
+            elif per_page < settings.MIN_PER_PAGE:
+                per_page = settings.MIN_PER_PAGE
+        paginator = Paginator(qs, per_page)
         if ( request.GET.has_key('page') ):
             page = request.GET.get('page')
         else:
@@ -848,6 +1263,34 @@ def search_species(request):
             # If page is out of range (e.g. 9999), deliver last page of results.
             taxa = paginator.page(paginator.num_pages)
         template_params['taxa'] = taxa
+        # Web service
+        if ws:
+            if taxa.paginator.count == 0:
+                return HttpResponse(status=404)
+            from json.encoder import JSONEncoder
+            from django.core.urlresolvers import reverse
+            records = []
+            for taxon in taxa.object_list:
+                records.append({'fullname':taxon.label, 'id':taxon.id})
+            resp = HttpResponse(JSONEncoder(sort_keys=True, indent=4).encode(records))
+            # Pagination stuff
+            if taxa.number == 1:
+                resp['X-Total-Count'] = taxa.paginator.count
+            abs_uri = 'https' if request.is_secure() else 'http'
+            abs_uri += '://' + request.get_host()
+            abs_uri += reverse('app.views.search_species')
+            link = ''
+            if taxa.has_previous():
+                link = _add_link(abs_uri, link, taxa.previous_page_number(), u'prev', get_params)
+            if taxa.has_next():
+                link = _add_link(abs_uri, link, taxa.next_page_number(), u'next', get_params)
+            if taxa.number > 1:
+                link = _add_link(abs_uri, link, 1, u'first', get_params)
+            if taxa.number != taxa.end_index():
+                link = _add_link(abs_uri, link, taxa.end_index(), u'last', get_params)
+            if len(link) > 0:
+                resp['Link'] = link
+            return resp
     template_params['full_path'] = request.get_full_path()
     c = RequestContext(request, template_params)
     return render_to_response( possible_templates, c )
@@ -887,3 +1330,29 @@ def interview(request, interview_id):
     template_params['request'] = request
     c = RequestContext(request, template_params)
     return render_to_response( possible_templates, c )
+
+def ws_metadata(request):
+    'Return web service metadata'
+    from json.encoder import JSONEncoder
+    # Gather uses
+    uses = []
+    for node, info in TypeOfUse.get_annotated_list():
+        parent_id = None
+        parent = node.get_parent()
+        if parent is not None:
+            parent_id = parent.id
+        uses.append({'id':node.id, 'label':node.label, 'level':info['level'], 'parent_id': parent_id})
+    # Gather habitats
+    habitats = []
+    for node, info in Habitat.get_annotated_list():
+        parent_id = None
+        parent = node.get_parent()
+        if parent is not None:
+            parent_id = parent.id
+        habitats.append({'id':node.id, 'label':node.name, 'level':info['level'], 'parent_id': parent_id})
+    # Conservation status
+    status = ConservationStatus.objects.all().distinct('status').values_list('status', flat=True)
+    # Build response
+    meta = {'citation': u'Sistema Flora Regional - Instituto de Pesquisas Ecológicas (IPÊ)', 'name': 'Regional Flora Web Service', 'license': 'GNU AGPLv3', 'settings': {'species_pagination': {'default_per_page':settings.DEFAULT_PER_PAGE, 'max_per_page':settings.MAX_PER_PAGE, 'min_per_page':settings.MIN_PER_PAGE}}, 'dictionaries': {'crown_shape': _to_dict(CROWN_SHAPES), 'color': _to_dict(COLORS), 'root_type': _to_dict(ROOT_SYSTEMS), 'seed_type':_to_dict(SEED_TYPES), 'light_requirement':_to_dict(LIGHT_REQUIREMENTS), 'fruit_type':_to_dict(FRUIT_TYPES), 'bark_texture':_to_dict(BARK_TEXTURES), 'growth_rate':_to_dict(GROWTH_RATE), 'foliage_persistence':_to_dict(FOLIAGE_PERSISTENCE), 'trunk_alignment':_to_dict(TRUNK_ALIGNMENT), 'soil_type':_to_dict(SOIL_TYPES), 'seed_dispersal':_to_dict(SEED_DISPERSAL_TYPE), 'seed_collection':_to_dict(SEED_COLLECTION), 'pre_germination_treatment':_to_dict(PRE_GERMINATION_TREATMENT), 'use':uses, 'habitat':habitats, 'status':list(status)}}
+    return HttpResponse(JSONEncoder(sort_keys=True, indent=4).encode(meta))
+
