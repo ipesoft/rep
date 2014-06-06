@@ -927,7 +927,7 @@ def show_species(request, species_id, ws=False):
             if taxon.pg_no_need or taxon.pg_thermal or taxon.pg_chemical or taxon.pg_water or taxon.pg_mechanical or taxon.pg_combined or taxon.pg_other or taxon.pg_details:
                 pg = {}
                 if taxon.pg_no_need or taxon.pg_thermal or taxon.pg_chemical or taxon.pg_water or taxon.pg_mechanical or taxon.pg_combined or taxon.pg_other:
-                    treatment = {}
+                    treatment = []
                     if taxon.pg_no_need:
                         treatment.append('N')
                     if taxon.pg_thermal:
@@ -1356,3 +1356,9 @@ def ws_metadata(request):
     meta = {'citation': u'Sistema Flora Regional - Instituto de Pesquisas Ecológicas (IPÊ)', 'name': 'Regional Flora Web Service', 'license': 'GNU AGPLv3', 'settings': {'species_pagination': {'default_per_page':settings.DEFAULT_PER_PAGE, 'max_per_page':settings.MAX_PER_PAGE, 'min_per_page':settings.MIN_PER_PAGE}}, 'dictionaries': {'crown_shape': _to_dict(CROWN_SHAPES), 'color': _to_dict(COLORS), 'root_type': _to_dict(ROOT_SYSTEMS), 'seed_type':_to_dict(SEED_TYPES), 'light_requirement':_to_dict(LIGHT_REQUIREMENTS), 'fruit_type':_to_dict(FRUIT_TYPES), 'bark_texture':_to_dict(BARK_TEXTURES), 'growth_rate':_to_dict(GROWTH_RATE), 'foliage_persistence':_to_dict(FOLIAGE_PERSISTENCE), 'trunk_alignment':_to_dict(TRUNK_ALIGNMENT), 'soil_type':_to_dict(SOIL_TYPES), 'seed_dispersal':_to_dict(SEED_DISPERSAL_TYPE), 'seed_collection':_to_dict(SEED_COLLECTION), 'pre_germination_treatment':_to_dict(PRE_GERMINATION_TREATMENT), 'use':uses, 'habitat':habitats, 'status':list(status)}}
     return HttpResponse(JSONEncoder(sort_keys=True, indent=4).encode(meta))
 
+def ws_info(request):
+    'Web service documentation'
+    _handle_language( request )
+    c = RequestContext(request, {'base_template':settings.BASE_TEMPLATE})
+    possible_templates = ['my_ws_info.html', 'ws_info.html']
+    return render_to_response( possible_templates, c )

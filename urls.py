@@ -36,6 +36,7 @@ urlpatterns = patterns('',
     url(r'^docs/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.PDF_ROOT,}),
     # web service
     url(r'^ws/1.0/?$', 'app.views.ws_metadata'),
+    url(r'^ws/1.0/info$', 'app.views.ws_info'),
     url(r'^ws/1.0/sp/?$', 'app.views.search_species', {'ws': True,}),
     url(r'^ws/1.0/sp/(?P<species_id>\d+)/?$', 'app.views.show_species', {'ws': True,}),
     # Help content

@@ -1,0 +1,824 @@
+{% extends base_template %}
+{% load i18n %}
+{% block content %}
+<h1>{% trans "Regional Flora Web Service Interface" %}</h1>
+<div id="ws">
+<p>Species data stored in the Regional Flora database can be searched and retrieved by other programs through a specific Web Service interface. The interface follows the REST pattern, with all requests specified as simple URLs accessed through HTTP GET with a number of parameters. Responses are always returned in JSON format with strings encoded in UTF-8. All requests start with the "<b>/ws/1.0/</b>" prefix.</p>
+
+<h2>Web service metadata</h2>
+
+<p>Metadata about the web service can be retrieved by calling the root address:</p>
+
+<p><a href="/ws/1.0/">/ws/1.0/</a></p>
+
+<p>Metadata response includes general information about the web service, such as name, citation, license, settings and accepted values for search parameters with controlled vocabulary:</p>
+
+<pre>
+{
+    "license": "GNU AGPLv3", 
+    "name": "Regional Flora Web Service", 
+    "settings": {
+        "species_pagination": {
+            "default_per_page": 25, 
+            "max_per_page": 100, 
+            "min_per_page": 10
+        }
+    },
+    "dictionaries": {
+        "color": {
+            1: "white", 
+            2: "red", 
+            3: "yellow"
+        }
+    }
+}
+</pre>
+
+<h2>Searching and listing species</h2>
+
+<p>Species can be searched or listed by appending "<b>/sp/</b>" to the root URL and using any of the optional search parameters. To start listing all species, simply use:</p>
+
+<p><a href="/ws/1.0/sp">/ws/1.0/sp</a></p>
+
+<p>The number of records returned can be specified with the "<b>per_page</b>" parameter:</p>
+
+<p><a href="/ws/1.0/sp?per_page=3">/ws/1.0/sp?per_page=3</a></p>
+
+<p>The "<b>per_page</b>" parameter must be a number between the "<b>min_per_page</b>" and "<b>max_per_page</b>" values indicated on the web service metadata. When "per_page" is not specified, the "<b>default_per_page</b>" value is used. The next pages can be fetched using the "<b>page</b>" parameter.</p>
+
+<p>Search response will be an array of records, each record containing the species full name and id, such as:</p>
+
+<pre>
+[
+    {
+        "fullname": "Actinostemon klotzschii (Didr.) Pax", 
+        "id": 17
+    }, 
+    {
+        "fullname": "Allophylus edulis (A.St.-Hil. et al.) Hieron. ex Niederl.", 
+        "id": 18
+    }, 
+    {
+        "fullname": "Amaioua intermedia Mart. ex Schult. & Schult.f.", 
+        "id": 19
+    }
+]
+</pre>
+
+<p>Pagination links are included in the <b>Link</b> header so that clients don't need to build links during data harvesting, such as:</p>
+
+<pre>
+Link: </ws/1.0/sp?page=2>; rel="next",</ws/1.0/page=25>; rel="last"
+</pre>
+
+<p>The possible "<b>rel</b>" values are:</p>
+
+<table>
+<tr><td>next</td><td>Shows the URL of the immediate next page of results.</td></tr>
+<tr><td>last</td><td>Shows the URL of the last page of results.</td></tr>
+<tr><td>first</td><td>Shows the URL of the first page of results.</td></tr>
+<tr><td>prev</td><td>Shows the URL of the immediate previous page of results.</td></tr>
+</table>
+
+<h3>Filters</h3>
+
+<h4>By recommended use</h4>
+
+<p>The following parameters can be used to filter species by recommended use. Presence of the parameter - regardless its value - is enough to activate the filter.</p>
+
+<table>
+<tr><th>parameter</th><th>recommended use</th></tr>
+<tr><td>restor</td><td>Restoration</td></tr>
+<tr><td>urban</td><td>Urban forestry</td></tr>
+<tr><td>silv</td><td>Silviculture</td></tr>
+</table>
+
+<p>Examples:</p>
+
+<p>Species recommended for silviculture: <a href="/ws/1.0/sp?silv">/ws/1.0/sp?silv</a></p>
+
+<p>Species recommended for silviculture and urban forestry: <a href="/ws/1.0/sp?silv&urban">/ws/1.0/sp?silv&urban</a></p>
+
+<h4>By species name</h4>
+
+<p>Species can also be searched by name using the "<b>name</b>" parameter. In this case, searches are performed against scientific names, popular names and synonyms. The search engine initially tries an exact match. Upon failure, then it tries a partial match with the beginning of all names. If it fails again, then it tries a partial match with any part of all names.</p>
+
+<p>Example:</p>
+
+<p><a href="/ws/1.0/sp?name=casearia">/ws/1.0/sp?name=casearia</a></p>
+
+<h4>Other filters</h4>
+
+<table>
+<tr><th>filter</th><th>parameter</th><th>description</th><th>accepted values</th><th>notes</th></tr>
+<tr>
+  <td>Family</td>
+  <td>family</td>
+  <td>Species family.</td>
+  <td>string (complete family name)</td>
+  <td></td>
+</tr>
+<tr>
+  <td>Endemism</td>
+  <td>endemic</td>
+  <td>If the species is considered endemic.</td>
+  <td>- (presence of the parameter)</td>
+  <td></td>
+</tr>
+<tr>
+  <td>Rarity</td>
+  <td>rare</td>
+  <td>If the species is considered rare.</td>
+  <td>- (presence of the parameter)</td>
+  <td></td>
+</tr>
+<tr>
+  <td rowspan="8">Special features</td>
+  <td>h_flowers</td>
+  <td>If flowers are considered a special feature.</td>
+  <td>- (presence of the parameter)</td>
+  <td rowspan="8">joined by AND</td>
+</tr>
+<tr>
+  <td>h_leaves</td>
+  <td>If leaves are considered a special feature.</td>
+  <td>- (presence of the parameter)</td>
+</tr>
+<tr>
+  <td>h_fruits</td>
+  <td>If fruits are considered a special feature.</td>
+  <td>- (presence of the parameter)</td>
+</tr>
+<tr>
+  <td>h_crown</td>
+  <td>If crown is considered a special feature.</td>
+  <td>- (presence of the parameter)</td>
+</tr>
+<tr>
+  <td>h_bark</td>
+  <td>If bark is considered a special feature.</td>
+  <td>- (presence of the parameter)</td>
+</tr>
+<tr>
+  <td>h_seeds</td>
+  <td>If seeds are considered a special feature.</td>
+  <td>- (presence of the parameter)</td>
+</tr>
+<tr>
+  <td>h_wood</td>
+  <td>If wood is considered a special feature.</td>
+  <td>- (presence of the parameter)</td>
+</tr>
+<tr>
+  <td>h_roots</td>
+  <td>If roots are considered a special feature.</td>
+  <td>- (presence of the parameter)</td>
+</tr>
+<tr>
+  <td rowspan="3">Growth</td>
+  <td>gr_slow</td>
+  <td>Slow.</td>
+  <td>- (presence of the parameter)</td>
+  <td rowspan="3">joined by OR</td>
+</tr>
+<tr>
+  <td>gr_moderate</td>
+  <td>Moderate.</td>
+  <td>- (presence of the parameter)</td>
+</tr>
+<tr>
+  <td>gr_fast</td>
+  <td>Fast.</td>
+  <td>- (presence of the parameter)</td>
+</tr>
+<tr>
+  <td rowspan="5">Trunk alignment</td>
+  <td>tr_straight</td>
+  <td>Straight.</td>
+  <td>- (presence of the parameter)</td>
+  <td rowspan="5">joined by OR</td>
+</tr>
+<tr>
+  <td>tr_sl_inclined</td>
+  <td>Slightly inclined.</td>
+  <td>- (presence of the parameter)</td>
+</tr>
+<tr>
+  <td>tr_inclined</td>
+  <td>Inclined.</td>
+  <td>- (presence of the parameter)</td>
+</tr>
+<tr>
+  <td>tr_sl_crooked</td>
+  <td>Slightly crooked.</td>
+  <td>- (presence of the parameter)</td>
+</tr>
+<tr>
+  <td>tr_crooked</td>
+  <td>Crooked.</td>
+  <td>- (presence of the parameter)</td>
+</tr>
+<tr>
+  <td rowspan="3">Foliage persistence</td>
+  <td>fo_evergreen</td>
+  <td>Evergreen.</td>
+  <td>- (presence of the parameter)</td>
+  <td rowspan="3">joined by OR</td>
+</tr>
+<tr>
+  <td>fo_semideciduous</td>
+  <td>Semideciduous.</td>
+  <td>- (presence of the parameter)</td>
+</tr>
+<tr>
+  <td>fo_deciduous</td>
+  <td>Deciduous.</td>
+  <td>- (presence of the parameter)</td>
+</tr>
+<tr>
+  <td rowspan="2">Height</td>
+  <td>min_height</td>
+  <td>Minimum height (m).</td>
+  <td>numeric</td>
+  <td></td>
+</tr>
+<tr>
+  <td>max_height</td>
+  <td>Maximum height (m).</td>
+  <td>numeric</td>
+  <td></td>
+</tr>
+<tr>
+  <td rowspan="2">DBH</td>
+  <td>min_dbh</td>
+  <td>Minimum DBH (cm).</td>
+  <td>numeric</td>
+  <td></td>
+</tr>
+<tr>
+  <td>max_dbh</td>
+  <td>Maximum DBH (cm).</td>
+  <td>numeric</td>
+</tr>
+<tr>
+  <td rowspan="2">Crown diameter</td>
+  <td>cr_min_diameter</td>
+  <td>Minimum crown diameter (m).</td>
+  <td>numeric</td>
+  <td></td>
+</tr>
+<tr>
+  <td>cr_max_diameter</td>
+  <td>Maximum crown diameter (m).</td>
+  <td>numeric</td>
+  <td></td>
+</tr>
+<tr>
+  <td rowspan="2">Germination rate</td>
+  <td>seed_gmin_rate</td>
+  <td>Minimum rate (%).</td>
+  <td>numeric</td>
+  <td></td>
+</tr>
+<tr>
+  <td>seed_gmax_rate</td>
+  <td>Maximum rate (%).</td>
+  <td>numeric</td>
+  <td></td>
+</tr>
+<tr>
+  <td>Crown shape</td>
+  <td>cr_shape</td>
+  <td>Desired crown shape.</td>
+  <td>character</td>
+  <td>single value (see "crown_shape" in the dictionaries metadata for valid values)</td>
+</tr>
+<tr>
+  <td>Flower color</td>
+  <td>color</td>
+  <td>Desired flower color.</td>
+  <td>digit</td>
+  <td>single value (see "color" in the dictionaries metadata for valid values)</td>
+</tr>
+<tr>
+  <td>Root system</td>
+  <td>r_type</td>
+  <td>Desired root type.</td>
+  <td>character</td>
+  <td>single value (see "root_type" in the dictionaries metadata for valid values)</td>
+</tr>
+<tr>
+  <td>Seed type</td>
+  <td>s_type</td>
+  <td>Desired seed type.</td>
+  <td>character</td>
+  <td>single value (see "seed_type" in the dictionaries metadata for valid values)</td>
+</tr>
+<tr>
+  <td>Light requirements</td>
+  <td>light</td>
+  <td>Desired light requirements.</td>
+  <td>character</td>
+  <td>single value (see "light_requirement" in the dictionaries metadata for valid values)</td>
+</tr>
+<tr>
+  <td rowspan="2">Flowering period</td>
+  <td>fl_start</td>
+  <td>Start of the flowering period.</td>
+  <td>integer</td>
+  <td></td>
+</tr>
+<tr>
+  <td>fl_end</td>
+  <td>End of the flowering period.</td>
+  <td>integer</td>
+  <td>
+</tr>
+<tr>
+  <td rowspan="2">Fruiting period</td>
+  <td>fr_start</td>
+  <td>Start of the fruiting period.</td>
+  <td>integer</td>
+  <td></td>
+</tr>
+<tr>
+  <td>fr_end</td>
+  <td>End of the fruiting period.</td>
+  <td>integer</td>
+  <td>
+</tr>
+<tr>
+  <td>Pruning</td>
+  <td>pruning</td>
+  <td>Requires pruning.</td>
+  <td>boolean</td>
+  <td>0 or 1</td>
+</tr>
+<tr>
+  <td>Pollinators</td>
+  <td>pollinators</td>
+  <td>Attracts pollinators.</td>
+  <td>boolean</td>
+  <td>0 or 1</td>
+</tr>
+<tr>
+  <td>Diseases</td>
+  <td>diseases</td>
+  <td>Vulnerable to pests or diseases.</td>
+  <td>boolean</td>
+  <td>0 or 1</td>
+</tr>
+<tr>
+  <td>Thorns</td>
+  <td>thorns</td>
+  <td>Contains thorns or spines.</td>
+  <td>boolean</td>
+  <td>0 or 1</td>
+</tr>
+<tr>
+  <td>Toxic</td>
+  <td>toxic</td>
+  <td>Is toxic or allergenic.</td>
+  <td>boolean</td>
+  <td>0 or 1</td>
+</tr>
+<tr>
+  <td rowspan="4">Successional group</td>
+  <td>sg_pioneer</td>
+  <td>Pioneer.</td>
+  <td>- (presence of the parameter)</td>
+  <td rowspan="4">joined by OR</td>
+</tr>
+<tr>
+  <td>sg_early_secondary</td>
+  <td>Early secondary.</td>
+  <td>- (presence of the parameter)</td>
+</tr>
+<tr>
+  <td>sg_late_secondary</td>
+  <td>Late secondary.</td>
+  <td>- (presence of the parameter)</td>
+</tr>
+<tr>
+  <td>sg_climax</td>
+  <td>Climax.</td>
+  <td>- (presence of the parameter)</td>
+</tr>
+<tr>
+  <td rowspan="5">Seed dispersal</td>
+  <td>dt_anemochorous</td>
+  <td>Anemochorous.</td>
+  <td>- (presence of the parameter)</td>
+  <td rowspan="5">joined by OR</td>
+</tr>
+<tr>
+  <td>dt_autochorous</td>
+  <td>Autochorous.</td>
+  <td>- (presence of the parameter)</td>
+</tr>
+<tr>
+  <td>dt_barochorous</td>
+  <td>Barochorous.</td>
+  <td>- (presence of the parameter)</td>
+</tr>
+<tr>
+  <td>dt_hydrochorous</td>
+  <td>Hydrochorous.</td>
+  <td>- (presence of the parameter)</td>
+</tr>
+<tr>
+  <td>dt_zoochorous</td>
+  <td>Zoochorous.</td>
+  <td>- (presence of the parameter)</td>
+</tr>
+<tr>
+  <td rowspan="2">Terrain drainage</td>
+  <td>wetland</td>
+  <td>Adapted to wetlands.</td>
+  <td>- (presence of the parameter)</td>
+  <td rowspan="2">joined by OR</td>
+</tr>
+<tr>
+  <td>dry</td>
+  <td>Adapted to dry terrains.</td>
+  <td>- (presence of the parameter)</td>
+</tr>
+<tr>
+  <td rowspan="7">Pre-germination treatment</td>
+  <td>pg_no_need</td>
+  <td>No need for treatment.</td>
+  <td>- (presence of the parameter)</td>
+  <td rowspan="7">joined by OR</td>
+</tr>
+<tr>
+  <td>pg_thermal</td>
+  <td>Thermal treatment.</td>
+  <td>- (presence of the parameter)</td>
+</tr>
+<tr>
+  <td>pg_chemical</td>
+  <td>Chemical treatment.</td>
+  <td>- (presence of the parameter)</td>
+</tr>
+<tr>
+  <td>pg_water</td>
+  <td>Water treatment.</td>
+  <td>- (presence of the parameter)</td>
+</tr>
+<tr>
+  <td>pg_mechanical</td>
+  <td>Mechanical treatment.</td>
+  <td>- (presence of the parameter)</td>
+</tr>
+<tr>
+  <td>pg_combined</td>
+  <td>Combined methods.</td>
+  <td>- (presence of the parameter)</td>
+</tr>
+<tr>
+  <td>pg_other</td>
+  <td>Other methods.</td>
+  <td>- (presence of the parameter)</td>
+</tr>
+<tr>
+  <td>Symbiotic association</td>
+  <td>symb_assoc</td>
+  <td>Has symbiotic association.</td>
+  <td>boolean</td>
+  <td>0 or 1</td>
+</tr>
+<tr>
+  <td>Specific uses</td>
+  <td>uses</td>
+  <td>Documented uses for the species (see "use" in the dictionaries metadata for valid ids).</td>
+  <td>digit</td>
+  <td>multiple parameters accepted</td>
+</tr>
+<tr>
+  <td>Habitat</td>
+  <td>habitats</td>
+  <td>Species habitats (see "habitat" in the dictionaries  metadata for valid ids).</td>
+  <td>digit</td>
+  <td>multiple parameters accepted</td>
+</tr>
+<tr>
+  <td rowspan="2">Wood density</td>
+  <td>min_density</td>
+  <td>Minimum density (kg/m3).</td>
+  <td>numeric</td>
+  <td></td>
+</tr>
+<tr>
+  <td>max_density</td>
+  <td>Maximum density (kg/m3).</td>
+  <td>numeric</td>
+  <td></td>
+</tr>
+<tr>
+  <td>MAI curve</td>
+  <td>has_mai_curve</td>
+  <td>Has MAI curve.</td>
+  <td>boolean</td>
+  <td>0 or 1</td>
+</tr>
+<tr>
+  <td>Conservation status</td>
+  <td>status</td>
+  <td>Conservation status.</td>
+  <td>text</td>
+  <td>exact match (see "conservation_status" in the dictionaries metadata for valid values).</td>
+</tr>
+</table>
+
+<h2>Fetching more details about a species</h2>
+
+<p>More details about a particular species can be retrieved by appending the species id to the URL, such as:</p>
+
+<p><a href="/ws/1.0/sp/17">/ws/1.0/sp/17</a></p>
+
+<p>By default, only a basic subset of the species data is returned, including full name, common names, synonyms and family:</p>
+
+<pre>
+{
+    "common_names": [
+        "Folha-fedorenta"
+    ], 
+    "family": "Euphorbiaceae", 
+    "fullname": "Actinostemon klotzschii (Didr.) Pax", 
+    "synonyms": [
+        "Actinostemon angustifolius (Müll.Arg.) Pax", 
+        "Actinostemon estrellensis Pax"
+    ]
+}
+</pre>
+
+<p>If there is no species associated with the id an HTTP 404 code (not found) is returned.
+To include additional data for the species, additional parameters can be used, as explained in the next sections.</p>
+
+<h3>Occurrence points</h3>
+
+<p>Use the "<b>points</b>" parameter to include species occurrence points. Example:</p>
+
+<p>Basic data and species occurrence points: <a href="/ws/1.0/sp/18?points">/ws/1.0/sp/18?points</a></p>
+
+<pre>
+{
+    "family": "Sapindaceae", 
+    "fullname": "Allophylus edulis (A.St.-Hil. et al.) Hieron. ex Niederl.", 
+    "points": [
+        {
+            "label": "Parcela 1", 
+            "x": -46.50867222222222, 
+            "y": -23.330716666666667
+        }, 
+        {
+            "label": "Parcela 4", 
+            "x": -46.489625000000004, 
+            "y": -23.12713888888889
+        }, 
+        {
+            "label": "Parcela 5", 
+            "x": -46.528216666666665, 
+            "y": -23.168808333333335
+        }, 
+    ]
+}
+</pre>
+
+<h3>General features</h3>
+
+<p>Use the "<b>features</b>" parameter to include general features about the species. Example:</p>
+
+<p>Basic data and species general features: <a href="/ws/1.0/sp/18?features">/ws/1.0/sp/18?features</a></p>
+
+<pre>
+{
+    "family": "Sapindaceae", 
+    "features": {
+        "bark": {
+            "texture": "R"
+        }, 
+        "crown": {
+            "diameter": {
+                "max": 7, 
+                "min": 4
+            }, 
+            "shape": {
+                "classification": "S"
+            }
+        }, 
+        "flower": {
+            "color": 1
+        }, 
+        "fruit": {
+            "type": "B"
+        }, 
+        "growth": {
+            "details": "Aos 12 meses de idade pode alcan\u00e7ar 30-50 cm de altura.", 
+            "rate": [
+                "S", 
+                "M"
+            ]
+        }, 
+        "leaves": {
+            "foliage_persistence": [
+                "S"
+            ]
+        }, 
+        "root": {
+            "type": "T"
+        }, 
+        "size": {
+            "dbh": {
+                "max": "30.0", 
+                "min": "20.0"
+            }, 
+            "height": {
+                "max": "20.0", 
+                "min": "6.0"
+            }
+        }, 
+        "trunk": {
+            "alignment": [
+                "5"
+            ]
+        }
+    },
+    "fullname": "Allophylus edulis (A.St.-Hil. et al.) Hieron. ex Niederl."
+}
+</pre>
+
+<h3>Care</h3>
+
+<p>Use the "<b>care</b>" parameter to include information about particular care with the species. Example:</p>
+
+<p>Basic data and information about care: <a href="/ws/1.0/sp/18?care">/ws/1.0/sp/18?care</a></p>
+
+<pre>
+{
+    "care": {
+        "pruning": {
+            "indication": true
+        }
+    }, 
+    "family": "Sapindaceae", 
+    "fullname": "Allophylus edulis (A.St.-Hil. et al.) Hieron. ex Niederl."
+}
+</pre>
+
+<h3>Ecology & Reproduction</h3>
+
+<p>Use the "<b>ecology</b>" parameter to include information about ecology and reproduction. Example:</p>
+
+<p>Basic data and information about ecology: <a href="/ws/1.0/sp/18?ecology">/ws/1.0/sp/18?ecology</a></p>
+
+<pre>
+{
+    "ecology": {
+        "dispersers": {
+            "information": "Aves/ bugio (Alouatta guariba)"
+        }, 
+        "flowering": {
+            "period": {
+                "end": 9, 
+                "start": 7
+            }
+        }, 
+        "fruiting": {
+            "period": {
+                "end": 12, 
+                "start": 10
+            }
+        }, 
+        "pollinators": {
+            "information": "Abelhas"
+        }, 
+        "seed_dispersal": {
+            "classification": [
+                "2", 
+                "5"
+            ]
+        }, 
+        "successional_group": {
+            "classification": [
+                "1", 
+                "2"
+            ]
+        }
+    },
+    "family": "Sapindaceae", 
+    "fullname": "Allophylus edulis (A.St.-Hil. et al.) Hieron. ex Niederl."
+}
+</pre>
+
+<h3>Seedling Production</h3>
+
+<p>Use the "<b>seedling</b>" parameter to include information about seedling production. Example:</p>
+
+<p>Basic data and information about seedling production: <a href="/ws/1.0/sp/18?seedling">/ws/1.0/sp/18?seedling</a></p>
+
+<pre>
+{
+    "family": "Sapindaceae", 
+    "fullname": "Allophylus edulis (A.St.-Hil. et al.) Hieron. ex Niederl."
+    "seedling_production": {
+        "germination": {
+            "rate": {
+                "max": 96, 
+                "min": 44
+            }, 
+            "time_lapse": {
+                "max": 45, 
+                "min": 8
+            }
+        }, 
+        "light": {
+            "requirements": "S"
+        }, 
+        "pre_germination_treatment": {
+            "treatment": [
+                "N"
+            ]
+        }, 
+        "seed_collection": {
+            "details": "Momento de colheita: quando iniciarem queda espont\u00e2nea."
+        }, 
+        "seed_type": {
+            "type": "O"
+        }, 
+        "seedling_production": {
+            "details": "Semeadura direta das sementes ou dos frutos.", 
+            "individual_containers": true, 
+            "seedbed": true
+        }, 
+        "seeds_per_weight": {
+            "value": 400
+        }
+    }
+}
+</pre>
+
+<h3>Silviculture</h3>
+
+<p>Use the "<b>silviculture</b>" parameter to include information about silviculture. Example:</p>
+
+<p>Basic data and information about silviculture: <a href="/ws/1.0/sp/18?silviculture">/ws/1.0/sp/18?silviculture</a></p>
+
+<pre>
+{
+    "family": "Sapindaceae", 
+    "fullname": "Allophylus edulis (A.St.-Hil. et al.) Hieron. ex Niederl."
+    "silviculture": {
+        "has_mai_curve": true, 
+        "wood_density": 1.5, 
+        "wood_information": "(detalhes sobre a madeira)"
+    }
+}
+</pre>
+
+<h3>Bibliographic References</h3>
+
+<p>Use the "<b>references</b>" parameter to include bibliographic references. Example:</p>
+
+<p>Basic data, information about care and bibliographic references: <a href="/ws/1.0/sp/18?care&references">/ws/1.0/sp/18?care&references</a></p>
+
+<pre>
+{
+    "care": {
+        "pruning": {
+            "indication": true, 
+            "references": [
+                "1"
+            ]
+        }
+    },
+    "family": "Sapindaceae", 
+    "fullname": "Allophylus edulis (A.St.-Hil. et al.) Hieron. ex Niederl."
+    "references": {
+        "1": "Esp\u00e9cies Arb\u00f3reas Brasileiras, v.2", 
+        "2": "Manual T\u00e9cnico de Arboriza\u00e7\u00e3o Urbana (RS)", 
+        "3": "Manual T\u00e9cnico de Arboriza\u00e7\u00e3o Urbana de S\u00e3o Paulo", 
+        "4": "KUHLMAN, 1975", 
+        "5": "Plantas da Floresta Atl\u00e2ntica", 
+        "6": "Backes; Irgang, 2004", 
+        "7": "ENGEL; POGGIANI, 1985", 
+        "8": "Gimenez; Moglia, 2003", 
+        "9": "Campos, 2007", 
+        "10": "POGGIANI, 1985", 
+        "11": "AQUILA; AZAMBUJA, 1996", 
+        "12": "EIBL et al., 1994", 
+        "13": "Sanchonete, 1989", 
+        "14": "Publica\u00e7\u00e3o Biondi", 
+        "15": "Lorenzi v.1", 
+        "16": "anexo Resolu\u00e7\u00e3o SMA 08", 
+        "17": "Circular t\u00e9cnica 127, Embrapa Florestas", 
+        "18": "Rev. Arv. 30, n.6", 
+        "19": "LORENZI e SALIS et al., 1994", 
+        "20": "VACCARO et al., 1999", 
+        "21": "Reitz, 1980"
+    }
+}
+</pre>
+
+</div>
+{% endblock content %}
