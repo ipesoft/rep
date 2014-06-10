@@ -1,5 +1,6 @@
 from django.conf.urls.defaults import patterns, include, url
 from django.conf import settings
+from django.conf.urls.i18n import i18n_patterns
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -35,10 +36,7 @@ urlpatterns = patterns('',
     url(r'^faq/?$', 'app.views.faq'),
     url(r'^docs/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.PDF_ROOT,}),
     # web service
-    url(r'^ws/1.0/?$', 'app.views.ws_metadata'),
     url(r'^ws/1.0/info$', 'app.views.ws_info'),
-    url(r'^ws/1.0/sp/?$', 'app.views.search_species', {'ws': True,}),
-    url(r'^ws/1.0/sp/(?P<species_id>\d+)/?$', 'app.views.show_species', {'ws': True,}),
     # Help content
     url(r'^help/(?P<content_id>[-\w\d]+)/?$', 'app.views.show_help'),
     # Uncomment the admin/doc line below to enable admin documentation:
@@ -48,6 +46,15 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^tinymce/', include('tinymce.urls')),
 )
+
+wspatterns = i18n_patterns('',
+    # web service
+    url(r'^ws/1.0/?$', 'app.views.ws_metadata'),
+    url(r'^ws/1.0/sp/?$', 'app.views.search_species', {'ws': True,}),
+    url(r'^ws/1.0/sp/(?P<species_id>\d+)/?$', 'app.views.show_species', {'ws': True,}),
+)
+
+urlpatterns += wspatterns
 
 try:
     import my_urls

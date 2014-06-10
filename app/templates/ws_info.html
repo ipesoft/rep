@@ -3,7 +3,10 @@
 {% block content %}
 <h1>{% trans "Regional Flora Web Service Interface" %}</h1>
 <div id="ws">
-<p>Species data stored in the Regional Flora database can be searched and retrieved by other programs through a specific Web Service interface. The interface follows the REST pattern, with all requests specified as simple URLs accessed through HTTP GET with a number of parameters. Responses are always returned in JSON format with strings encoded in UTF-8. All requests start with the "<b>/ws/1.0/</b>" prefix.</p>
+
+<h2>General Information</h2>
+
+<p>Species data stored into the Regional Flora database can be searched and retrieved by external programs through a specific Web Service interface. This page describes such interface and is therefore targeted to web developers. The interface follows the REST pattern, with all requests specified as simple URLs accessed through HTTP GET with a number of parameters. Responses are always returned in JSON format with strings encoded in UTF-8. All requests start with the "<b>/ws/1.0/</b>" prefix, preceded or not by a language code.</p>
 
 <h2>Web service metadata</h2>
 
@@ -11,7 +14,7 @@
 
 <p><a href="/ws/1.0/">/ws/1.0/</a></p>
 
-<p>Metadata response includes general information about the web service, such as name, citation, license, settings and accepted values for search parameters with controlled vocabulary:</p>
+<p>Metadata response includes general information about the web service, such as name, citation, license, settings, available languages and dictionaries containing controlled vocabulary that can be used on searches or referenced by search results:</p>
 
 <pre>
 {
@@ -30,9 +33,24 @@
             2: "red", 
             3: "yellow"
         }
-    }
-}
+    },
+    "languages": {
+        "en": "English", 
+        "pt-br": "Brazilian Portuguese"
+    },}
 </pre>
+
+<h3>Languages</h3>
+
+<p>Most of the content returned by the web service is associated with a language. Such content can in principle be expressed in any of the available languages indicated by the metadata response. To retrieve content in a specific language, prepend the language code to the root URL, such as:</p>
+
+<p><a href="/en/ws/1.0/">/en/ws/1.0/</a></p>
+
+<p>If no language is specified, the service returns content in the default language. Please note that if a particular content is not translated in the system, it will always be returned in the default language. In this case, users can contact the system administrators asking for the missing translations.</p>
+
+<h3>Identifiers</h3>
+
+<p>Many identifiers are returned by the web service - some of them are hard coded into the system, others are primary keys that are automatically assigned to new content. In both cases, the system itself does not ensure that identifiers may remain the same over the time, since this is essentially a management matter (records can be removed, categories can be changed, etc.). For this reason, external applications are recommended to either interact with the service dynamically (always getting content on-the-fly), or, if they wish to work with local copies, then avoid storing only partial content.</p>
 
 <h2>Searching and listing species</h2>
 
@@ -44,23 +62,26 @@
 
 <p><a href="/ws/1.0/sp?per_page=3">/ws/1.0/sp?per_page=3</a></p>
 
-<p>The "<b>per_page</b>" parameter must be a number between the "<b>min_per_page</b>" and "<b>max_per_page</b>" values indicated on the web service metadata. When "per_page" is not specified, the "<b>default_per_page</b>" value is used. The next pages can be fetched using the "<b>page</b>" parameter.</p>
+<p>The "<b>per_page</b>" parameter must be a number between the "<b>min_per_page</b>" and "<b>max_per_page</b>" values indicated in the web service metadata. When "per_page" is not specified, the "<b>default_per_page</b>" value is used. Next pages can be fetched using the "<b>page</b>" parameter.</p>
 
-<p>Search response will be an array of records, each record containing the species full name and id, such as:</p>
+<p>Search responses are always an array of records, each record containing species full name, id and link to its web page on the system, such as:</p>
 
 <pre>
 [
     {
         "fullname": "Actinostemon klotzschii (Didr.) Pax", 
-        "id": 17
+        "id": 17,
+        "link": "http://flora.ipe.org.br/sp/17"
     }, 
     {
         "fullname": "Allophylus edulis (A.St.-Hil. et al.) Hieron. ex Niederl.", 
-        "id": 18
+        "id": 18,
+        "link": "http://flora.ipe.org.br/sp/18"
     }, 
     {
         "fullname": "Amaioua intermedia Mart. ex Schult. & Schult.f.", 
-        "id": 19
+        "id": 19,
+        "link": "http://flora.ipe.org.br/sp/19"
     }
 ]
 </pre>
@@ -68,7 +89,8 @@
 <p>Pagination links are included in the <b>Link</b> header so that clients don't need to build links during data harvesting, such as:</p>
 
 <pre>
-Link: </ws/1.0/sp?page=2>; rel="next",</ws/1.0/page=25>; rel="last"
+Link: &lt;http://flora.ipe.org.br/ws/1.0/sp?page=2&gt;; rel="next",
+      &lt;http://flora.ipe.org.br/ws/1.0/sp?page=25&gt;; rel="last"
 </pre>
 
 <p>The possible "<b>rel</b>" values are:</p>

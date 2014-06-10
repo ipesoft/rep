@@ -1269,16 +1269,17 @@ def search_species(request, ws=False):
                 return HttpResponse(status=404)
             from json.encoder import JSONEncoder
             from django.core.urlresolvers import reverse
+            abs_uri = 'https' if request.is_secure() else 'http'
+            abs_uri += '://' + request.get_host()
+            abs_uri += reverse('app.views.search_species')
+            sp_base_url = abs_uri[:abs_uri.index('/', 10)] + '/sp/'
             records = []
             for taxon in taxa.object_list:
-                records.append({'fullname':taxon.label, 'id':taxon.id})
+                records.append({'fullname':taxon.label, 'id':taxon.id, 'link':sp_base_url+str(taxon.id)})
             resp = HttpResponse(JSONEncoder(sort_keys=True, indent=4).encode(records))
             # Pagination stuff
             if taxa.number == 1:
                 resp['X-Total-Count'] = taxa.paginator.count
-            abs_uri = 'https' if request.is_secure() else 'http'
-            abs_uri += '://' + request.get_host()
-            abs_uri += reverse('app.views.search_species')
             link = ''
             if taxa.has_previous():
                 link = _add_link(abs_uri, link, taxa.previous_page_number(), u'prev', get_params)
@@ -1335,25 +1336,29 @@ def ws_metadata(request):
     'Return web service metadata'
     from json.encoder import JSONEncoder
     # Gather uses
-    uses = []
+    uses = {}
     for node, info in TypeOfUse.get_annotated_list():
         parent_id = None
         parent = node.get_parent()
         if parent is not None:
             parent_id = parent.id
-        uses.append({'id':node.id, 'label':node.label, 'level':info['level'], 'parent_id': parent_id})
+        uses[node.id] = {'label':node.label, 'level':info['level'], 'parent_id': str(parent_id)}
     # Gather habitats
-    habitats = []
+    habitats = {}
     for node, info in Habitat.get_annotated_list():
         parent_id = None
         parent = node.get_parent()
         if parent is not None:
             parent_id = parent.id
-        habitats.append({'id':node.id, 'label':node.name, 'level':info['level'], 'parent_id': parent_id})
+        habitats[node.id] = {'label':node.name, 'level':info['level'], 'parent_id': str(parent_id)}
     # Conservation status
     status = ConservationStatus.objects.all().distinct('status').values_list('status', flat=True)
+    # Languages
+    languages = {}
+    for lang in settings.LANGUAGES:
+        languages[lang[0]] = lang[1]
     # Build response
-    meta = {'citation': u'Sistema Flora Regional - Instituto de Pesquisas Ecológicas (IPÊ)', 'name': 'Regional Flora Web Service', 'license': 'GNU AGPLv3', 'settings': {'species_pagination': {'default_per_page':settings.DEFAULT_PER_PAGE, 'max_per_page':settings.MAX_PER_PAGE, 'min_per_page':settings.MIN_PER_PAGE}}, 'dictionaries': {'crown_shape': _to_dict(CROWN_SHAPES), 'color': _to_dict(COLORS), 'root_type': _to_dict(ROOT_SYSTEMS), 'seed_type':_to_dict(SEED_TYPES), 'light_requirement':_to_dict(LIGHT_REQUIREMENTS), 'fruit_type':_to_dict(FRUIT_TYPES), 'bark_texture':_to_dict(BARK_TEXTURES), 'growth_rate':_to_dict(GROWTH_RATE), 'foliage_persistence':_to_dict(FOLIAGE_PERSISTENCE), 'trunk_alignment':_to_dict(TRUNK_ALIGNMENT), 'soil_type':_to_dict(SOIL_TYPES), 'seed_dispersal':_to_dict(SEED_DISPERSAL_TYPE), 'seed_collection':_to_dict(SEED_COLLECTION), 'pre_germination_treatment':_to_dict(PRE_GERMINATION_TREATMENT), 'use':uses, 'habitat':habitats, 'status':list(status)}}
+    meta = {'citation': u'Sistema Flora Regional - Instituto de Pesquisas Ecológicas (IPÊ)', 'name': 'Regional Flora Web Service', 'license': 'GNU AGPLv3', 'languages':languages, 'settings': {'species_pagination': {'default_per_page':settings.DEFAULT_PER_PAGE, 'max_per_page':settings.MAX_PER_PAGE, 'min_per_page':settings.MIN_PER_PAGE}}, 'dictionaries': {'crown_shape': _to_dict(CROWN_SHAPES), 'color': _to_dict(COLORS), 'root_type': _to_dict(ROOT_SYSTEMS), 'seed_type':_to_dict(SEED_TYPES), 'light_requirement':_to_dict(LIGHT_REQUIREMENTS), 'fruit_type':_to_dict(FRUIT_TYPES), 'bark_texture':_to_dict(BARK_TEXTURES), 'growth_rate':_to_dict(GROWTH_RATE), 'foliage_persistence':_to_dict(FOLIAGE_PERSISTENCE), 'trunk_alignment':_to_dict(TRUNK_ALIGNMENT), 'soil_type':_to_dict(SOIL_TYPES), 'seed_dispersal':_to_dict(SEED_DISPERSAL_TYPE), 'seed_collection':_to_dict(SEED_COLLECTION), 'pre_germination_treatment':_to_dict(PRE_GERMINATION_TREATMENT), 'use':uses, 'habitat':habitats, 'status':list(status)}}
     return HttpResponse(JSONEncoder(sort_keys=True, indent=4).encode(meta))
 
 def ws_info(request):
