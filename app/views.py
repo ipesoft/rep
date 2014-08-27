@@ -545,7 +545,7 @@ def show_help(request, content_id):
     if len(options) == 0:
         raise Http404
     try:
-        h = options.get(lang=request.LANGUAGE_CODE)
+        h = options.get(lang=translation.get_language())
     except StaticContent.DoesNotExist:
         # Get first
         h = options[0]
@@ -558,7 +558,7 @@ def show_page(request, page_code):
     if len(pages) == 0:
         raise Http404
     try:
-        p = pages.get(lang=request.LANGUAGE_CODE)
+        p = pages.get(lang=translation.get_language())
     except StaticContent.DoesNotExist:
         # Get first
         p = pages[0]
