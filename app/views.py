@@ -2,7 +2,7 @@
 
 from app.models import StaticContent, Taxon, TaxonName, TaxonDataReference, COLORS, MONTHS, ROOT_SYSTEMS, CROWN_SHAPES, LIGHT_REQUIREMENTS, SEED_TYPES, FRUIT_TYPES, BARK_TEXTURES, GROWTH_RATE, FOLIAGE_PERSISTENCE, TRUNK_ALIGNMENT, SOIL_TYPES, SEED_DISPERSAL_TYPE, SEED_COLLECTION, PRE_GERMINATION_TREATMENT, ConservationStatus, Interview, TypeOfUse, TaxonUse, Habitat, TaxonHabitat
 from django.http import HttpResponse, Http404
-from django.shortcuts import render_to_response, render, get_object_or_404
+from django.shortcuts import render_to_response, render, get_object_or_404, redirect
 from django.template import RequestContext
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -634,6 +634,9 @@ def show_species(request, species_id, ws=False):
     for occ in taxon.taxonoccurrence_set.all():
         orig_points.append({'x':occ.get_decimal_long(), 'y':occ.get_decimal_lat(), 'label':occ.label})
     if request.GET.has_key('pdf'):
+        if request.GET['pdf'] not in ("1", ""):
+            # Someone may attempt to get server information by messing with this parameter
+            return redirect('http://www.ic3.gov/about/')
         return _pdf_for_species_page( taxon, numbers, citations )
     points = _json_raw_encode( orig_points )
     # Help content
@@ -1234,6 +1237,9 @@ def search_species(request, ws=False):
         # Limit the number of fields to be returned
         qs = qs.order_by('genus', 'species').only('id', 'genus', 'species')
         if request.GET.has_key('pdf'):
+            if request.GET['pdf'] not in ("1", ""):
+                # Someone may attempt to get server information by messing with this parameter
+                return redirect('http://www.ic3.gov/about/')
             return _pdf_for_species_list( qs )
         template_params['performed_query'] = True
         # Pagination
