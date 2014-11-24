@@ -588,6 +588,9 @@ def hist_results(request):
     template_params = {'base_template':settings.BASE_TEMPLATE}
     interviews = Interview.objects.all().order_by('title')
     template_params['interviews'] = interviews
+    # Fake page, in case template has some logic based on page code
+    page = StaticContent(code='hist_results')
+    template_params['page'] = page
     c = RequestContext(request, template_params)
     return render_to_response( possible_templates, c )
 
@@ -1044,18 +1047,27 @@ def search_species(request, ws=False):
                 form = UrbanForestrySearchForm(request.GET)
             else:
                 form = UrbanForestrySearchForm()
+            # Fake page, in case template has some logic based on page code
+            page = StaticContent(code='adv_search_species_urban')
+            template_params['page'] = page
         elif request.GET.has_key('silv'):
             possible_templates = ['my_adv_search_species_silviculture.html', 'adv_search_species_silviculture.html']
             if request.GET.has_key('search'):
                 form = SilvicultureSearchForm(request.GET)
             else:
                 form = SilvicultureSearchForm()
+            # Fake page, in case template has some logic based on page code
+            page = StaticContent(code='adv_search_species_silviculture')
+            template_params['page'] = page
         else:
             possible_templates = ['my_adv_search_species_restoration.html', 'adv_search_species_restoration.html']
             if request.GET.has_key('search'):
                 form = RestorationSearchForm(request.GET)
             else:
                 form = RestorationSearchForm()
+            # Fake page, in case template has some logic based on page code
+            page = StaticContent(code='adv_search_species_restoration')
+            template_params['page'] = page
         template_params['form'] = form
         if not request.GET.has_key('search'):
             perform_query = False
