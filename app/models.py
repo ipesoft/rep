@@ -964,7 +964,7 @@ class Taxon( models.Model ):
         return (self.get_height() is not None) or (self.get_dbh() is not None) or (self.get_fl_color_display() is not None) or (self.get_growth_rate() is not None) or (self.gr_comments is not None and len(self.gr_comments) > 0) or (self.get_foliage_persistence() is not None) or (self.get_r_type_display() is not None) or (self.get_cr_shape_display() is not None) or (self.get_crown_diameter() is not None) or (self.get_trunk_alignment() is not None) or (self.get_bark_texture_display() is not None) or (self.get_fr_class_display() is not None) or (self.get_fr_type_display() is not None) or (self.fl_color_details is not None and len(self.fl_color_details) > 0)
 
     def has_care_data( self ):
-        return (self.get_pruning() is not None) or (self.pests_and_diseases is not None) or (self.get_thorns_or_spines() is not None) or (self.get_toxic_or_allergenic() is not None) or self.wetland or self.dry
+        return (self.get_pruning() is not None) or (self.pests_and_diseases) or (self.get_thorns_or_spines() is not None) or (self.get_toxic_or_allergenic() is not None) or self.wetland or self.dry
 
     def has_ecology_and_reproduction_data( self ):
         return (self.get_successional_group() is not None) or (self.pollinators is not None and len(self.pollinators) > 0) or (self.get_flowering_period() is not None) or (self.get_dispersal_types() is not None) or (self.dispersers is not None and len(self.dispersers) > 0) or (self.get_fruiting_period() is not None) or (self.get_symbiotic_assoc() is not None) or (self.symbiotic_details is not None and len(self.symbiotic_details) > 0) or (self.fr_details is not None and len(self.fr_details) > 0) or (self.fl_details is not None and len(self.fl_details) > 0)
