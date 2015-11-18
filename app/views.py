@@ -149,8 +149,12 @@ class SilvicultureSearchForm(CommonSearchForm):
 # Internal methods
 def _handle_language(request):
     if request.GET.has_key('setlang'):
-        translation.activate( request.GET['setlang'] )
-        request.session['django_language'] = request.GET['setlang']
+        available_langs = []
+        for lang in settings.LANGUAGES:
+            available_langs.append(lang[0])
+        if request.GET['setlang'] in available_langs:
+            translation.activate( request.GET['setlang'] )
+            request.session['django_language'] = request.GET['setlang']
     else:
         if not request.session.has_key('django_language'):
             translation.activate( settings.LANGUAGE_CODE )
