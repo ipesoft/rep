@@ -90,7 +90,7 @@ class UrbanForestrySearchForm(CommonSearchForm):
     tr_sl_crooked  = forms.BooleanField(label=_(u'Slightly crooked'))
     tr_crooked     = forms.BooleanField(label=_(u'Crooked'))
     # Conservation status
-    status_choices = [('NULL', no_matter_str)] + [(c['status'], c['status']) for c in ConservationStatus.objects.values('status').order_by('status').distinct()]
+    status_choices = [('NULL', no_matter_str)] + [(c['status'], c['status']) for c in ConservationStatus.objects.filter(taxon__urban_use=True).values('status').order_by('status').distinct()]
     status = forms.ChoiceField(label=_(u'Conservation status'), initial='NULL', choices=status_choices)
     # Pollination
     pollinators = forms.ChoiceField(label=_(u'Pollinators'), initial=-1, choices=null_boolean_choices)
@@ -104,7 +104,7 @@ class RestorationSearchForm(CommonSearchForm):
     sg_late_secondary  = forms.BooleanField(label=_(u'Late secondary'))
     sg_climax          = forms.BooleanField(label=_(u'Climax'))
     # Conservation status
-    status_choices = [('NULL', no_matter_str)] + [(c['status'], c['status']) for c in ConservationStatus.objects.values('status').order_by('status').distinct()]
+    status_choices = [('NULL', no_matter_str)] + [(c['status'], c['status']) for c in ConservationStatus.objects.filter(taxon__restoration=True).values('status').order_by('status').distinct()]
     status = forms.ChoiceField(label=_(u'Conservation status'), initial='NULL', choices=status_choices)
     # Pre-germination treatment
     pg_no_need    = forms.BooleanField(label=_(u'No need for treatment'))
