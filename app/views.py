@@ -668,6 +668,19 @@ def show_species(request, species_id, ws=False):
             data['common_names'] = popnames_json
         if taxon.description:
             data['description'] = taxon.description
+        if taxon.endemic is not None:
+            endemism = {}
+            endemism['endemic'] = taxon.endemic
+            _add_references(request, endemism, 'END', numbers)
+            data['endemism'] = endemism
+        specific_uses = taxon.get_specific_uses()
+        if len(specific_uses) > 0:
+            uses = {}
+            uses['specific_uses'] = specific_uses
+            _add_references(request, uses, 'USE', numbers)
+            data['uses'] = uses
+        # Points
+        # ------
         if request.GET.has_key('points'):
             data['points'] = orig_points
         # General features
