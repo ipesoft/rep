@@ -877,7 +877,7 @@ def show_species(request, species_id, ws=False):
                     seed_dispersal['classification'].append('4')
                 if taxon.dt_zoochorous:
                     seed_dispersal['classification'].append('5')
-                _add_references(request, successional_group, 'SED', numbers)
+                _add_references(request, seed_dispersal, 'SED', numbers)
                 ecology['seed_dispersal'] = seed_dispersal
             # Dispersion agents
             if taxon.dispersers:
