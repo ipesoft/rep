@@ -31,7 +31,7 @@ Features
 Installation
 ============
 
-Besides a web server, you'll need Python, Django and a relational database compatible with Django. The application was developed with Apache 2.2, PostgreSQL 8.4 and Django 1.5.1. After installing the basic software, create a new database, copy settings.py.ref to settings.py and edit the configuration. If you want to learn more about Django settings you can look at: https://docs.djangoproject.com/en/1.5/topics/settings/
+Besides a web server, you'll need Python, Django and a relational database compatible with Django. The application was developed with Apache 2.2, PostgreSQL 8.4, Python 2.7 and Django 1.5.1. All third party Django apps are already included, so you don't need to install them. After installing the basic software, create a new database, copy settings.py.ref to settings.py and edit the configuration. If you want to learn more about Django settings you can look at: https://docs.djangoproject.com/en/1.5/topics/settings/
 
 In particular, you need to pay attention to the following parts:
 
