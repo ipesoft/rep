@@ -95,7 +95,7 @@ STATICFILES_FINDERS = (
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'kjswpoc83%hs$d,d*swhe83!#yw82<&$$$@JksUwd'
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -103,7 +103,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.locale.LocaleMiddleware', # must be after SessionMiddleware
     'django.middleware.common.CommonMiddleware',
     'utils.multilang.middleware.AdminLocaleURLMiddleware',
-)
+]
 
 ROOT_URLCONF = 'rep.urls'
 
