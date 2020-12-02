@@ -1,5 +1,5 @@
-from django.conf.urls import include, url
 from django.conf import settings
+from django.conf.urls import include, url
 from django.conf.urls.i18n import i18n_patterns
 from django.conf.urls.static import static
 
@@ -32,8 +32,6 @@ urlpatterns = [
     url(r'^hist/results/?$', views.hist_results),
     url(r'^hist/interview/(?P<interview_id>\d+)/?$', views.interview),
     url(r'^faq/?$', views.faq),
-    #url(r'^docs/(?P<path>.*)$', django.views.static.serve, {'document_root': settings.PDF_ROOT,}),
-    static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
     # web service
     url(r'^ws/1.0/info$', views.ws_info),
     # Help content
@@ -43,18 +41,19 @@ urlpatterns = [
     url(r'^tinymce/', include('tinymce.urls')),
 ]
 
-wspatterns = i18n_patterns('',
+wspatterns = i18n_patterns(
     # web service
     url(r'^ws/1.0/?$', views.ws_metadata),
     url(r'^ws/1.0/sp/?$', views.search_species, {'ws': True,}),
     url(r'^ws/1.0/sp/(?P<species_id>\d+)/?$', views.show_species, {'ws': True,}),
+    prefix_default_language=False
 )
 
 urlpatterns += wspatterns
 
 try:
-    import my_urls
-    urlpatterns += myurlpatterns
+    from . import my_urls
+    urlpatterns.append( url(r'^', include('rep.my_urls')) )
 except:
     pass
 
