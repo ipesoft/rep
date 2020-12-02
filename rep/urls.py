@@ -1,6 +1,7 @@
 from django.conf.urls import include, url
 from django.conf import settings
 from django.conf.urls.i18n import i18n_patterns
+from django.conf.urls.static import static
 
 from django.contrib import admin
 
@@ -31,16 +32,14 @@ urlpatterns = [
     url(r'^hist/results/?$', views.hist_results),
     url(r'^hist/interview/(?P<interview_id>\d+)/?$', views.interview),
     url(r'^faq/?$', views.faq),
-    url(r'^docs/(?P<path>.*)$', django.views.static.serve, {'document_root': settings.PDF_ROOT,}),
+    #url(r'^docs/(?P<path>.*)$', django.views.static.serve, {'document_root': settings.PDF_ROOT,}),
+    static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
     # web service
     url(r'^ws/1.0/info$', views.ws_info),
     # Help content
     url(r'^help/(?P<content_id>[-\w\d]+)/?$', views.show_help),
-    # Uncomment the admin/doc line below to enable admin documentation:
-    url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
-    # Uncomment the next line to enable the admin:
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
     url(r'^tinymce/', include('tinymce.urls')),
 ]
 
@@ -55,6 +54,9 @@ urlpatterns += wspatterns
 
 try:
     import my_urls
-    urlpatterns += patterns('', url(r'^', include('my_urls')), )
+    urlpatterns += myurlpatterns
 except:
     pass
+
+if settings.DEBUG:
+    urlpatterns += static('docs/', document_root=settings.PDF_ROOT)
