@@ -6,7 +6,6 @@ from django.core.exceptions import ValidationError
 from django.db.models.signals import pre_save, post_save, post_delete
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import string_concat
 from django.utils.translation import ugettext
 from django.utils import translation
 from treebeard.mp_tree import MP_Node
@@ -591,8 +590,8 @@ class Taxon( models.Model ):
         for field in fields:
             if getattr(self, field):
                 if prev:
-                    types = string_concat(types, sep)
-                types = string_concat(types, self._get_field_label(field))
+                    types = types + sep
+                types = types + self._get_field_label(field)
                 prev = True
         if prev:
             return types
@@ -699,7 +698,7 @@ class Taxon( models.Model ):
 
     def get_seedbed(self):
         if self.sl_seedbed and self.sl_containers:
-            return string_concat(self._get_field_label('sl_seedbed'),' ',_(u'or'),' ',self._get_field_label('sl_containers'))
+            return self._get_field_label('sl_seedbed') + u' ' + _(u'or') + u' ' + self._get_field_label('sl_containers')
         elif self.sl_seedbed:
             return self._get_field_label('sl_seedbed')
         elif self.sl_containers:
@@ -710,22 +709,22 @@ class Taxon( models.Model ):
         val = None
         if self.seed_gmin_time is not None:
             if self.seed_gmax_time is not None and self.seed_gmax_time != self.seed_gmin_time:
-                val = string_concat(str(self.seed_gmin_time), ' ', _(u'to'), ' ', str(self.seed_gmax_time), ' ', _(u'days'))
+                val = str(self.seed_gmin_time) + u' ' + _(u'to') + u' ' + str(self.seed_gmax_time) + u' ' + _(u'days')
             else:
-                val = string_concat(str(self.seed_gmin_time), ' ', _(u'days'))
+                val = str(self.seed_gmin_time) + u' ' + _(u'days')
         elif self.seed_gmax_time is not None:
-            val = string_concat(str(self.seed_gmax_time), ' ', _(u'days'))
+            val = str(self.seed_gmax_time) + u' ' + _(u'days')
         return val
 
     def get_germination_rate(self):
         val = None
         if self.seed_gmin_rate is not None:
             if self.seed_gmax_rate is not None and self.seed_gmax_rate != self.seed_gmin_rate:
-                val = string_concat(str(self.seed_gmin_rate), ' ', _(u'to'), ' ', str(self.seed_gmax_rate), '%')
+                val = str(self.seed_gmin_rate) + u' ' + _(u'to') + u' ' + str(self.seed_gmax_rate) + u'%'
             else:
-                val = string_concat(str(self.seed_gmin_rate), '%')
+                val = str(self.seed_gmin_rate) + u'%'
         elif self.seed_gmax_rate is not None:
-            val = string_concat(str(self.seed_gmax_rate), '%')
+            val = str(self.seed_gmax_rate) + u'%'
         return val
 
     def get_special_features(self):
@@ -765,7 +764,7 @@ class Taxon( models.Model ):
         if self.fl_start:
             val = self.get_fl_start_display()
             if self.fl_end and self.fl_end != self.fl_start:
-                val = string_concat(val, ' ', _(u'to'), ' ', self.get_fl_end_display())
+                val = val + u' ' + _(u'to') + u' ' + self.get_fl_end_display()
             return val
         return None
 
@@ -773,7 +772,7 @@ class Taxon( models.Model ):
         if self.fr_start:
             val = self.get_fr_start_display()
             if self.fr_end and self.fr_end != self.fr_start:
-                val = string_concat(val, ' ', _(u'to'), ' ', self.get_fr_end_display())
+                val = val + u' ' + _(u'to') + u' ' + self.get_fr_end_display()
             return val
         return None
 
@@ -855,7 +854,7 @@ class Taxon( models.Model ):
             if p[1]:
                 icon = 'yes'
                 alt = 'v'
-            html = string_concat(html, '<a href="'+str(self.id)+'/#fset'+str(cnt)+'" title="',p[0],'"><img src="/static/admin/img/icon-'+icon+'.gif" alt="'+alt+'" /></a>')
+            html = html + u'<a href="' + str(self.id) + '/#fset'+str(cnt) + '" title="' + p[0] + '"><img src="/static/admin/img/icon-' + icon + '.gif" alt="' + alt + '" /></a>'
             cnt = cnt + 1
         return html
     data_completeness.short_description = _(u'Data completeness')
