@@ -2,8 +2,8 @@
 
 from app.models import StaticContent, Taxon, TaxonName, TaxonDataReference, COLORS, MONTHS, ROOT_SYSTEMS, CROWN_SHAPES, LIGHT_REQUIREMENTS, SEED_TYPES, FRUIT_TYPES, BARK_TEXTURES, GROWTH_RATE, FOLIAGE_PERSISTENCE, TRUNK_ALIGNMENT, SOIL_TYPES, SEED_DISPERSAL_TYPE, SEED_COLLECTION, PRE_GERMINATION_TREATMENT, ConservationStatus, Interview, TypeOfUse, TaxonUse, Habitat, TaxonHabitat
 from django.http import HttpResponse, Http404
-from django.shortcuts import render_to_response, render, get_object_or_404, redirect
-from django.template import RequestContext
+from django.shortcuts import render, get_object_or_404, redirect
+from django.template import loader
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext
@@ -566,10 +566,10 @@ def show_page(request, page_code):
     except StaticContent.DoesNotExist:
         # Get first
         p = pages[0]
-    c = RequestContext(request, {'page': p,
-                                 'base_template':settings.BASE_TEMPLATE})
+    c = {'page': p, 'base_template': settings.BASE_TEMPLATE}
     possible_templates = ['my_page.html', 'page.html']
-    return render_to_response( possible_templates, c )
+    template = loader.select_template( possible_templates )
+    return HttpResponse( template.render(c, request) )
 
 def about(request):
     return show_page(request, 'about')
@@ -588,15 +588,13 @@ def hist_overview(request):
 
 def hist_results(request):
     _handle_language( request )
-    possible_templates = ['my_hist_results.html', 'hist_results.html']
-    template_params = {'base_template':settings.BASE_TEMPLATE}
     interviews = Interview.objects.all().order_by('title')
-    template_params['interviews'] = interviews
     # Fake page, in case template has some logic based on page code
     page = StaticContent(code='hist_results')
-    template_params['page'] = page
-    c = RequestContext(request, template_params)
-    return render_to_response( possible_templates, c )
+    c = {'base_template': settings.BASE_TEMPLATE, 'page': page, 'interviews': interviews}
+    possible_templates = ['my_hist_results.html', 'hist_results.html']
+    template = loader.select_template( possible_templates )
+    return HttpResponse( template.render(c, request) )
 
 def faq(request):
     return show_page(request, 'faq')
@@ -1047,15 +1045,16 @@ def show_species(request, species_id, ws=False):
                 data['references'] = dict_citations
         return HttpResponse(JSONEncoder(sort_keys=True, indent=4).encode(data))
     # Normal page rendering
-    c = RequestContext(request, {'taxon': taxon, 'refs': numbers, 'citations': citations, 
-                                 'points': points, 'base_template':settings.BASE_TEMPLATE,
-                                 'full_path': request.get_full_path(), 'help_entries':help_entries})
+    c = {'taxon': taxon, 'refs': numbers, 'citations': citations, 
+         'points': points, 'base_template': settings.BASE_TEMPLATE,
+         'full_path': request.get_full_path(), 'help_entries': help_entries}
     possible_templates = ['my_species_page.html', 'species_page.html']
-    return render_to_response( possible_templates, c )
+    template = loader.select_template( possible_templates )
+    return HttpResponse( template.render(c, request) )
 
 def search_species(request, ws=False):
     _handle_language( request )
-    template_params = {'base_template':settings.BASE_TEMPLATE}
+    template_params = {'base_template': settings.BASE_TEMPLATE}
     perform_query = True
     if request.GET.has_key('adv'):
         if request.GET.has_key('urban'):
@@ -1328,8 +1327,8 @@ def search_species(request, ws=False):
                 resp['Link'] = link
             return resp
     template_params['full_path'] = request.get_full_path()
-    c = RequestContext(request, template_params)
-    return render_to_response( possible_templates, c )
+    template = loader.select_template( possible_templates )
+    return HttpResponse( template.render(template_params, request) )
 
 def interview(request, interview_id):
     'Display interview page'
@@ -1364,8 +1363,8 @@ def interview(request, interview_id):
     template_params['paginator'] = paginator
     template_params['page_obj'] = page_obj
     template_params['request'] = request
-    c = RequestContext(request, template_params)
-    return render_to_response( possible_templates, c )
+    template = loader.select_template( possible_templates )
+    return HttpResponse( template.render(template_params, request) )
 
 def ws_metadata(request):
     'Return web service metadata'
@@ -1399,6 +1398,7 @@ def ws_metadata(request):
 def ws_info(request):
     'Web service documentation'
     _handle_language( request )
-    c = RequestContext(request, {'base_template':settings.BASE_TEMPLATE})
+    c = {'base_template': settings.BASE_TEMPLATE}
     possible_templates = ['my_ws_info.html', 'ws_info.html']
-    return render_to_response( possible_templates, c )
+    template = loader.select_template( possible_templates )
+    return HttpResponse( template.render(c, request) )
