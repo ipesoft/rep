@@ -630,7 +630,7 @@ def show_species(request, species_id, ws=False):
             else:
                 numbers[ref.data] = ctrl[ref.reference_id]
         else:
-            if ref_data in numbers:
+            if ref.data in numbers:
                 numbers[ref.data] = numbers[ref.data] + ',' + '<a href="#ref-'+ctrl[ref.reference_id]+'" onclick="fr_highlight(' + ctrl[ref.reference_id] + ');">' + ctrl[ref.reference_id] + '</a>'
             else:
                 numbers[ref.data] = '<a href="#ref-'+ctrl[ref.reference_id]+'" onclick="fr_highlight(' + ctrl[ref.reference_id] + ');">' + ctrl[ref.reference_id] + '</a>'
