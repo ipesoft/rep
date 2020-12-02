@@ -26,7 +26,7 @@ class CommonSearchForm(forms.Form):
     use_choices = TypeOfUse.objects.all().order_by('path')
     my_use_choices = []
     for choice in use_choices:
-        my_use_choices.append([choice.id, unicode(choice)])
+        my_use_choices.append([choice.id, str(choice)])
     uses = forms.MultipleChoiceField(label=_(u'Specific use'), choices=my_use_choices)
     # Rarity
     rare = forms.BooleanField(label=_(u'Rare'))
@@ -138,7 +138,7 @@ class SilvicultureSearchForm(CommonSearchForm):
     habitat_choices = Habitat.objects.all().order_by('path')
     my_habitat_choices = []
     for choice in habitat_choices:
-        my_habitat_choices.append([choice.id, unicode(choice)])
+        my_habitat_choices.append([choice.id, str(choice)])
     habitats = forms.MultipleChoiceField(label=ugettext(u'Biome')+'/'+ugettext(u'Fitofisionomy'), choices=my_habitat_choices)
     # Density
     min_density = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}))
@@ -271,7 +271,7 @@ def _json_raw_encode(data):
 def _add_link(abs_uri, link, page_number, label, params):
     sep = u', ' if len(link) > 0 else u''
     params = params + u'&' if len(params) > 0 else u''
-    return u'%s%s<%s?%spage=%d>; rel="%s"' % (link, sep, unicode(abs_uri), params, page_number, label)
+    return u'%s%s<%s?%spage=%d>; rel="%s"' % (link, sep, str(abs_uri), params, page_number, label)
 
 def _pdf_for_species_list( qs ):
     """
