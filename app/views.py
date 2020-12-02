@@ -148,7 +148,7 @@ class SilvicultureSearchForm(CommonSearchForm):
 
 # Internal methods
 def _handle_language(request):
-    if request.GET.has_key('setlang'):
+    if 'setlang' in request.GET:
         available_langs = []
         for lang in settings.LANGUAGES:
             available_langs.append(lang[0])
@@ -156,13 +156,13 @@ def _handle_language(request):
             translation.activate( request.GET['setlang'] )
             request.session['django_language'] = request.GET['setlang']
     else:
-        if not request.session.has_key('django_language'):
+        if not 'django_language' in request.session:
             translation.activate( settings.LANGUAGE_CODE )
             request.session['django_language'] = settings.LANGUAGE_CODE
 
 def _add_and_conditions(request, qs, fields):
     for field in fields:
-        if ( request.GET.has_key(field)):
+        if field in request.GET:
             kwargs = {'%s' % (field): True}
             qs = qs.filter(**kwargs)
     return qs
@@ -170,7 +170,7 @@ def _add_and_conditions(request, qs, fields):
 def _add_or_conditions(request, qs, fields):
     new_filter = None
     for field in fields:
-        if ( request.GET.has_key(field)):
+        if field in request.GET:
             kwargs = {'%s' % (field): True}
             if new_filter is None:
                 new_filter = Q(**kwargs)
@@ -181,7 +181,7 @@ def _add_or_conditions(request, qs, fields):
     return qs
 
 def _add_interval_condition(request, qs, min_field, max_field):
-    if ( request.GET.has_key(min_field)):
+    if min_field in request.GET:
         ok_min = False
         min_val = request.GET.get(min_field)
         if not isinstance( min_val, int ):
@@ -193,7 +193,7 @@ def _add_interval_condition(request, qs, min_field, max_field):
         if ok_min:
             kwargs = {'%s__gte' % (min_field): min_val}
             qs = qs.filter(**kwargs)
-    if ( request.GET.has_key(max_field)):
+    if max_field in request.GET:
         ok_max = False
         max_val = request.GET.get(max_field)
         if not isinstance( max_val, int ):
@@ -208,7 +208,7 @@ def _add_interval_condition(request, qs, min_field, max_field):
     return qs
 
 def _add_single_field_interval_condition(request, qs, field, min_param, max_param):
-    if ( request.GET.has_key(min_param)):
+    if min_param in request.GET:
         ok_min = False
         min_val = request.GET.get(min_param)
         if not isinstance( min_val, int ):
@@ -220,7 +220,7 @@ def _add_single_field_interval_condition(request, qs, field, min_param, max_para
         if ok_min:
             kwargs = {'%s__gte' % (field): min_val}
             qs = qs.filter(**kwargs)
-    if ( request.GET.has_key(max_param)):
+    if max_param in request.GET:
         ok_max = False
         max_val = request.GET.get(max_param)
         if not isinstance( max_val, int ):
@@ -377,7 +377,7 @@ def _pdf_for_species_page( taxon, refs, citations ):
         if not content:
             content = '-'
         p += force_text( content )
-        if refs.has_key( key ):
+        if key in refs:
             p += '<sup>' + refs[key] + '</sup>'
         Story.append( Paragraph( p, styles[style] ) )
     def _appendDetails( story, content ):
@@ -404,7 +404,7 @@ def _pdf_for_species_page( taxon, refs, citations ):
     if c == 'None':
         c = '-'
     t += c
-    if refs.has_key( 'END' ):
+    if 'END' in refs:
         t += '<sup>' + refs['END'] + '</sup>'
     #t += '    <b>'+ugettext(u'Rare')+':</b> '
     #r = force_text( taxon.get_rare() )
@@ -414,7 +414,7 @@ def _pdf_for_species_page( taxon, refs, citations ):
     #m = taxon.max_density
     #if m is not None:
     #    t += str(m) + ugettext(u' individuals per hectare')
-    #if refs.has_key( 'RAR' ):
+    #if 'RAR' in refs:
     #    t += '<sup>' + refs['RAR'] + '</sup>'
     Story.append( Paragraph( t, styles['Left'] ) )
     _appendLabelAndContent( Story, ugettext(u'Biome')+'/'+ugettext(u'Fitofisionomy'), taxon.get_habitats(), 'HAB' )
@@ -522,7 +522,7 @@ def _to_dict(model_vocabulary):
     return my_dict
 
 def _add_references(request, obj, key, refs):
-    if request.GET.has_key('references') and refs.has_key(key) and len(refs[key]) > 0:
+    if 'references' in request.GET and key in refs and len(refs[key]) > 0:
         obj['references'] = refs[key].split(',')
 
 # View methods
@@ -619,18 +619,18 @@ def show_species(request, species_id, ws=False):
     refs = taxon.taxondatareference_set.all().order_by('data')
     cnt = 1
     for ref in refs:
-        if not ctrl.has_key(ref.reference_id):
+        if not ref.reference_id in ctrl:
             ctrl[ref.reference_id] = str(cnt)
             citations.append( (str(cnt), ref.reference.full) )
             cnt = cnt + 1
     for ref in refs:
-        if request.GET.has_key('pdf') or ws:
-            if numbers.has_key(ref.data):
+        if 'pdf' in request.GET or ws:
+            if ref.data in numbers:
                 numbers[ref.data] = numbers[ref.data] + ',' + ctrl[ref.reference_id]
             else:
                 numbers[ref.data] = ctrl[ref.reference_id]
         else:
-            if numbers.has_key(ref.data):
+            if ref_data in numbers:
                 numbers[ref.data] = numbers[ref.data] + ',' + '<a href="#ref-'+ctrl[ref.reference_id]+'" onclick="fr_highlight(' + ctrl[ref.reference_id] + ');">' + ctrl[ref.reference_id] + '</a>'
             else:
                 numbers[ref.data] = '<a href="#ref-'+ctrl[ref.reference_id]+'" onclick="fr_highlight(' + ctrl[ref.reference_id] + ');">' + ctrl[ref.reference_id] + '</a>'
@@ -638,7 +638,7 @@ def show_species(request, species_id, ws=False):
     orig_points = []
     for occ in taxon.taxonoccurrence_set.all():
         orig_points.append({'x':occ.get_decimal_long(), 'y':occ.get_decimal_lat(), 'label':occ.label})
-    if request.GET.has_key('pdf'):
+    if 'pdf' in request.GET:
         if request.GET['pdf'] not in ("1", ""):
             # Someone may attempt to get server information by messing with this parameter
             return redirect('http://www.ic3.gov/about/')
@@ -679,11 +679,11 @@ def show_species(request, species_id, ws=False):
             data['uses'] = uses
         # Points
         # ------
-        if request.GET.has_key('points'):
+        if 'points' in request.GET:
             data['points'] = orig_points
         # General features
         # ----------------
-        if request.GET.has_key('features'):
+        if 'features' in request.GET:
             features = {}
             # Tree size
             if taxon.min_height or taxon.max_height or taxon.min_dbh or taxon.max_dbh:
@@ -795,7 +795,7 @@ def show_species(request, species_id, ws=False):
             data['features'] = features
         # Care
         # ----
-        if request.GET.has_key('care'):
+        if 'care' in request.GET:
             care = {}
             # Pruning
             if taxon.pruning is not None:
@@ -838,7 +838,7 @@ def show_species(request, species_id, ws=False):
             data['care'] = care
         # Ecology & reproduction
         # ----------------------
-        if request.GET.has_key('ecology'):
+        if 'ecology' in request.GET:
             ecology = {}
             # Successional group
             if taxon.sg_pioneer or taxon.sg_early_secondary or taxon.sg_late_secondary or taxon.sg_climax:
@@ -923,7 +923,7 @@ def show_species(request, species_id, ws=False):
             data['ecology'] = ecology
         # Seedling production
         # -------------------
-        if request.GET.has_key('seedling'):
+        if 'seedling' in request.GET:
             seedling = {}
             # Seed collection
             if taxon.wetland or taxon.dry or taxon.seed_collection:
@@ -1017,7 +1017,7 @@ def show_species(request, species_id, ws=False):
             data['seedling_production'] = seedling
         # Silviculture
         # ------------
-        if request.GET.has_key('silviculture'):
+        if 'silviculture' in request.GET:
             silviculture = {}
             if taxon.wood_general_info or taxon.wood_density is not None or taxon.wood_has_mai_curve is not None or taxon.wood_has_cai_curve is not None:
                 # General information
@@ -1037,7 +1037,7 @@ def show_species(request, species_id, ws=False):
             data['silviculture'] = silviculture
         # References
         # ----------
-        if request.GET.has_key('references'):
+        if 'references' in request.GET:
             if len(citations) > 0:
                 dict_citations = {}
                 for ref_num, ref_text in citations:
@@ -1056,19 +1056,19 @@ def search_species(request, ws=False):
     _handle_language( request )
     template_params = {'base_template': settings.BASE_TEMPLATE}
     perform_query = True
-    if request.GET.has_key('adv'):
-        if request.GET.has_key('urban'):
+    if 'adv' in request.GET:
+        if 'urban' in request.GET:
             possible_templates = ['my_adv_search_species_urban.html', 'adv_search_species_urban.html']
-            if request.GET.has_key('search'):
+            if 'search' in request.GET:
                 form = UrbanForestrySearchForm(request.GET)
             else:
                 form = UrbanForestrySearchForm()
             # Fake page, in case template has some logic based on page code
             page = StaticContent(code='adv_search_species_urban')
             template_params['page'] = page
-        elif request.GET.has_key('silv'):
+        elif 'silv' in request.GET:
             possible_templates = ['my_adv_search_species_silviculture.html', 'adv_search_species_silviculture.html']
-            if request.GET.has_key('search'):
+            if 'search' in request.GET:
                 form = SilvicultureSearchForm(request.GET)
             else:
                 form = SilvicultureSearchForm()
@@ -1077,7 +1077,7 @@ def search_species(request, ws=False):
             template_params['page'] = page
         else:
             possible_templates = ['my_adv_search_species_restoration.html', 'adv_search_species_restoration.html']
-            if request.GET.has_key('search'):
+            if 'search' in request.GET:
                 form = RestorationSearchForm(request.GET)
             else:
                 form = RestorationSearchForm()
@@ -1085,14 +1085,14 @@ def search_species(request, ws=False):
             page = StaticContent(code='adv_search_species_restoration')
             template_params['page'] = page
         template_params['form'] = form
-        if not request.GET.has_key('search'):
+        if not 'search' in request.GET:
             perform_query = False
     else:
         possible_templates = ['my_search_species.html', 'search_species.html']
     # Queryset
     if perform_query:
         name = None
-        if request.GET.has_key('name'):
+        if 'name' in request.GET:
             name = request.GET.get('name')
         if name is not None:
             template_params['name'] = name
@@ -1113,11 +1113,11 @@ def search_species(request, ws=False):
             qs = Taxon.objects.filter(id__in=ids)
         else:
             qs = Taxon.objects.all()
-        if ( request.GET.has_key('restor') ):
+        if 'restor' in request.GET:
             qs = qs.filter(restoration=True)
-        if request.GET.has_key('urban'):
+        if 'urban' in request.GET:
             qs = qs.filter(urban_use=True)
-        if request.GET.has_key('silv'):
+        if 'silv' in request.GET:
             qs = qs.filter(silviculture=True)
         # GET params used in pagination
         get_params = ''
@@ -1129,11 +1129,11 @@ def search_species(request, ws=False):
             get_params += k + '=' + v
         template_params['get_params'] = get_params
         # Advanced search filters
-        if request.GET.has_key('family') and request.GET['family'] != 'NULL':
+        if 'family' in request.GET and request.GET['family'] != 'NULL':
             qs = qs.filter(family=request.GET['family'])
-        if request.GET.has_key('endemic'):
+        if 'endemic' in request.GET:
             qs = qs.filter(endemic=True)
-        if request.GET.has_key('rare'):
+        if 'rare' in request.GET:
             qs = qs.filter(rare=True)
         # Use AND conditions for special features
         qs = _add_and_conditions(request, qs, ['h_flowers', 'h_leaves', 'h_fruits', 'h_crown', 'h_bark', 'h_seeds', 'h_wood', 'h_roots'])
@@ -1152,52 +1152,52 @@ def search_species(request, ws=False):
         # Germination rate
         qs = _add_interval_condition(request, qs, 'seed_gmin_rate', 'seed_gmax_rate')
         # Crown shape
-        if request.GET.has_key('cr_shape') and request.GET['cr_shape'] != 'NULL':
+        if 'cr_shape' in request.GET and request.GET['cr_shape'] != 'NULL':
             qs = qs.filter(cr_shape=request.GET['cr_shape'])
         # Flower color
-        if request.GET.has_key('color') and request.GET['color'] not in ('0', 0):
+        if 'color' in request.GET and request.GET['color'] not in ('0', 0):
             qs = qs.filter(fl_color=request.GET['color'])
         # Root system
-        if request.GET.has_key('r_type') and request.GET['r_type'] != 'NULL':
+        if 'r_type' in request.GET and request.GET['r_type'] != 'NULL':
             qs = qs.filter(r_type=request.GET['r_type'])
         # Seed type
-        if request.GET.has_key('s_type') and request.GET['s_type'] != 'NULL':
+        if 's_type' in request.GET and request.GET['s_type'] != 'NULL':
             qs = qs.filter(seed_type=request.GET['s_type'])
         # Light requirements
-        if request.GET.has_key('light') and request.GET['light'] != 'NULL':
+        if 'light' in request.GET and request.GET['light'] != 'NULL':
             qs = qs.filter(light=request.GET['light'])
         # Flowering period
-        if request.GET.has_key('fl_month'):
+        if 'fl_month' in request.GET:
             qs = _add_month_condition(request, qs, 'fl_month', 'fl_start', 'fl_end')
         # Fruiting period
-        if request.GET.has_key('fr_month'):
+        if 'fr_month' in request.GET:
             qs = _add_month_condition(request, qs, 'fr_month', 'fr_start', 'fr_end')
         # Pruning
-        if request.GET.has_key('pruning'):
+        if 'pruning' in request.GET:
             if request.GET['pruning'] in ('1', 1):
                 qs = qs.filter(pruning=True)
             elif request.GET['pruning'] in ('0', 0):
                 qs = qs.filter(pruning=False)
         # Pollinators
-        if request.GET.has_key('pollinators'):
+        if 'pollinators' in request.GET:
             if request.GET['pollinators'] in ('1', 1):
                 qs = qs.filter(pollinators__isnull=False).exclude(pollinators='')
             elif request.GET['pollinators'] in ('0', 0):
                 qs = qs.filter(Q(pollinators__isnull=True) | Q(pollinators=''))
         # Diseases
-        if request.GET.has_key('diseases'):
+        if 'diseases' in request.GET:
             if request.GET['diseases'] in ('1', 1):
                 qs = qs.filter(pests_and_diseases__isnull=False).exclude(pests_and_diseases='')
             elif request.GET['diseases'] in ('0', 0):
                 qs = qs.filter(Q(pests_and_diseases__isnull=True) | Q(pests_and_diseases=''))
         # Thorns
-        if request.GET.has_key('thorns'):
+        if 'thorns' in request.GET:
             if request.GET['thorns'] in ('1', 1):
                 qs = qs.filter(thorns_or_spines__isnull=False).exclude(thorns_or_spines='')
             elif request.GET['thorns'] in ('0', 0):
                 qs = qs.filter(Q(thorns_or_spines__isnull=True) | Q(thorns_or_spines=''))
         # Toxic
-        if request.GET.has_key('toxic'):
+        if 'toxic' in request.GET:
             if request.GET['toxic'] in ('1', 1):
                 qs = qs.filter(toxic_or_allergenic__isnull=False).exclude(toxic_or_allergenic='')
             elif request.GET['toxic'] in ('0', 0):
@@ -1211,13 +1211,13 @@ def search_species(request, ws=False):
         # Use OR condition for pre-germination treatment
         qs = _add_or_conditions(request, qs, ['pg_no_need', 'pg_thermal', 'pg_chemical', 'pg_water', 'pg_mechanical', 'pg_combined', 'pg_other'])
         # Symbiotic association
-        if request.GET.has_key('symb_assoc'):
+        if 'symb_assoc' in request.GET:
             if request.GET['symb_assoc'] in ('1', 1):
                 qs = qs.filter(symbiotic_assoc=True)
             elif request.GET['symb_assoc'] in ('0', 0):
                 qs = qs.filter(symbiotic_assoc=False)
         # Specific uses
-        if request.GET.has_key('uses'):
+        if 'uses' in request.GET:
             my_uses = []
             for use_id in request.GET.getlist('uses'):
                 try:
@@ -1231,7 +1231,7 @@ def search_species(request, ws=False):
                 taxa_ids = TaxonUse.objects.filter(use__in=my_uses).values_list('taxon__id', flat=True).distinct('taxon__id')
                 qs = qs.filter(id__in=taxa_ids)
         # Habitat
-        if request.GET.has_key('habitats'):
+        if 'habitats' in request.GET:
             my_habitats = []
             for habitat_id in request.GET.getlist('habitats'):
                 try:
@@ -1247,13 +1247,13 @@ def search_species(request, ws=False):
         # Density
         qs = _add_single_field_interval_condition(request, qs, 'wood_density', 'min_density', 'max_density')
         # Has MAI curve
-        if request.GET.has_key('has_mai_curve'):
+        if 'has_mai_curve' in request.GET:
             if request.GET['has_mai_curve'] in ('1', 1):
                 qs = qs.filter(wood_has_mai_curve=True)
             elif request.GET['has_mai_curve'] in ('0', 0):
                 qs = qs.filter(wood_has_mai_curve=False)
         # Conservation status
-        if request.GET.has_key('status') and request.GET['status'] != u'NULL':
+        if 'status' in request.GET and request.GET['status'] != u'NULL':
             taxa_in_status = []
             try:
                 for taxon_in_status in ConservationStatus.objects.filter(status=request.GET['status']).values_list('taxon__id', flat=True):
@@ -1264,7 +1264,7 @@ def search_species(request, ws=False):
                 pass
         # Limit the number of fields to be returned
         qs = qs.order_by('genus', 'species').only('id', 'genus', 'species')
-        if request.GET.has_key('pdf'):
+        if 'pdf' in request.GET:
             if request.GET['pdf'] not in ("1", ""):
                 # Someone may attempt to get server information by messing with this parameter
                 return redirect('http://www.ic3.gov/about/')
@@ -1272,7 +1272,7 @@ def search_species(request, ws=False):
         template_params['performed_query'] = True
         # Pagination
         per_page = settings.DEFAULT_PER_PAGE
-        if request.GET.has_key('per_page'):
+        if 'per_page' in request.GET:
             per_page = request.GET.get('per_page')
             if not isinstance( per_page, int ):
                 if per_page.isdigit():
@@ -1284,7 +1284,7 @@ def search_species(request, ws=False):
             elif per_page < settings.MIN_PER_PAGE:
                 per_page = settings.MIN_PER_PAGE
         paginator = Paginator(qs, per_page)
-        if ( request.GET.has_key('page') ):
+        if 'page' in request.GET:
             page = request.GET.get('page')
         else:
             page = 1
@@ -1345,7 +1345,7 @@ def interview(request, interview_id):
     # Pagination
     from app.interview_paginator import InterviewPaginator
     paginator = InterviewPaginator(interview.content, 1, 0, True, 40) # 40 lines per page
-    if ( request.GET.has_key('page') ):
+    if 'page' in request.GET:
         page = request.GET.get('page')
     else:
         page = 1
