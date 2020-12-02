@@ -988,7 +988,7 @@ class Taxon( models.Model ):
 
 class TaxonName( models.Model ):
     "Taxon name"
-    taxon = models.ForeignKey(Taxon)
+    taxon = models.ForeignKey(Taxon, on_delete=models.CASCADE)
     name = models.CharField( _(u'Name'), help_text=_(u'Taxon name'), max_length=50, db_index=True )
     ntype = models.CharField( _(u'Type'), help_text=_(u'Type'), choices=NAME_TYPES, max_length=1 )
 
@@ -1022,8 +1022,8 @@ class ConservationAssessmentSource( models.Model ):
 
 class ConservationStatus( models.Model ):
     "Conservation status"
-    taxon  = models.ForeignKey(Taxon)
-    source = models.ForeignKey(ConservationAssessmentSource, verbose_name=_(u'Source'))
+    taxon  = models.ForeignKey(Taxon, on_delete=models.CASCADE)
+    source = models.ForeignKey(ConservationAssessmentSource, verbose_name=_(u'Source'), on_delete=models.PROTECT)
     status = models.CharField( _(u'Status'), max_length=30 )
 
     class Meta:
@@ -1035,8 +1035,8 @@ class ConservationStatus( models.Model ):
 
 class TaxonDataReference( models.Model ):
     "Reference for a taxon data"
-    taxon     = models.ForeignKey(Taxon)
-    reference = models.ForeignKey(Reference, verbose_name=_(u'Reference'))
+    taxon     = models.ForeignKey(Taxon, on_delete=models.CASCADE)
+    reference = models.ForeignKey(Reference, verbose_name=_(u'Reference'), on_delete=models.PROTECT)
     data      = models.CharField( _(u'Data'), max_length=3, choices=TAXON_DATA )
     notes     = models.CharField( _(u'Notes'), help_text=_(u'Additional notes, such as page numbers'), max_length=80, null=True, blank=True )
 
@@ -1045,8 +1045,8 @@ class TaxonDataReference( models.Model ):
 
 class TaxonUse( models.Model ):
     "Uses of a taxon"
-    taxon = models.ForeignKey(Taxon)
-    use   = models.ForeignKey(TypeOfUse, verbose_name=_(u'type of use'))
+    taxon = models.ForeignKey(Taxon, on_delete=models.CASCADE)
+    use   = models.ForeignKey(TypeOfUse, verbose_name=_(u'type of use'), on_delete=models.PROTECT)
     fieldwork = models.BooleanField( _(u'Detected in fieldwork') )
 
     class Meta:
@@ -1057,8 +1057,8 @@ class TaxonUse( models.Model ):
 
 class TaxonHabitat( models.Model ):
     "Taxon habitat"
-    taxon = models.ForeignKey(Taxon)
-    habitat = models.ForeignKey(Habitat, verbose_name=_(u'habitat'))
+    taxon = models.ForeignKey(Taxon, on_delete=models.CASCADE)
+    habitat = models.ForeignKey(Habitat, verbose_name=_(u'habitat'), on_delete=models.PROTECT)
 
     class Meta:
         unique_together = ((u'taxon', u'habitat'),)
@@ -1068,7 +1068,7 @@ class TaxonHabitat( models.Model ):
 
 class TaxonOccurrence( models.Model ):
     "Taxon occurrence"
-    taxon     = models.ForeignKey(Taxon)
+    taxon     = models.ForeignKey(Taxon, on_delete=models.CASCADE)
     label     = models.TextField( _(u'Label'), null=True, blank=True )
     locality  = models.TextField( _(u'Locality'), null=True, blank=True )
     long_orig = models.CharField( _(u'Original longitude'), max_length=30 )
@@ -1102,10 +1102,10 @@ class TaxonOccurrence( models.Model ):
 
 class TaxonCitation( models.Model ):
     "Taxon citation in an interview"
-    interview  = models.ForeignKey(Interview)
+    interview  = models.ForeignKey(Interview, on_delete=models.CASCADE)
     # Note1: The taxon may not be uniquely identified or even present in the DB
     # Note2: The same taxon may be cited more than once in the same interview
-    taxon      = models.ForeignKey(Taxon, null=True)
+    taxon      = models.ForeignKey(Taxon, null=True, on_delete=models.PROTECT)
     cited_name = models.CharField( _(u'Cited name'), max_length=50 )
     page       = models.IntegerField( _(u'Page number') )
 
@@ -1114,7 +1114,7 @@ class TaxonCitation( models.Model ):
 
 class InterPart( models.Model ):
     "Highlight of an interview"
-    interview = models.ForeignKey(Interview)
+    interview = models.ForeignKey(Interview, on_delete=models.CASCADE)
     title     = models.CharField( _(u'Title'), max_length=100 )
     page      = models.IntegerField( _(u'Page number') )
     anchor    = models.CharField( _(u'Anchor id'), max_length=20 )
