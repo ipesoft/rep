@@ -388,7 +388,7 @@ class Interview( models.Model ):
     def generate_pdf(self):
         # For now, save document only in the settings language
         cur_language = translation.get_language()
-        if cur_language <> settings.LANGUAGE_CODE:
+        if cur_language != settings.LANGUAGE_CODE:
             translation.activate( settings.LANGUAGE_CODE )
         pdf_file = settings.PDF_ROOT + self.get_pdf_name()
         from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
@@ -921,7 +921,7 @@ class Taxon( models.Model ):
                     status = u'-> synonym of '+c_data[1]+' '+c_data[2]
             else:
                 status = u' Not found!'
-        except Exception, e:
+        except Exception as e:
             status = u' Exception: ' + str(e)
         return status
 
@@ -929,7 +929,7 @@ class Taxon( models.Model ):
         try:
             q = TaxonName.objects.get(taxon=self, ntype=ntype, name=name)
             # do nothing if name already exists
-        except Exception, e:
+        except Exception as e:
             # include if not found
             n = TaxonName(taxon=self, ntype=ntype, name=name)
             n.save()
@@ -937,7 +937,7 @@ class Taxon( models.Model ):
     def _get_checklist_data( self, verbose=False ):
         query = 'http://checklist.florabrasil.net/service/ACCEPTED/FORMAT/xml/LANG/en/GENUS/'+self.genus+'/SPECIES/'+self.species
         if verbose:
-            print query
+            print(query)
         h = httplib2.Http()
         resp, content = h.request(query)
         if resp.status == 200:
@@ -1006,7 +1006,7 @@ class TaxonName( models.Model ):
             try:
                 other_accepted_names = TaxonName.objects.get( taxon=self.taxon, ntype='A' ).exclude( pk=self.id )
                 raise ValidationError(u'A taxon may only have a single accepted name!')
-            except Exception, e:
+            except Exception as e:
                 # OK, no other accepted names
                 pass
 
@@ -1138,7 +1138,7 @@ def post_save_taxon( sender, instance, created, raw, using, **kwargs ):
         accepted.save()
     else:
         accepted = TaxonName.objects.get( taxon=instance, ntype=u'A' )
-        if short_name <> accepted.name:
+        if short_name != accepted.name:
             accepted.name = short_name
             accepted.save()
 
