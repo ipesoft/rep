@@ -526,7 +526,7 @@ def _add_references(request, obj, key, refs):
         obj['references'] = refs[key].split(',')
 
 # View methods
-def handler404( request ):
+def handler404( request, exception ):
     "404 page"
     c = RequestContext(request, {'base_template':settings.BASE_TEMPLATE})
     possible_templates = ['my_404.html', '404.html']
