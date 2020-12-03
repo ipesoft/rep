@@ -638,7 +638,7 @@ class Taxon( models.Model ):
                 roots[use.id] = [use.label, []]
             else:
                 root = use.get_root()
-                if roots.has_key(root.id):
+                if root.id in roots:
                     roots[root.id][1].append( use.label )
                 else:
                     roots[root.id] = [root.label, [use.label]]
@@ -663,7 +663,7 @@ class Taxon( models.Model ):
                 roots[habitat.id] = [habitat.name, []]
             else:
                 root = habitat.get_root()
-                if roots.has_key(root.id):
+                if root.id in roots:
                     roots[root.id][1].append( habitat.name )
                 else:
                     roots[root.id] = [root.name, [habitat.name]]
