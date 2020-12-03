@@ -855,7 +855,7 @@ class Taxon( models.Model ):
             if p[1]:
                 icon = 'yes'
                 alt = 'v'
-            html = html + '<a href="' + str(self.id) + '/#fset' + str(cnt) + '" title="' + p[0] + '"><img src="/static/admin/img/icon-' + icon + '.gif" alt="' + alt + '" /></a>'
+            html = html + '<a href="' + str(self.id) + '/#fset' + str(cnt) + '" title="' + p[0] + '"><img src="/static/admin/img/icon-' + icon + '.svg" alt="' + alt + '" /></a>'
             cnt = cnt + 1
         return format_html(html)
     data_completeness.short_description = _(u'Data completeness')
