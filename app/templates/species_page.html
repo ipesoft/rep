@@ -99,24 +99,9 @@ function setmap() {
 
     if ( window['google'] != undefined ) {
 
-      var gphy = new OpenLayers.Layer.Google(
-          "{% trans "Physical map" %}",
-          {type: google.maps.MapTypeId.TERRAIN}
-      );
-      var gmap = new OpenLayers.Layer.Google(
-          "{% trans "Road map" %}", // the default
-          {numZoomLevels: 20}
-      );
-      var ghyb = new OpenLayers.Layer.Google(
-          "{% trans "Hybrid map" %}",
-          {type: google.maps.MapTypeId.HYBRID, numZoomLevels: 20}
-      );
-      var gsat = new OpenLayers.Layer.Google(
-          "{% trans "Satellite map" %}",
-          {type: google.maps.MapTypeId.SATELLITE, numZoomLevels: 22}
-      );
+      var osm = new OpenLayers.Layer.OSM();
 
-      map.addLayers([gphy, gmap, ghyb, gsat]);
+      map.addLayers([osm]);
 
       var markers = new OpenLayers.Layer.Markers( "Occurrence locations" );
 
@@ -134,7 +119,7 @@ function setmap() {
 
           var point = new OpenLayers.LonLat( points[i].x, points[i].y );
 
-          // Google.v3 uses EPSG:900913 as projection, so we have to
+          // OSM and Google.v3 uses EPSG:900913 as projection, so we have to
           // transform our coordinates
           point.transform( proj, map.getProjectionObject() );
 
