@@ -698,7 +698,7 @@ class Taxon( models.Model ):
 
     def get_seedbed(self):
         if self.sl_seedbed and self.sl_containers:
-            return self._get_field_label('sl_seedbed') + u' ' + _(u'or') + u' ' + self._get_field_label('sl_containers')
+            return self._get_field_label('sl_seedbed') + u' ' + ugettext(u'or') + u' ' + self._get_field_label('sl_containers')
         elif self.sl_seedbed:
             return self._get_field_label('sl_seedbed')
         elif self.sl_containers:
@@ -709,18 +709,18 @@ class Taxon( models.Model ):
         val = None
         if self.seed_gmin_time is not None:
             if self.seed_gmax_time is not None and self.seed_gmax_time != self.seed_gmin_time:
-                val = str(self.seed_gmin_time) + u' ' + _(u'to') + u' ' + str(self.seed_gmax_time) + u' ' + _(u'days')
+                val = str(self.seed_gmin_time) + u' ' + ugettext(u'to') + u' ' + str(self.seed_gmax_time) + u' ' + ugettext(u'days')
             else:
-                val = str(self.seed_gmin_time) + u' ' + _(u'days')
+                val = str(self.seed_gmin_time) + u' ' + ugettext(u'days')
         elif self.seed_gmax_time is not None:
-            val = str(self.seed_gmax_time) + u' ' + _(u'days')
+            val = str(self.seed_gmax_time) + u' ' + ugettext(u'days')
         return val
 
     def get_germination_rate(self):
         val = None
         if self.seed_gmin_rate is not None:
             if self.seed_gmax_rate is not None and self.seed_gmax_rate != self.seed_gmin_rate:
-                val = str(self.seed_gmin_rate) + u' ' + _(u'to') + u' ' + str(self.seed_gmax_rate) + u'%'
+                val = str(self.seed_gmin_rate) + u' ' + ugettext(u'to') + u' ' + str(self.seed_gmax_rate) + u'%'
             else:
                 val = str(self.seed_gmin_rate) + u'%'
         elif self.seed_gmax_rate is not None:
@@ -764,7 +764,7 @@ class Taxon( models.Model ):
         if self.fl_start:
             val = self.get_fl_start_display()
             if self.fl_end and self.fl_end != self.fl_start:
-                val = val + u' ' + _(u'to') + u' ' + self.get_fl_end_display()
+                val = val + u' ' + ugettext(u'to') + u' ' + self.get_fl_end_display()
             return val
         return None
 
@@ -772,7 +772,7 @@ class Taxon( models.Model ):
         if self.fr_start:
             val = self.get_fr_start_display()
             if self.fr_end and self.fr_end != self.fr_start:
-                val = val + u' ' + _(u'to') + u' ' + self.get_fr_end_display()
+                val = val + u' ' + ugettext(u'to') + u' ' + self.get_fr_end_display()
             return val
         return None
 
