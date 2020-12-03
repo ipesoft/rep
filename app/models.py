@@ -866,15 +866,15 @@ class Taxon( models.Model ):
         if self.fo_evergreen and self.fo_deciduous:
             raise ValidationError(_(u'Foliage persistence cannot be evergreen and decidous simultaneously!'))
         # Crown diameter
-        if self.cr_min_diameter > self.cr_max_diameter:
+        if self.cr_min_diameter is not None and self.cr_max_diameter is not None and self.cr_min_diameter > self.cr_max_diameter:
             raise ValidationError(_(u'Minimum crown diameter cannot be greater than the maximum diameter!'))
         self._ensure_both('cr_min_diameter', 'cr_max_diameter')
         # Height
-        if self.min_height > self.max_height:
+        if self.min_height is not None and self.max_height is not None and self.min_height > self.max_height:
             raise ValidationError(_(u'Minimum height cannot be greater than the maximum height!'))
         self._ensure_both('min_height', 'max_height')
         # DBH
-        if self.min_dbh > self.max_dbh:
+        if self.min_dbh is not None and self.max_dbh is not None and self.min_dbh > self.max_dbh:
             raise ValidationError(_(u'Minimum DBH cannot be greater than the maximum DBH!'))
         self._ensure_both('min_dbh', 'max_dbh')
         # Flowering period
