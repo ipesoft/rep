@@ -668,7 +668,7 @@ class Taxon( models.Model ):
                     roots[root.id] = [root.name, [habitat.name]]
         is_first = True
         habitats_str = ''
-        for rid, rdata in roots.iteritems():
+        for rid, rdata in roots.items():
             if is_first:
                 is_first = False
                 habitats_str = rdata[0]
