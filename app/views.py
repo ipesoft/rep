@@ -12,7 +12,7 @@ from django.utils.encoding import force_text
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django import forms
 from django.db.models import Q, F
-from json.encoder import JSONEncoder
+import json
 
 # General definitions
 no_matter_str = _(u'indifferent')
@@ -631,7 +631,7 @@ def show_species(request, species_id, ws=False):
             # Someone may attempt to get server information by messing with this parameter
             return redirect('http://www.ic3.gov/about/')
         return _pdf_for_species_page( taxon, numbers, citations )
-    points = JSONEncoder().encode( orig_points )
+    points = json.JSONEncoder().encode( orig_points )
     # Help content
     help_entries = StaticContent.objects.filter(code__startswith='HELP-').values_list('code', flat=True)
     # Web service
