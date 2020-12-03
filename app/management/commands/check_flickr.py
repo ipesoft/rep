@@ -42,4 +42,3 @@ class Command( BaseCommand ):
             else:
                 print('Failed! HTTP status code', str(resp.status))
             time.sleep(1)
-        conn.close()
