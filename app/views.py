@@ -516,15 +516,15 @@ def _add_references(request, obj, key, refs):
 # View methods
 def handler404( request, exception ):
     "404 page"
-    c = RequestContext(request, {'base_template':settings.BASE_TEMPLATE})
+    c = {'base_template': settings.BASE_TEMPLATE}
     possible_templates = ['my_404.html', '404.html']
-    return render( request, possible_templates, context_instance=c, content_type='text/html; charset=utf-8', status=404 )
+    return render( request, possible_templates, context=c, content_type='text/html; charset=utf-8', status=404 )
 
 def handler500( request ):
     "500 page"
-    c = RequestContext(request, {'base_template':settings.BASE_TEMPLATE} )
+    c = {'base_template': settings.BASE_TEMPLATE}
     possible_templates = ['my_500.html', '500.html']
-    return render( request, possible_templates, context_instance=c, content_type='text/html; charset=utf-8', status=500 )
+    return render( request, possible_templates, context=c, content_type='text/html; charset=utf-8', status=500 )
 
 def index(request):
     'Index page'
