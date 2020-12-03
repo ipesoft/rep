@@ -1,7 +1,7 @@
 # coding=UTF-8
 
 from app.models import StaticContent, Taxon, TaxonName, TaxonDataReference, COLORS, MONTHS, ROOT_SYSTEMS, CROWN_SHAPES, LIGHT_REQUIREMENTS, SEED_TYPES, FRUIT_TYPES, BARK_TEXTURES, GROWTH_RATE, FOLIAGE_PERSISTENCE, TRUNK_ALIGNMENT, SOIL_TYPES, SEED_DISPERSAL_TYPE, SEED_COLLECTION, PRE_GERMINATION_TREATMENT, ConservationStatus, Interview, TypeOfUse, TaxonUse, Habitat, TaxonHabitat
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template import loader
 from django.conf import settings
@@ -12,6 +12,8 @@ from django.utils.encoding import force_text
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django import forms
 from django.db.models import Q, F
+from django.urls import reverse
+
 import json
 
 # General definitions
@@ -636,7 +638,6 @@ def show_species(request, species_id, ws=False):
     help_entries = StaticContent.objects.filter(code__startswith='HELP-').values_list('code', flat=True)
     # Web service
     if ws:
-        from json.encoder import JSONEncoder
         data = {'fullname':taxon.label}
         if taxon.family:
             data['family'] = taxon.family
@@ -1031,7 +1032,7 @@ def show_species(request, species_id, ws=False):
                 for ref_num, ref_text in citations:
                     dict_citations[int(ref_num)] = ref_text
                 data['references'] = dict_citations
-        return HttpResponse(JSONEncoder(sort_keys=True, indent=4).encode(data))
+        return JsonResponse(data)
     # Normal page rendering
     c = {'taxon': taxon, 'refs': numbers, 'citations': citations, 
          'points': points, 'base_template': settings.BASE_TEMPLATE,
@@ -1289,16 +1290,14 @@ def search_species(request, ws=False):
         if ws:
             if taxa.paginator.count == 0:
                 return HttpResponse(status=404)
-            from json.encoder import JSONEncoder
-            from django.core.urlresolvers import reverse
             abs_uri = 'https' if request.is_secure() else 'http'
             abs_uri += '://' + request.get_host()
-            abs_uri += reverse('app.views.search_species')
+            abs_uri += reverse('search_species')
             sp_base_url = abs_uri[:abs_uri.index('/', 10)] + '/sp/'
             records = []
             for taxon in taxa.object_list:
                 records.append({'fullname':taxon.label, 'id':taxon.id, 'link':sp_base_url+str(taxon.id)})
-            resp = HttpResponse(JSONEncoder(sort_keys=True, indent=4).encode(records))
+            resp = JsonResponse(records, safe=False)
             # Pagination stuff
             if taxa.number == 1:
                 resp['X-Total-Count'] = taxa.paginator.count
@@ -1356,7 +1355,6 @@ def interview(request, interview_id):
 
 def ws_metadata(request):
     'Return web service metadata'
-    from json.encoder import JSONEncoder
     # Gather uses
     uses = {}
     for node, info in TypeOfUse.get_annotated_list():
@@ -1381,7 +1379,7 @@ def ws_metadata(request):
         languages[lang[0]] = lang[1]
     # Build response
     meta = {'citation': u'Sistema Flora Regional - Instituto de Pesquisas Ecológicas (IPÊ)', 'name': 'Regional Flora Web Service', 'license': 'GNU AGPLv3', 'languages':languages, 'settings': {'species_pagination': {'default_per_page':settings.DEFAULT_PER_PAGE, 'max_per_page':settings.MAX_PER_PAGE, 'min_per_page':settings.MIN_PER_PAGE}}, 'dictionaries': {'crown_shape': _to_dict(CROWN_SHAPES), 'color': _to_dict(COLORS), 'root_type': _to_dict(ROOT_SYSTEMS), 'seed_type':_to_dict(SEED_TYPES), 'light_requirement':_to_dict(LIGHT_REQUIREMENTS), 'fruit_type':_to_dict(FRUIT_TYPES), 'bark_texture':_to_dict(BARK_TEXTURES), 'growth_rate':_to_dict(GROWTH_RATE), 'foliage_persistence':_to_dict(FOLIAGE_PERSISTENCE), 'trunk_alignment':_to_dict(TRUNK_ALIGNMENT), 'soil_type':_to_dict(SOIL_TYPES), 'seed_dispersal':_to_dict(SEED_DISPERSAL_TYPE), 'seed_collection':_to_dict(SEED_COLLECTION), 'pre_germination_treatment':_to_dict(PRE_GERMINATION_TREATMENT), 'use':uses, 'habitat':habitats, 'status':list(status)}}
-    return HttpResponse(JSONEncoder(sort_keys=True, indent=4).encode(meta))
+    return JsonResponse(meta)
 
 def ws_info(request):
     'Web service documentation'

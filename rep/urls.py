@@ -18,7 +18,7 @@ urlpatterns = [
     # Static content page
     url(r'^p/(?P<page_code>[-\w\d]+)/$', views.show_page),
     # Browse species
-    url(r'^sp/?$', views.search_species),
+    url(r'^sp/?$', views.search_species, name="search_species"),
     # Species page
     url(r'^sp/(?P<species_id>\d+)/?$', views.show_species),
     # "Static" pages
