@@ -219,8 +219,8 @@ class StaticContent( models.Model ):
         unique_together = ((u'code', u'lang'),)
         ordering = [u'description']
 
-    def __unicode__(self):
-        return unicode(self.description)
+    def __str__(self):
+        return self.description
 
 class Reference( models.Model ):
     "Bibliographic reference"
@@ -232,8 +232,8 @@ class Reference( models.Model ):
         verbose_name_plural = _(u'bibliographic references')
         ordering = [u'citation']
 
-    def __unicode__(self):
-        return unicode(self.citation)
+    def __str__(self):
+        return self.citation
 
 class TypeOfUse( MP_Node ):
     "Types of use of a taxon"
@@ -245,11 +245,11 @@ class TypeOfUse( MP_Node ):
         verbose_name_plural = _(u'types of use')
         ordering = [u'path']
 
-    def __unicode__(self):
+    def __str__(self):
         if self.depth > 1:
-            return u'-'*(self.depth-1)+unicode(self.label)
+            return u'-'*(self.depth-1) + self.label
         else:
-            return unicode(self.label)
+            return self.label
 
 class Habitat( MP_Node ):
     "Habitat"
@@ -262,11 +262,11 @@ class Habitat( MP_Node ):
         verbose_name_plural = _(u'habitats')
         ordering = [u'path']
 
-    def __unicode__(self):
+    def __str__(self):
         if self.depth > 1:
-            return u'-'*(self.depth-1)+unicode(self.name)
+            return u'-'*(self.depth-1) + self.name
         else:
-            return unicode(self.name)
+            return self.name
 
 class Interview( models.Model ):
     "Interview"
@@ -284,8 +284,8 @@ class Interview( models.Model ):
         verbose_name_plural = _(u'interviews')
         ordering = [u'title']
 
-    def __unicode__(self):
-        return unicode(self.title)
+    def __str__(self):
+        return self.title
 
     def get_citations(self):
         return TaxonCitation.objects.filter(interview=self).order_by('cited_name', 'page')
@@ -572,12 +572,12 @@ class Taxon( models.Model ):
         verbose_name_plural = _(u'plants')
         ordering = [u'label']
 
-    def __unicode__(self):
-        return unicode(self.label)
+    def __str__(self):
+        return self.label
 
     def _get_field_label(self, name):
         'Return a field label given its name'
-        return unicode(Taxon._meta.get_field_by_name(name)[0].verbose_name)
+        return str(Taxon._meta.get_field(name).verbose_name)
 
     def _get_boolean_concat(self, fields):
         '''
@@ -643,7 +643,7 @@ class Taxon( models.Model ):
                     roots[root.id] = [root.label, [use.label]]
         is_first = True
         uses_str = ''
-        for rid, rdata in roots.iteritems():
+        for rid, rdata in roots.items():
             if is_first:
                 is_first = False
                 uses_str = rdata[0]
@@ -996,8 +996,8 @@ class TaxonName( models.Model ):
         verbose_name = _(u'name')
         verbose_name_plural = _(u'names')
 
-    def __unicode__(self):
-        return unicode(self.name)
+    def __str__(self):
+        return self.name
 
     def clean(self):
         # Make sure there's only one accepted name for the taxon
@@ -1017,8 +1017,8 @@ class ConservationAssessmentSource( models.Model ):
         verbose_name = _(u'conservation assessment source')
         verbose_name_plural = _(u'conservation assessment sources')
 
-    def __unicode__(self):
-        return unicode(self.acronym)
+    def __str__(self):
+        return self.acronym
 
 class ConservationStatus( models.Model ):
     "Conservation status"
@@ -1030,8 +1030,8 @@ class ConservationStatus( models.Model ):
         verbose_name = _(u'conservation status')
         verbose_name_plural = _(u'conservation statuses')
 
-    def __unicode__(self):
-        return unicode(self.status)
+    def __str__(self):
+        return self.status
 
 class TaxonDataReference( models.Model ):
     "Reference for a taxon data"
@@ -1040,8 +1040,8 @@ class TaxonDataReference( models.Model ):
     data      = models.CharField( _(u'Data'), max_length=3, choices=TAXON_DATA )
     notes     = models.CharField( _(u'Notes'), help_text=_(u'Additional notes, such as page numbers'), max_length=80, null=True, blank=True )
 
-    def __unicode__(self):
-        return unicode(self.taxon) + u' ' + unicode(self.reference)
+    def __str__(self):
+        return str(self.taxon) + u' ' + str(self.reference)
 
 class TaxonUse( models.Model ):
     "Uses of a taxon"
@@ -1052,8 +1052,8 @@ class TaxonUse( models.Model ):
     class Meta:
         unique_together = ((u'taxon', u'use'),)
 
-    def __unicode__(self):
-        return unicode(self.taxon) + u' ' + unicode(self.use)
+    def __str__(self):
+        return str(self.taxon) + u' ' + str(self.use)
 
 class TaxonHabitat( models.Model ):
     "Taxon habitat"
@@ -1063,8 +1063,8 @@ class TaxonHabitat( models.Model ):
     class Meta:
         unique_together = ((u'taxon', u'habitat'),)
 
-    def __unicode__(self):
-        return unicode(self.taxon) + u' ' + unicode(self.habitat)
+    def __str__(self):
+        return str(self.taxon) + u' ' + str(self.habitat)
 
 class TaxonOccurrence( models.Model ):
     "Taxon occurrence"
@@ -1109,8 +1109,8 @@ class TaxonCitation( models.Model ):
     cited_name = models.CharField( _(u'Cited name'), max_length=50 )
     page       = models.IntegerField( _(u'Page number') )
 
-    def __unicode__(self):
-        return unicode(self.taxon) + u' in ' + unicode(self.interview) + u'(p.' + str(self.page) + u')'
+    def __str__(self):
+        return str(self.taxon) + u' in ' + str(self.interview) + u'(p.' + str(self.page) + u')'
 
 class InterPart( models.Model ):
     "Highlight of an interview"
@@ -1119,8 +1119,8 @@ class InterPart( models.Model ):
     page      = models.IntegerField( _(u'Page number') )
     anchor    = models.CharField( _(u'Anchor id'), max_length=20 )
 
-    def __unicode__(self):
-        return unicode(self.title) + u' in ' + unicode(self.interview)
+    def __str__(self):
+        return self.title + u' in ' + str(self.interview)
 
 ############# Signal receivers #############
 
