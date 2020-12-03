@@ -8,6 +8,7 @@ from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext
 from django.utils import translation
+from django.utils.html import format_html
 from treebeard.mp_tree import MP_Node
 from tinymce.models import HTMLField
 
@@ -807,44 +808,44 @@ class Taxon( models.Model ):
 
     # Functions used by the admin change list form
     def data_completeness(self):
-        fieldsets = ((_('Taxonomic data'), bool(self.genus) and bool(self.species) and bool(self.author) and bool(self.family)),
-                     (_('General description'), bool(self.description)),
-                     (_('Ethnobotany description'), bool(self.ethno_notes)),
-                     (_('Uses'), bool(self.restoration) or bool(self.urban_use) or bool(self.silviculture)),
-                     (_('Abundance'), self.rare is not None),
+        fieldsets = ((ugettext('Taxonomic data'), bool(self.genus) and bool(self.species) and bool(self.author) and bool(self.family)),
+                     (ugettext('General description'), bool(self.description)),
+                     (ugettext('Ethnobotany description'), bool(self.ethno_notes)),
+                     (ugettext('Uses'), bool(self.restoration) or bool(self.urban_use) or bool(self.silviculture)),
+                     (ugettext('Abundance'), self.rare is not None),
 
-                     (_('Endemism'), self.endemic is not None),
-                     (_('Special features'), (self.h_flowers is not None) and (self.h_leaves is not None) and (self.h_fruits is not None) and (self.h_crown is not None) and (self.h_bark is not None) and (self.h_seeds is not None) and (self.h_wood is not None) and (self.h_roots is not None)),
-                     (_('Successional group'), self.sg_pioneer or self.sg_early_secondary or self.sg_late_secondary or self.sg_climax),
-                     (_('Growth rate'), self.gr_slow or self.gr_moderate or self.gr_fast),
-                     (_('Pruning'), self.pruning is not None),
-                     (_('Flowering period'), (self.fl_start is not None) and (self.fl_end is not None)),
-                     (_('Flowering color'), self.fl_color is not None),
-                     (_('Pollination'), bool(self.pollinators)),
-                     (_('Seed dispersal'), (self.dt_anemochorous or self.dt_autochorous or self.dt_barochorous or self.dt_hydrochorous or self.dt_zoochorous)),
-                     (_('Dispersion agents'), bool(self.dispersers)),
-                     (_('Fruits'), (self.fr_type is not None or self.fr_class is not None)),
-                     (_('Symbiotic association with roots'), (self.symbiotic_assoc is not None) or bool(self.symbiotic_details)), 
-                     (_('Roots'), self.r_type is not None), 
-                     (_('Foliage persistence'), self.fo_evergreen or self.fo_semideciduous or self.fo_deciduous), 
-                     (_('Crown diameter'), bool(self.cr_min_diameter) and bool(self.cr_max_diameter)), 
-                     (_('Crown shape'), bool(self.cr_shape)), 
-                     (_('Bark texture'), bool(self.bark_texture)), 
-                     (_('Trunk alignment'), self.tr_straight or self.tr_sl_inclined or self.tr_inclined or self.tr_sl_crooked or self.tr_crooked), 
-                     (_('Tree size'), bool(self.min_height) and bool(self.max_height) and bool(self.min_dbh) and bool(self.max_dbh)), 
-                     (_('Thorns or spines'), self.thorns_or_spines is not None), 
-                     (_('Toxic or allergenic'), self.toxic_or_allergenic is not None), 
-                     (_('Pests and diseases'), bool(self.pests_and_diseases)), 
-                     (_('Fruiting period'), (self.fr_start is not None) and (self.fr_end is not None)), 
-                     (_('Seed collection'), self.seed_tree or self.seed_soil), 
-                     (_('Seed type'), bool(self.seed_type)), 
-                     (_('Pre-germination treatment'), self.has_pregermination_treatment()), 
-                     (_('Seedling production'), self.sl_seedbed or self.sl_containers), 
-                     (_('Germination time lapse'), bool(self.seed_gmin_time) and bool(self.seed_gmax_time)), 
-                     (_('Germination rate'), bool(self.seed_gmin_rate) and bool(self.seed_gmax_rate)), 
-                     (_('Seeds per weight'), bool(self.seeds_per_weight)), 
-                     (_('Light requirements'), self.light is not None), 
-                     (_('Terrain drainage'), self.wetland or self.dry), 
+                     (ugettext('Endemism'), self.endemic is not None),
+                     (ugettext('Special features'), (self.h_flowers is not None) and (self.h_leaves is not None) and (self.h_fruits is not None) and (self.h_crown is not None) and (self.h_bark is not None) and (self.h_seeds is not None) and (self.h_wood is not None) and (self.h_roots is not None)),
+                     (ugettext('Successional group'), self.sg_pioneer or self.sg_early_secondary or self.sg_late_secondary or self.sg_climax),
+                     (ugettext('Growth rate'), self.gr_slow or self.gr_moderate or self.gr_fast),
+                     (ugettext('Pruning'), self.pruning is not None),
+                     (ugettext('Flowering period'), (self.fl_start is not None) and (self.fl_end is not None)),
+                     (ugettext('Flowering color'), self.fl_color is not None),
+                     (ugettext('Pollination'), bool(self.pollinators)),
+                     (ugettext('Seed dispersal'), (self.dt_anemochorous or self.dt_autochorous or self.dt_barochorous or self.dt_hydrochorous or self.dt_zoochorous)),
+                     (ugettext('Dispersion agents'), bool(self.dispersers)),
+                     (ugettext('Fruits'), (self.fr_type is not None or self.fr_class is not None)),
+                     (ugettext('Symbiotic association with roots'), (self.symbiotic_assoc is not None) or bool(self.symbiotic_details)), 
+                     (ugettext('Roots'), self.r_type is not None), 
+                     (ugettext('Foliage persistence'), self.fo_evergreen or self.fo_semideciduous or self.fo_deciduous), 
+                     (ugettext('Crown diameter'), bool(self.cr_min_diameter) and bool(self.cr_max_diameter)), 
+                     (ugettext('Crown shape'), bool(self.cr_shape)), 
+                     (ugettext('Bark texture'), bool(self.bark_texture)), 
+                     (ugettext('Trunk alignment'), self.tr_straight or self.tr_sl_inclined or self.tr_inclined or self.tr_sl_crooked or self.tr_crooked), 
+                     (ugettext('Tree size'), bool(self.min_height) and bool(self.max_height) and bool(self.min_dbh) and bool(self.max_dbh)), 
+                     (ugettext('Thorns or spines'), self.thorns_or_spines is not None), 
+                     (ugettext('Toxic or allergenic'), self.toxic_or_allergenic is not None), 
+                     (ugettext('Pests and diseases'), bool(self.pests_and_diseases)), 
+                     (ugettext('Fruiting period'), (self.fr_start is not None) and (self.fr_end is not None)), 
+                     (ugettext('Seed collection'), self.seed_tree or self.seed_soil), 
+                     (ugettext('Seed type'), bool(self.seed_type)), 
+                     (ugettext('Pre-germination treatment'), self.has_pregermination_treatment()), 
+                     (ugettext('Seedling production'), self.sl_seedbed or self.sl_containers), 
+                     (ugettext('Germination time lapse'), bool(self.seed_gmin_time) and bool(self.seed_gmax_time)), 
+                     (ugettext('Germination rate'), bool(self.seed_gmin_rate) and bool(self.seed_gmax_rate)), 
+                     (ugettext('Seeds per weight'), bool(self.seeds_per_weight)), 
+                     (ugettext('Light requirements'), self.light is not None), 
+                     (ugettext('Terrain drainage'), self.wetland or self.dry), 
                      )
         html = ''
         cnt = 1
@@ -854,9 +855,9 @@ class Taxon( models.Model ):
             if p[1]:
                 icon = 'yes'
                 alt = 'v'
-            html = html + u'<a href="' + str(self.id) + '/#fset'+str(cnt) + '" title="' + p[0] + '"><img src="/static/admin/img/icon-' + icon + '.gif" alt="' + alt + '" /></a>'
+            html = html + '<a href="' + str(self.id) + '/#fset' + str(cnt) + '" title="' + p[0] + '"><img src="/static/admin/img/icon-' + icon + '.gif" alt="' + alt + '" /></a>'
             cnt = cnt + 1
-        return html
+        return format_html(html)
     data_completeness.short_description = _(u'Data completeness')
     data_completeness.allow_tags = True
 
