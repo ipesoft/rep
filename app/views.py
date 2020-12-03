@@ -12,6 +12,7 @@ from django.utils.encoding import force_text
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django import forms
 from django.db.models import Q, F
+from json.encoder import JSONEncoder
 
 # General definitions
 no_matter_str = _(u'indifferent')
@@ -254,19 +255,6 @@ def _add_month_condition(request, qs, param, min_field, max_field):
         outside = Q(**kwargs_out) & (Q(**kwargs1) | Q(**kwargs2))
         qs = qs.filter(inside | outside)
     return qs
-
-def _json_raw_encode(data):
-    """
-    Return the specified data encoded in json.
-    """
-    import types
-    from django.core import serializers
-    from json.encoder import JSONEncoder
-    if type(data) is types.InstanceType: # assuming a Django object
-        json_serializer = serializers.get_serializer("json")()
-        return json_serializer.serialize(data, ensure_ascii=False)
-    else:
-        return JSONEncoder().encode(data)
 
 def _add_link(abs_uri, link, page_number, label, params):
     sep = u', ' if len(link) > 0 else u''
@@ -643,7 +631,7 @@ def show_species(request, species_id, ws=False):
             # Someone may attempt to get server information by messing with this parameter
             return redirect('http://www.ic3.gov/about/')
         return _pdf_for_species_page( taxon, numbers, citations )
-    points = _json_raw_encode( orig_points )
+    points = JSONEncoder().encode( orig_points )
     # Help content
     help_entries = StaticContent.objects.filter(code__startswith='HELP-').values_list('code', flat=True)
     # Web service
