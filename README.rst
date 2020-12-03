@@ -31,7 +31,7 @@ Features
 Installation
 ============
 
-Besides a web server, you'll need Python (>=3), Django (>=3), a relational database compatible with Django, and the Django modules django-tiny-mce (3.0.1) and django treebeard. This application was developed with Apache 2.4, PostgreSQL 10.15, Python 3.6 and Django 3.1.1. After installing the basic software, create a new database, copy rep/settings.py.ref to rep/settings.py and edit the configuration. If you want to learn more about Django settings you can look at: https://docs.djangoproject.com/en/3.1/topics/settings/
+Besides a web server, you'll need Python (>=3), Django (>=3), a relational database compatible with Django, the Python module reportlab and the Django modules django-tiny-mce (3.0.1) and django treebeard (4.3.1). This application was developed with Apache 2.4, PostgreSQL 10.15, Python 3.6 and Django 3.1.1. After installing the basic software, create a new database, copy rep/settings.py.ref to rep/settings.py and edit the configuration. If you want to learn more about Django settings you can look at: https://docs.djangoproject.com/en/3.1/topics/settings/
 
 In particular, you need to pay attention to the following parts:
 
