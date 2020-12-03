@@ -8,20 +8,26 @@ import zipfile
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.utils import translation
-from django.utils.translation import string_concat
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from app.models import Taxon
 
 class Command( BaseCommand ):
-    option_list = BaseCommand.option_list + (
-        make_option('-f', '--file', dest='file_path', type='string',
-            help='Output file path.'),
-        )
-    help = "Export data according to the TDWG Species Profile Model (SPM)"
-    usage_str = "Usage: ./manage.py export_data app -f file_path"
+    help = u"Export data according to the TDWG Species Profile Model (SPM)"
+    usage_str = u"Usage: ./manage.py export_data app -f file_path"
 
-    def handle( self, app=None, file_path=None, **options ):
-        if file_path is None:
+    def add_arguments(self, parser):
+
+        # Named (optional) arguments
+        parser.add_argument(
+            '-f',
+            '--file',
+            dest='file_path',
+            help='Output file path.',
+        )
+
+    def handle( self, *args, **options ):
+        file_path = options['file_path']
+        if file_path in [None, '']:
             file_path = settings.EOL_FILE_LOCATION
         final_file = file_path + 'eol.zip'
         temp_file = file_path + 'eol.xml'
@@ -38,15 +44,16 @@ class Command( BaseCommand ):
                 last_ref = max( last_modified, last_created )
         else:
             last_ref = last_created
-        print 'Last modification',last_ref
+        print('Last modification', last_ref)
         if last_ref is not None:
             if os.path.exists( final_file ):
                 file_changed = datetime.datetime.fromtimestamp( os.path.getmtime(final_file) )
-                print 'Last export      ', file_changed
+                print('Last export      ', file_changed)
                 if file_changed >= last_ref:
-                    print 'No changes since last export. Exiting.'
+                    print('No changes since last export. Exiting.')
                     exit(0)
-        print 'Exporting data ...'
+        print('Exporting data ...')
+        print('File path: ' + file_path)
         if os.path.exists( temp_file ):
             os.remove( temp_file )
         self._generate_xml( temp_file )
@@ -63,7 +70,7 @@ class Command( BaseCommand ):
         finally:
             zf.close()
         os.remove( temp_file )
-        print 'Finished'
+        print('Finished')
 
     def _generate_xml( self, file ):
         f = codecs.open( file, 'wb', 'utf8' )
@@ -92,36 +99,36 @@ class Command( BaseCommand ):
             for compiler in compilers:
                 f.write(u"\n\t\t<agent role=\"compiler\">"+compiler+'</agent>')
             # Dates
-            f.write(u"\n\t\t<dcterms:created>"+string.replace(str(taxon.created), ' ', 'T')+"</dcterms:created>")
+            f.write(u"\n\t\t<dcterms:created>"+str(taxon.created).replace(' ', 'T')+"</dcterms:created>")
             if taxon.modified is not None:
-                f.write(u"\n\t\t<dcterms:modified>"+string.replace(str(taxon.modified), ' ', 'T')+"</dcterms:modified>")
+                f.write(u"\n\t\t<dcterms:modified>"+str(taxon.modified).replace(' ', 'T')+"</dcterms:modified>")
             # Data objects
             ## General description
             desc = ''
             desc_ref = ['-']
             fol = taxon.get_foliage_persistence()
             if fol is not None:
-                desc = string_concat( desc, _(u'Foliage persistence'), ': ', fol, '. ' )
+                desc = desc + _(u'Foliage persistence') + ': ' + fol + '. '
                 desc_ref.append('FOL')
             if taxon.fl_color is not None:
-                desc = string_concat( desc, _(u'Flowering color'), ': ', taxon.get_fl_color_display(), '. ' )
+                desc = desc + _(u'Flowering color') + ': ' + taxon.get_fl_color_display() + '. '
                 repro_ref.append('FLC')
             flp = taxon.get_flowering_period()
             if flp is not None:
-                desc = string_concat( desc, _(u'Flowering period'), ': ', flp, '. ' )
+                desc = desc + _(u'Flowering period') + ': ' + flp + '. '
                 desc_ref.append('FLP')
             if taxon.r_type is not None:
-                desc = string_concat( desc, taxon._get_field_label('r_type'), ': ', taxon.get_r_type_display(), '. ' )
+                desc = desc + taxon._get_field_label('r_type') + ': ' + taxon.get_r_type_display() + '. '
                 repro_ref.append('ROT')
             if taxon.cr_shape is not None:
-                desc = string_concat( desc, _(u'Crown shape'), ': ', taxon.get_cr_shape_display(), '. ' )
+                desc = desc + _(u'Crown shape') + ': ' + taxon.get_cr_shape_display() + '. '
                 repro_ref.append('CRS')
             tra = taxon.get_trunk_alignment()
             if tra is not None:
-                desc = string_concat( desc, _(u'Trunk alignment'), ': ', tra, '. ' )
+                desc = desc + _(u'Trunk alignment') + ': ' + tra + '. '
                 desc_ref.append('TRA')
             if taxon.bark_texture is not None:
-                desc = string_concat( desc, _(u'Bark texture'), ': ', taxon.get_bark_texture_display(), '. ' )
+                desc = desc + _(u'Bark texture') + ': ' + taxon.get_bark_texture_display() + '. '
                 repro_ref.append('BRT')
             if len(desc):
                 self._add_data_object( f, taxon, u'GeneralDescription', desc_ref, desc, lang)
@@ -130,13 +137,13 @@ class Command( BaseCommand ):
             size_ref = ['SIZ']
             h = taxon.get_height()
             if h is not None:
-                size = string_concat( _(u'height'), ': ', h, '. ' )
+                size = _(u'height') + ': ' + h +  '. '
             dbh = taxon.get_dbh()
             if dbh is not None:
-                size = string_concat( size, _(u'DBH'), ': ', dbh, '. ' )
+                size = size + _(u'DBH') + ': ' + dbh + '. '
             crd = taxon.get_crown_diameter()
             if crd is not None:
-                size = string_concat( size, _(u'Crown diameter'), ': ', crd, '. ' )
+                size = size + _(u'Crown diameter') + ': ' + crd + '. '
                 size_ref.append('CRD')
             if size is not None:
                 self._add_data_object( f, taxon, u'Size', size_ref, size, lang)
@@ -148,7 +155,7 @@ class Command( BaseCommand ):
             ## Growth
             growth_rate = taxon.get_growth_rate()
             if growth_rate is not None:
-                self._add_data_object( f, taxon, u'Growth', ['GRO'], string_concat( _(u'Growth rate'), ': ', growth_rate), lang)
+                self._add_data_object( f, taxon, u'Growth', ['GRO'], _(u'Growth rate') + ': ' + growth_rate, lang)
             ## Associations
             assoc = ''
             if taxon.pollinators:
@@ -156,14 +163,14 @@ class Command( BaseCommand ):
             if taxon.symbiotic_assoc:
                 if len(assoc):
                     assoc = assoc + '. '
-                assoc = string_concat(assoc, _(u'Symbiotic association with roots'),': ', taxon.symbiotic_details)
+                assoc = assoc + _(u'Symbiotic association with roots') + ': ' + taxon.symbiotic_details
             if len(assoc):
                 self._add_data_object( f, taxon, u'Associations', ['POL', 'SYM'], assoc, lang)
             ## Dispersal
             dispersal = ''
             d_types = taxon.get_dispersal_types()
             if d_types is not None:
-                dispersal = string_concat(_(u'Seed dispersal'),': ', d_types)
+                dispersal = _(u'Seed dispersal') + ': ' + d_types
             if taxon.dispersers:
                 if len(dispersal):
                     dispersal = dispersal + '. '
@@ -189,32 +196,32 @@ class Command( BaseCommand ):
             repro_ref = ['-']
             fp = taxon.get_fruiting_period()
             if fp is not None:
-                repro = string_concat( _(u'Fruiting period'), ': ', fp, '. ' )
+                repro = _(u'Fruiting period') + ': ' + fp + '. '
                 repro_ref.append('FRP')
             seed_g = taxon.get_seed_gathering()
             if seed_g is not None:
-                repro = string_concat( repro, seed_g, '. ' )
+                repro = repro + str(seed_g) + '. '
                 repro_ref.append('SEC')
             if taxon.seed_type is not None:
-                repro = string_concat( repro, _(u'Seed type'), ': ', taxon.get_seed_type_display(), '. ' )
+                repro = repro + _(u'Seed type') + ': ' + taxon.get_seed_type_display() + '. '
                 repro_ref.append('SET')
             if taxon.has_pregermination_treatment():
-                repro = string_concat( repro, _(u'Pre-germination treatment'), ': ', taxon.get_pregermination_treatment(), '. ' )
+                repro = repro + _(u'Pre-germination treatment') + ': ' + taxon.get_pregermination_treatment() + '. '
                 repro_ref.append('PGT')
             seedbed = taxon.get_seedbed()
             if seedbed is not None:
-                repro = string_concat( repro, _(u'Seedling production'), ': ', seedbed, '. ' )
+                repro = repro + _(u'Seedling production') + ': ' + seedbed + '. '
                 repro_ref.append('SDL')
             g_time_lapse = taxon.get_germination_time_lapse()
             if g_time_lapse is not None:
-                repro = string_concat( repro, _(u'Germination time lapse'), ': ', g_time_lapse, '. ' )
+                repro = repro + _(u'Germination time lapse') + ': ' + g_time_lapse + '. '
                 repro_ref.append('GET')
             g_rate = taxon.get_germination_rate()
             if g_rate is not None:
-                repro = string_concat( repro, _(u'Germination rate'), ': ', g_rate, '. ' )
+                repro = repro + _(u'Germination rate') + ': ' + g_rate + '. '
                 repro_ref.append('GER')
             if taxon.light is not None:
-                repro = string_concat( repro, _(u'Light requirements'), ': ', taxon.get_light_display(), '. ' )
+                repro = repro + _(u'Light requirements') + ': ' + taxon.get_light_display() + '. '
                 repro_ref.append('LIG')
             if len(repro):
                 self._add_data_object( f, taxon, u'Reproduction', repro_ref, repro, lang)
