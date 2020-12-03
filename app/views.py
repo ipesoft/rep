@@ -28,124 +28,124 @@ class CommonSearchForm(forms.Form):
     my_use_choices = []
     for choice in use_choices:
         my_use_choices.append([choice.id, str(choice)])
-    uses = forms.MultipleChoiceField(label=_(u'Specific use'), choices=my_use_choices)
+    uses = forms.MultipleChoiceField(label=_(u'Specific use'), choices=my_use_choices, required=False)
     # Rarity
-    rare = forms.BooleanField(label=_(u'Rare'))
+    rare = forms.BooleanField(label=_(u'Rare'), required=False)
     # Endemism
-    endemic = forms.BooleanField(label=_(u'Endemic'))
+    endemic = forms.BooleanField(label=_(u'Endemic'), required=False)
     # Growth rate
-    gr_slow     = forms.BooleanField(label=_(u'Slow'))
-    gr_moderate = forms.BooleanField(label=_(u'Moderate'))
-    gr_fast     = forms.BooleanField(label=_(u'Fast'))
+    gr_slow     = forms.BooleanField(label=_(u'Slow'), required=False)
+    gr_moderate = forms.BooleanField(label=_(u'Moderate'), required=False)
+    gr_fast     = forms.BooleanField(label=_(u'Fast'), required=False)
     # Pruning
-    pruning = forms.ChoiceField(label=_(u'Requires pruning'), initial=-1, choices=null_boolean_choices)
+    pruning = forms.ChoiceField(label=_(u'Requires pruning'), initial=-1, choices=null_boolean_choices, required=False)
     # Flowering month
-    fl_month = forms.ChoiceField(label=_(u'With flower in month'), initial=0, choices=month_choices)
-    fr_month = forms.ChoiceField(label=_(u'With fruits in month'), initial=0, choices=month_choices)
+    fl_month = forms.ChoiceField(label=_(u'With flower in month'), initial=0, choices=month_choices, required=False)
+    fr_month = forms.ChoiceField(label=_(u'With fruits in month'), initial=0, choices=month_choices, required=False)
     # Root system
     root_system_choices = [('NULL', no_matter_str)] + list(ROOT_SYSTEMS)
-    r_type = forms.ChoiceField(label=_(u'Root system'), initial='NULL', choices=root_system_choices)
+    r_type = forms.ChoiceField(label=_(u'Root system'), initial='NULL', choices=root_system_choices, required=False)
     # Foliage persistence
-    fo_evergreen     = forms.BooleanField(label=_(u'Evergreen'))
-    fo_semideciduous = forms.BooleanField(label=_(u'Semi-deciduous'))
-    fo_deciduous     = forms.BooleanField(label=_(u'Deciduous'))
+    fo_evergreen     = forms.BooleanField(label=_(u'Evergreen'), required=False)
+    fo_semideciduous = forms.BooleanField(label=_(u'Semi-deciduous'), required=False)
+    fo_deciduous     = forms.BooleanField(label=_(u'Deciduous'), required=False)
     # Light requirement
     light_requirement_choices = [('NULL', no_matter_str)] + list(LIGHT_REQUIREMENTS)
-    light = forms.ChoiceField(label=_(u'Light requirements'), initial='NULL', choices=light_requirement_choices)
+    light = forms.ChoiceField(label=_(u'Light requirements'), initial='NULL', choices=light_requirement_choices, required=False)
     # Height
-    min_height = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}))
-    max_height = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}))
+    min_height = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}), required=False)
+    max_height = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}), required=False)
     # Crown diameter
-    cr_min_diameter = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}))
-    cr_max_diameter = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}))
+    cr_min_diameter = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}), required=False)
+    cr_max_diameter = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}), required=False)
     # Terrain drainage
-    wetland = forms.BooleanField(label=_(u'Wetland'))
-    dry     = forms.BooleanField(label=_(u'Well-drained'))
+    wetland = forms.BooleanField(label=_(u'Wetland'), required=False)
+    dry     = forms.BooleanField(label=_(u'Well-drained'), required=False)
     # Type of dispersion
-    dt_anemochorous = forms.BooleanField(label=_(u'Anemochorous'))
-    dt_autochorous  = forms.BooleanField(label=_(u'Autochorous'))
-    dt_barochorous  = forms.BooleanField(label=_(u'Barochorous'))
-    dt_hydrochorous = forms.BooleanField(label=_(u'Hydrochorous'))
-    dt_zoochorous   = forms.BooleanField(label=_(u'Zoochorous'))
+    dt_anemochorous = forms.BooleanField(label=_(u'Anemochorous'), required=False)
+    dt_autochorous  = forms.BooleanField(label=_(u'Autochorous'), required=False)
+    dt_barochorous  = forms.BooleanField(label=_(u'Barochorous'), required=False)
+    dt_hydrochorous = forms.BooleanField(label=_(u'Hydrochorous'), required=False)
+    dt_zoochorous   = forms.BooleanField(label=_(u'Zoochorous'), required=False)
 
 class UrbanForestrySearchForm(CommonSearchForm):
     color_choices = [(0, no_matter_str)] + list(COLORS)
     crown_shape_choices = [('NULL', no_matter_str)] + list(CROWN_SHAPES)
-    toxic    = forms.ChoiceField(label=_(u'Toxic or allergenic'), initial=-1, choices=null_boolean_choices)
-    thorns   = forms.ChoiceField(label=_(u'Thorns or spines'), initial=-1, choices=null_boolean_choices)
-    color    = forms.ChoiceField(label=_(u'Flowering color'), initial=0, choices=color_choices)
-    cr_shape = forms.ChoiceField(label=_(u'Crown shape'), initial='NULL', choices=crown_shape_choices)
+    toxic    = forms.ChoiceField(label=_(u'Toxic or allergenic'), initial=-1, choices=null_boolean_choices, required=False)
+    thorns   = forms.ChoiceField(label=_(u'Thorns or spines'), initial=-1, choices=null_boolean_choices, required=False)
+    color    = forms.ChoiceField(label=_(u'Flowering color'), initial=0, choices=color_choices, required=False)
+    cr_shape = forms.ChoiceField(label=_(u'Crown shape'), initial='NULL', choices=crown_shape_choices, required=False)
     # Special features
-    h_flowers   = forms.BooleanField(label=_(u'Flowers'))
-    h_leaves    = forms.BooleanField(label=_(u'Leaves'))
-    h_fruits    = forms.BooleanField(label=_(u'Fruits'))
-    h_crown     = forms.BooleanField(label=_(u'Crown'))
-    h_bark      = forms.BooleanField(label=_(u'Bark'))
-    h_seeds     = forms.BooleanField(label=_(u'Seeds'))
-    h_wood      = forms.BooleanField(label=_(u'Wood'))
-    h_roots     = forms.BooleanField(label=_(u'Roots'))
+    h_flowers   = forms.BooleanField(label=_(u'Flowers'), required=False)
+    h_leaves    = forms.BooleanField(label=_(u'Leaves'), required=False)
+    h_fruits    = forms.BooleanField(label=_(u'Fruits'), required=False)
+    h_crown     = forms.BooleanField(label=_(u'Crown'), required=False)
+    h_bark      = forms.BooleanField(label=_(u'Bark'), required=False)
+    h_seeds     = forms.BooleanField(label=_(u'Seeds'), required=False)
+    h_wood      = forms.BooleanField(label=_(u'Wood'), required=False)
+    h_roots     = forms.BooleanField(label=_(u'Roots'), required=False)
     # Trunk alignement
-    tr_straight    = forms.BooleanField(label=_(u'Straight'))
-    tr_sl_inclined = forms.BooleanField(label=_(u'Slightly inclined'))
-    tr_inclined    = forms.BooleanField(label=_(u'Inclined'))
-    tr_sl_crooked  = forms.BooleanField(label=_(u'Slightly crooked'))
-    tr_crooked     = forms.BooleanField(label=_(u'Crooked'))
+    tr_straight    = forms.BooleanField(label=_(u'Straight'), required=False)
+    tr_sl_inclined = forms.BooleanField(label=_(u'Slightly inclined'), required=False)
+    tr_inclined    = forms.BooleanField(label=_(u'Inclined'), required=False)
+    tr_sl_crooked  = forms.BooleanField(label=_(u'Slightly crooked'), required=False)
+    tr_crooked     = forms.BooleanField(label=_(u'Crooked'), required=False)
     # Conservation status
     status_choices = [('NULL', no_matter_str)] + [(c['status'], c['status']) for c in ConservationStatus.objects.filter(taxon__urban_use=True).values('status').order_by('status').distinct()]
-    status = forms.ChoiceField(label=_(u'Conservation status'), initial='NULL', choices=status_choices)
+    status = forms.ChoiceField(label=_(u'Conservation status'), initial='NULL', choices=status_choices, required=False)
     # Pollination
-    pollinators = forms.ChoiceField(label=_(u'Pollinators'), initial=-1, choices=null_boolean_choices)
+    pollinators = forms.ChoiceField(label=_(u'Pollinators'), initial=-1, choices=null_boolean_choices, required=False)
 
 class RestorationSearchForm(CommonSearchForm):
-    toxic = forms.ChoiceField(label=_(u'Toxic or allergenic'), initial=-1, choices=null_boolean_choices)
-    symb_assoc = forms.ChoiceField(label=_(u'Symbiotic association with roots'), initial=-1, choices=null_boolean_choices)
+    toxic = forms.ChoiceField(label=_(u'Toxic or allergenic'), initial=-1, choices=null_boolean_choices, required=False)
+    symb_assoc = forms.ChoiceField(label=_(u'Symbiotic association with roots'), initial=-1, choices=null_boolean_choices, required=False)
     # Successional group
-    sg_pioneer         = forms.BooleanField(label=_(u'Pioneer'))
-    sg_early_secondary = forms.BooleanField(label=_(u'Early secondary'))
-    sg_late_secondary  = forms.BooleanField(label=_(u'Late secondary'))
-    sg_climax          = forms.BooleanField(label=_(u'Climax'))
+    sg_pioneer         = forms.BooleanField(label=_(u'Pioneer'), required=False)
+    sg_early_secondary = forms.BooleanField(label=_(u'Early secondary'), required=False)
+    sg_late_secondary  = forms.BooleanField(label=_(u'Late secondary'), required=False)
+    sg_climax          = forms.BooleanField(label=_(u'Climax'), required=False)
     # Conservation status
     status_choices = [('NULL', no_matter_str)] + [(c['status'], c['status']) for c in ConservationStatus.objects.filter(taxon__restoration=True).values('status').order_by('status').distinct()]
-    status = forms.ChoiceField(label=_(u'Conservation status'), initial='NULL', choices=status_choices)
+    status = forms.ChoiceField(label=_(u'Conservation status'), initial='NULL', choices=status_choices, required=False)
     # Pre-germination treatment
-    pg_no_need    = forms.BooleanField(label=_(u'No need for treatment'))
-    pg_thermal    = forms.BooleanField(label=_(u'Thermal treatment'))
-    pg_chemical   = forms.BooleanField(label=_(u'Chemical treatment'))
-    pg_water      = forms.BooleanField(label=_(u'Immersion in water'))
-    pg_mechanical = forms.BooleanField(label=_(u'Mechanical scarification'))
-    pg_combined   = forms.BooleanField(label=_(u'Combined treatments'))
-    pg_other      = forms.BooleanField(label=_(u'Other'))
+    pg_no_need    = forms.BooleanField(label=_(u'No need for treatment'), required=False)
+    pg_thermal    = forms.BooleanField(label=_(u'Thermal treatment'), required=False)
+    pg_chemical   = forms.BooleanField(label=_(u'Chemical treatment'), required=False)
+    pg_water      = forms.BooleanField(label=_(u'Immersion in water'), required=False)
+    pg_mechanical = forms.BooleanField(label=_(u'Mechanical scarification'), required=False)
+    pg_combined   = forms.BooleanField(label=_(u'Combined treatments'), required=False)
+    pg_other      = forms.BooleanField(label=_(u'Other'), required=False)
     # Seed type
     seed_type_choices = [('NULL', no_matter_str)] + list(SEED_TYPES)
-    s_type = forms.ChoiceField(label=_(u'Seed type'), initial='NULL', choices=seed_type_choices)
+    s_type = forms.ChoiceField(label=_(u'Seed type'), initial='NULL', choices=seed_type_choices, required=False)
     # Germination rate
-    seed_gmin_rate = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}))
-    seed_gmax_rate = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}))
+    seed_gmin_rate = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}), required=False)
+    seed_gmax_rate = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}), required=False)
 
 class SilvicultureSearchForm(CommonSearchForm):
     # Successional group
-    sg_pioneer         = forms.BooleanField(label=_(u'Pioneer'))
-    sg_early_secondary = forms.BooleanField(label=_(u'Early secondary'))
-    sg_late_secondary  = forms.BooleanField(label=_(u'Late secondary'))
-    sg_climax          = forms.BooleanField(label=_(u'Climax'))
+    sg_pioneer         = forms.BooleanField(label=_(u'Pioneer'), required=False)
+    sg_early_secondary = forms.BooleanField(label=_(u'Early secondary'), required=False)
+    sg_late_secondary  = forms.BooleanField(label=_(u'Late secondary'), required=False)
+    sg_climax          = forms.BooleanField(label=_(u'Climax'), required=False)
     # DBH
-    min_dbh   = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}))
-    max_dbh   = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}))
+    min_dbh   = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}), required=False)
+    max_dbh   = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}), required=False)
     # Diseases
-    diseases = forms.ChoiceField(label=_(u'Pests and diseases'), initial=-1, choices=null_boolean_choices)
+    diseases = forms.ChoiceField(label=_(u'Pests and diseases'), initial=-1, choices=null_boolean_choices, required=False)
     # Pollination
-    pollinators = forms.ChoiceField(label=_(u'Pollinators'), initial=-1, choices=null_boolean_choices)
+    pollinators = forms.ChoiceField(label=_(u'Pollinators'), initial=-1, choices=null_boolean_choices, required=False)
     # Habitats
     habitat_choices = Habitat.objects.all().order_by('path')
     my_habitat_choices = []
     for choice in habitat_choices:
         my_habitat_choices.append([choice.id, str(choice)])
-    habitats = forms.MultipleChoiceField(label=ugettext(u'Biome')+'/'+ugettext(u'Fitofisionomy'), choices=my_habitat_choices)
+    habitats = forms.MultipleChoiceField(label=ugettext(u'Biome')+'/'+ugettext(u'Fitofisionomy'), choices=my_habitat_choices, required=False)
     # Density
-    min_density = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}))
-    max_density = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}))
+    min_density = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}), required=False)
+    max_density = forms.IntegerField(initial=None, widget=forms.TextInput(attrs={'size':'3'}), required=False)
     # Has MAI curve
-    has_mai_curve = forms.ChoiceField(label=_(u'Has mean annual increment curve'), initial=-1, choices=null_boolean_choices)
+    has_mai_curve = forms.ChoiceField(label=_(u'Has mean annual increment curve'), initial=-1, choices=null_boolean_choices, required=False)
 
 # Internal methods
 def _handle_language(request):
