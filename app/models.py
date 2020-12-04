@@ -247,7 +247,7 @@ class TypeOfUse( MP_Node ):
         ordering = [u'path']
 
     def __str__(self):
-        if self.depth > 1:
+        if self.depth is not None and self.depth > 1:
             return u'-'*(self.depth-1) + self.label
         else:
             return self.label
@@ -264,7 +264,7 @@ class Habitat( MP_Node ):
         ordering = [u'path']
 
     def __str__(self):
-        if self.depth > 1:
+        if self.depth is not None and self.depth > 1:
             return u'-'*(self.depth-1) + self.name
         else:
             return self.name
@@ -304,9 +304,8 @@ class Interview( models.Model ):
             part_keys = []
             for page_num in range(1, paginator.num_pages+1):
                 page_obj = paginator.page(page_num)
-                # Note: There must always one object
-                # Note: without the encode I get psycopg "can't adapt" error (??)
-                content = page_obj.object_list[0].encode('utf-8')
+                # Note: There must always be one object
+                content = page_obj.object_list[0]
                 root = etree.fromstring('<?xml version="1.0" encoding="UTF-8"?><x>'+content+'</x>')
                 nodes = root.findall(".//a")
                 for node in nodes:
