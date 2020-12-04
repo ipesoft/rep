@@ -50,12 +50,12 @@ class RefInline(admin.TabularInline):
     verbose_name_plural = _('references')
     template = 'admin/edit_inline/mytabular.html'
 
-    def queryset(self, request):
+    def get_queryset(self, request):
         """
         Overloaded to avoid displaying all references related to
         the taxon in each reference combo.
         """
-        qs = super(RefInline, self).queryset(request)
+        qs = super(RefInline, self).get_queryset(request)
         return qs.filter(data=self.form.taxondata)
 
 class RarityRefForm(RefForm):
@@ -373,11 +373,11 @@ class NamesInline(admin.TabularInline):
     exclude = ('ntype',)
     template = 'admin/edit_inline/tabular-django-1-4-2.html'
 
-    def queryset(self, request):
+    def get_queryset(self, request):
         """
         Overloaded to avoid displaying other name types.
         """
-        qs = super(NamesInline, self).queryset(request)
+        qs = super(NamesInline, self).get_queryset(request)
         return qs.filter(ntype=self.form.ntype)
 
 class SynonymsInline(NamesInline):
@@ -545,7 +545,7 @@ class TaxonAdmin(admin.ModelAdmin):
         }),
         (_('Wood information'), {                  #38
             #'classes': ('collapse',),
-            'fields': ('wood_general_info','wood_density',('wood_has_mai_curve','wood_has_cai_curve', 'wood_has_biomass_equation')),
+            'fields': ('wood_general_info','wood_density', ('wood_has_mai_curve', 'wood_has_cai_curve', 'wood_has_biomass_equation')),
         }),
     )
     inlines = [
